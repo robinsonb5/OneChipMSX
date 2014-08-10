@@ -1,0 +1,119 @@
+.TH Z80-MEMORY 3 "01 Oct 2006" "Z80-MEMORY Version 2.4" "Memory access"
+
+.SH NAME
+init_banks(\|), reset_banks(\|), bank_port(\|), switch_bank(\|),
+clear_memory(\|), memory_at(\|), read_addr(\|), read_memo(\|), write_memo(\|),
+write_to_memory(\!), dma_write(\|), dma_read(\|) \- total memory access
+.SH SYNOPSIS
+.B "#include <stdio.h>"
+.sp 2
+.BI "int init_banks(char *rom_path, char *bank_mapping_descr);"
+.sp
+.BI "void reset_banks(void);"
+.sp
+.BI "unsigned  bank_port(unsigned char id);"
+.sp
+.BI "void switch_bank(unsigned char id, unsigned i);"
+.sp
+.BI "void clear_memory(void);"
+.sp
+.BI "unsigned char memory_at(unsigned short index);"
+.sp
+.BI "unsigned char * io_address;"
+.sp
+.BI "unsigned char read_addr(unsigned short index);"
+.sp
+.BI "unsigned char read_memo(unsigned short index);"
+.sp
+.BI "void write_memo(unsigned short index, unsigned char data);"
+.sp
+.BI "unsigned char write_to_memory(unsigend short index, unsigned char data);"
+.sp
+.BI "unsigned  dma_write(unsigned short offset, unsigned count, FILE *from);"
+.sp
+.BI "unsigned  dma_read(unsigned short offset, unsigned count, FILE *to);"
+
+.SH DESCRIPTION
+These functions provide all memory access and also read data from external hardware.
+.TP
+.I init_banks
+initializes the bank handling and reads the bank contents from the directory
+.I *rom_path
+with the file
+.I *bank_mapping_descr
+containing the bank mapping description. It returns the number of usable bank entries in the description file.
+.TP
+.I reset_banks
+does a reset to the banks meaning going to the default initialization.
+.TP
+.I bank_port
+can be used to test a port whether it is reserved for bank switching.
+If this is the case it returns the positive bank port no else 0.
+.TP
+.I switch_bank
+switches the bank 
+.I id
+into memory at the position defined by bank port no
+.I i.
+.TP
+.I clear_memory
+sets these parts of the 64kB RAM to 0 which are writeable.
+.TP
+.I memory_at 
+returns the byte value at position 
+.I index
+in the memory. Can not be used by the decoding or execution unit of
+the CPU because it by-passes the CPU.
+.TP
+.I io_address
+holds the location of an external supplied byte by the hardware.
+.TP
+.I read_addr
+returns the byte value correspoing to the address
+.I index.
+This may be an IO-address in which case 
+.I io_address 
+is just to locate the byte.
+.TP
+.I read_memo
+returns the byte value correspoing to the address 
+.I index
+from memory.
+.TP
+.I write_memo
+writes the byte value
+.I data
+into memory at address 
+.I index
+provided this address is writeable.
+.TP
+.I write_to_memory
+writes the byte value
+.I data
+to address
+.I index
+provided this address is writeable. It returns the previous value at the
+address. This function can not be used by the execution unit because it
+by-passes the CPU. It is demanded from
+.I compile(void)
+which is called from
+.I z80-mon.
+.TP
+.I dma_write
+transfers into memory starting at address
+.I offset
+.I count
+many bytes directly from file
+.I from
+by passing the CPU.
+.TP
+.I dma_read
+transfers from memory address
+.I offset
+.I count
+many bytes directly into file
+.I to
+by passing the CPU.
+.PP
+.SH SEE ALSO
+z80-memory(5), z80-banks(5)

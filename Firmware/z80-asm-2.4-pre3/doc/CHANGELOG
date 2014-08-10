@@ -1,0 +1,258 @@
+changes from version ?? to 1.1:
+ * user interface add key  =  to change the registers
+   A,B,C,D,E,H,L,IX,IY,A',B',C',D',E',H',L',I,R
+ * display and update the cycle counter and the refresh register
+ * BUG in disasm.c  f_ld  LD rr,(nn) [only 1 byte loaded]   fixed!
+ * BUG in disasm.c  f_ex  EX (SP),IX break missing ==> runs into EX (SP),IY;   fixed!
+ * EI replaced by IFF1 & IFF2 (correct LD A,R & LD A,I)
+ * user interface  @(CPU reset), #(clear memory), *(clear all cpu register),
+                   $(clear tick counter), &(SP init)
+ * console.c:  BUG in c_init()  usuage of undefined variable t   fixed!
+
+changes from version 1.1 to 1.9:
+ * IN, OUT, INI, OUTD, ...  all implemented
+ * console.c:  BUG(?) in c_init()  if ICANON cleared  MIN should bet set to 1
+ * BUG in disasm.c  f_add  all 16-bit addition with carry bit :(   fixed!
+ * declaration of an assembler label may be appended by a colon 
+ * if PC, SP, and MEMP input is requested current values are displayed in hexa
+ * HALT really halts the CPU now if interrupt is disabled else set runmode false
+ * user interface  !(NMI) implemented
+ * user interface  .  puts compiled instructions into memory and increases addr
+ * user interface  = =  to change 16-bit registers BC,DE,HL,BC',DE',HL',IX,IY
+ * BUG in disasm.c  f_adc  wrong carry/h/v flag calculation    fixed!
+ * BUG in disasm.c  f_sbc  wrong carry/h/v flag calculation    fixed!
+ * interrupt behaviour simulated, except IM=0 (probably tick count wrong)
+ * user interface  D(dump/disassemble into file)  toggle DI/EI to key ^ changed
+ * PC and SP defaults into hexa,  CALL, JP and RST in disassembling format, too
+ * user interface  " (protocol instructions executed)
+ * bank switching logic implemented (still experimental)
+ * BUG in disasm.c  f_ld  if 16 bit load from 0xffff adress OVERFLOW   fixed!
+ * disasm.c:  f_sll  opcode CB30-CB37  implemented
+ * warnings and error_msg now  occupy only the very last line (row 23)
+ * user interface  %  sets a breakpoint with a run counter at current PC
+ * breakpoints (address & counter) are displayed in row 22
+ * pseudo instruction EQU in assembler (asm.c) implemented 
+ * CPU Halt-pin/status is displayed in upper right corner if active
+ * turbo mode improved a lot: 4 levels now (16 min, 380 sec, 38 sec, 2.5 sec)
+ * disasm.c:  f_nop2  all undocumented ED-opcodes implemented
+ * all the man pages updated
+ * turbo mode replaced by controling the clock speed/frequency
+ * the ports are implemented as a map onto one binary file named .Z80_ports
+ * hardware_clock.c  and  lcd_display.c  provided as examples for port usage
+
+changes from version 1.9 to 2.0beta:
+ * BUG in inst-dist.c  ED63  ld hl,(nn)  A_NUM -> A_PODDLE_NUM   fixed!
+ * z80-asm permits in the case of exactly 1 section and inputfilename ends with
+   .asm the outputfile to be optional (.asm is exchanged to .z80 for outputfile)
+ * BUG in z80-asm: if start > highest byte in memory undefined outputfile length
+ * HALT halts the CPU now if interrupt is enabled else set runmode false
+   necessary for emulator mode ==>  user interface  &  sets a DI on stack
+ * user interface  !  toggle keyboard read disabled/enabled in run mode
+   user interface ESC now simulates a NMI
+ * z80-mon has option -E for emulator mode (immediately CPU start)
+ * SIGTERM, SIGHUP terminates z80-mon, SIGUSR1 causes reset, SIGUSR2 causes NMI,
+   SIGABORT causes cpu_wait=1 and SIGTRAP makes a CPU dump
+ * keyboard mapping implemented (used for IN from port stdin)
+ * simul.c:  decode() now handles stray FD and DD prefixes
+ * all FD and DD are simulated by decode() ==>  IXh,IXl,IYh,IYl introduced in
+   regs.c and regs_token and set N_REGISTERS to 21 , global _ushort ddfdcb_reg
+ * decoder and executer [decode() and  execute.c] totally checked. Now memory
+   read access separated from memory write access. Usage of DATA pins!
+ * in disasm.c: all 11 CB-executions and all 8 arith/logic-A-executions bundled
+ * BUG in disasm.c: f_cp/f_cpd/f_cpi/f_cpdr/...  h-flag wrong calculated  fixed!
+ * BUG in disasm.c: f_dec  p-flag wrong calculated  fixed!
+ * the f_... functions in execute.c now return a pointer to char, doesn't print
+ * total memory access encapsulated in memory.c / io-data access simulated
+ * Makefile updated (*.h) goes now into hardware,  make install added
+ * doc/man pages updated
+ * in asm.c: write_to_memory(), set_start_address(), get_current_address()
+   introduced for usage of compile() [now returns the number of bytes writen]
+
+changes from version 2.0b to 2.0c:
+ * BUG in asm.c: lexical_analysis: multiple label definition possible  fixed!
+ * BUG in compile.c: c_add: ADD IY,IX valid(typo), ADD IY,IY invalid  fixed!
+ * BUG in execute.c: f_alu: ADD,ADC,SBC use second operand (bad nemonic) fixed!
+ * BUG in execute.c: f_neg: carry-flag always effected (carry=!!A)  fixed!
+ * BUG in execute.c: f_bit: sign-flag effected only if bit 7 tested  fixed!
+ * BUG in execute.c: f_daa: total nonsense! (>=4 independent errors)  fixed!
+ * z80-asm.c Option -l added ==> in asm.c LISTING in pass 2 evaluated
+ * in execute.c: in disassembling mode jr and djnz instruction offset with sign
+ * user interface  t  enables base switch for disassembling constants
+ * user interface  L  now can read true binary files into memory
+ * user interface  a,b  changed to  u,v  and  e  deleted [reserved for register]
+ * pseudo instructions  DEFM, ALIGN  in assembler (asm.c) implemented (sll,too)
+ * Z80-Asm accepts integers to base 16 also if they have a h or H postfix
+ * hash table structur/allocation optimized and option -c in z80-asm.c added
+
+changes from version 2.0c to 2.0:
+ * pseudo instruction  END  added and max label length to be 63 documented
+ * in asm.h: better interface (highest_address,generated_bytes,set_compile_pass)
+ * in asm.c: compile(void) now detects an EOF (take_line reads exactly 1 line)
+
+changes from version 2.0 to 2.1
+ * in asm.c: compile(char *txt) ==> take_line(..) not longer obligate!
+ * ticks encapsulated ==> wait_tics(AMOUNT) and quartz.c/quartz.h introduced
+ * -DEFINES in Makefile  and  hardware/z80-ctc.c (experimental/beta Z80_CTC)
+ * BUG in compile.c: IX-/ IY-displacements must be < 128 and >= -128  fixed!
+ * in asm.c: in compile() all error messages bundled (do we like to translate?)
+ * daisy_chain realized / more realistic interrupt handling by hardware 
+ * bank switching logic re-implemented (still all banks must have same size)
+ * in regs.c register names to upper case (better to distinguish from addresses)
+ * user interface  j  switches relative versa absolute address (disasm jr/djnz)
+ * several small errors/bugs fixed
+ * user interface  j  enables now labeled address disassembling for jp/call/jr
+ * user interface  j  enables relative disassembling via two-pass disassembling
+ * z80-mon with -E now reads CPU status from .CPU and finishes if HALT in DI
+ * algebraic expressions evaluation in asm.c: valid operators ~,&,|,^,+,-,*,/,%
+ * in asm.c:  @ is a special 'label' indicating the current PC
+ * in asm.c: explicit binary constants must be lead-in by # replacing % prefix
+      additionaly (to the 0x) the $ prefix for hexadecimal numbers is availible
+ * BUG in compile.c: c_ret: typo in case PO wrong machine code generated  fixed!
+ * several DJGCC compilation bugs removed (missing includes,defines,typos)
+
+changes from version 2.1c to 2.2:
+ * BUG in asm.c: convert_arg: memmove deletes IX or IY but needed later  fixed!
+ * BUG in execute.c f_out/f_in: ts[] resp. tf[] must be at least 5 chars  fixed!
+ * BUG in compile.c c_ld: LD HL,(addr) should generate opcode 2A not ED6B fixed!
+ * BUG in compile.c convert_arg: char consts must not be converted to upper case
+                                 fixed!
+ * BUG in compile.c convert_arg: missing {} for for-loop body which results in
+                                 all strings became nilstrings    fixed!
+ * BUG in compile.c convert_arg: bug in string parsing, wrong indices  fixed!
+ * BUG in execute.c f_ld: LD (addr),rr puts only lower byte into memory  fixed!
+ * BUG in asm.c: convert_arg: (IX+-num)  num argument was not expected to be an
+                              expression. test_number() <-> parse_expr()  fixed!
+ * BUG in asm.c: convert_arg: arg->label undefined! Default to false now  fixed!
+ * BUG in asm.c: lexical_analysis: overflow possible for 8-bit arguments in 1th
+                                   pass if labels are used in expressions fixed!
+ * BUG in asm.c: lexical_analysis: pseudo instructions I_EQU, I_DEFM, I_ORG,
+                                   I_ALIGN  also needs the current address as
+                                   argument in pass 1 if it is a label  fixed!
+ * BUG in asm.c: lexical_analysis: parsing inside '..' was finished by delimiter
+                                   (now new error message UNS introduced) fixed!
+ * BUG in z80-mon.c: main: init_ctc() must be before reset_cpu() because
+                           set_cpu_pin() may call set_ctc_pin()! fixed!
+ * BUG in execute.c: ix_iy_disp: _ushort a must be casted to signed char  fixed!
+ * BUG in execute.c: reg_str: in case A_PODLE_IX_PLUS, A_PODLE_IY_PLUS argument
+                              arg must be casted to signed char  fixed!
+ * in asm.c: if more than 4 bytes opcodes (e.g. DEFS) only the first 4 are shown
+             in the assembler listing
+ * in asm.c: new error message: Invalid character argument for invalid character
+             tokens containing more than 1 (or none) character
+ * in all places/files exchanged   DEFM <--> DEFS  (defs <--> defm). Historical
+    DEFM is used to put messages (strings) in memory and
+    DEFS is used to reserve storage (in memory) in Zilog Z80 assembler language
+
+changes after version 2.2:
+ * BUG in instr.c:  DEFS and DEFM must stay ordered lexicographicly  fixed!
+ * BUG in asm.c: compile: in printf if i>4 maximum must be 4 not 12  fixed!
+ * BUG in asm.c: compile: in I_ORG last must be set to address  fixed!
+ * in memory.c: set_default_byte() introduced to set the default memory value
+ * in z80-asm new option -f XX (this option defines DEFS & ORG gaps to be XX)
+ * BUG in asm.c: logic when to calculate EQU is wrong!! we need to store the
+                 expression in the hash table  NOT FIXED! "(pruchod != 11)"
+ * BUG in asm.c: the ALIGN statement must produce fill bytes, too (-f XX) fixed!
+ * BUG in asm.c: overwriting code warning must depend on fill byte  fixed!
+ * BUG in asm.c: test_number: if base is known (prefix) number may be start
+                              with non-digit character  fixed!
+ * BUG in asm.c: compile I_ALIGN  address is already increased by out()  fixed!
+ * BUG in z80-asm.c: init: now it has parameter fill_byte to init memory  fixed!
+ * in asm.c/expression.c/hash.c: new evaluation logic for EQU and expressions
+             implemented. Their values are now evaluated in pass 2 recursivly
+ * in z80-mon.c: ask() and ask_x() accept now all number representations like
+             z80-asm (even the '?') except that any sign is forbidden
+ * pseudo instructions  DEFL  in assembler (asm.c) implemented
+ * BUG in z80-asm.c: parse_arg: ignores filename parameter if one can be
+                                constructed from source filename  fixed!
+ * BUG in compile.c: out() should be performed to have correct PC if signed or
+                     unsigned overflow of 8-bit argument occurs.(ret=8,9) fixed!
+ * in expression.c: new operators !, <<, >>, ==, !=, >, <, >=, <=, &&, ||
+ * BUG in hash.c:  last_label_reusable: uniq must be negated    fixed!
+ * in asm.c:  DEFL lables now multiple in hashtable (distinguished by lineno)
+ * in asm.c:  COND/ENDC enables conditionel compiling
+ * BUG in execute.c: f_in_block, f_out_block: F_sign, F_Z not effected and
+                     if B!=0 F_Z not cleared   fixed!
+ * BUG in Makefile: now manuals are in doc/man not in doc  fixed!
+ * BUG in asm.c: convert_arg: indirect addressing was wrongly recognized  fixed!
+ * BUG in hash.c: is_in_table: for non-uniq lables (DEFL) wrong element  fixed!
+ * BUG in hash.c: add_to_table: ->uniq undefined  fixed!
+ * in expression.c: new operators ** , // , ?  and right operand of << and >>
+                    is now interpreted as unsigned
+ * BUG in expression,c: parse_expr(): all expressions must be tried to be
+                        evaluated in PASS 1 (needed for ORG, DEFS, CONDC) fixed!
+ * in ports.c:  cpu_pin iorq used, and the variables ADDRESS and DATA are set.
+ * in hardware/README:  explanation how to implement further add-ons
+ * z80-mon.c:  main: cpu_pins  busrq and busack are now served
+ * z80-cpu.c/ports,c:  Z80-CTC port access now wired at Z80-CPU
+ * BUG in ports.c: in_byte():  missing DATA bus assign from *data  fixed!
+
+changes after version 2.3:
+ * BUG in Makefile: DEFINES are not put to in $(MAKE) hardware  fixed!
+ * hardware:  logic_analzyer implemented (to view the Z80 pins)
+ * in decode.c: refresh_cycle()  mreq- and rfsh-pin used and I<<8|R onto ADDRESS
+ * in z80-cpu.c:  machine cycle counter (triggered by wait_tics)
+ * BUG in asm.c:  no_para[]: RST needs 1 Parameter, not 0  fixed!
+ * BUG in execute.c: cp_block:  3 tics missing  fixed!
+ * in z80-mon.c:  machine cycle counter displayed
+ * in z80-cpu.c:  busrq  is now acknowledged at beginning of each machine cycle
+ * with dummy.c  print_ticks() reintroduced to mask it in non z80-mon programs
+   using acknowledge_bus_request()
+ * BUG in hardware/z80-ctc.c: read_word():  fp may be 0  fixed!!
+ * only if !cpu_is_in_disassemble then set_cpu_pin() , acknowledge_bus_request()
+   and  ADDRESS  are used  (databus can be used if cpu_is_in_disassemble mode)
+ * port_buffer for OLD_STYLE port_access via Z80_PORTS put in hardware now
+ * z80-global im Makefile als dependence of z80-cpu.h 
+ * SSL_ZDS trigger in hardware
+ * BUG in execute.c: f_inc/f_dec: 16 bit registers shouldn't change flags fixed!
+ * BUG in execute.c: f_rrd: lower nibble in accu set wrongly  fixed!
+ * BUG in execute.c: f_adc16/f_sbc16: zero_flag wrongly calculated  fixed!
+ * BUG in execute.c: f_inc/f_dec: PV_flag wrongly calculated  fixed!
+ * in z80-asm.c und z80-mon.c option parsing simplified und equaly processed. 
+ * BUG in execute.c: add,adc,sub,sbc,cp,f_adc16,f_sbc16: underflow check for
+                     < -127 , < -32767 missing (V-Flag wrongly computed)  fixed!
+ * BUG ins asm.c: convert_arg():  arg->text isn't initialized to 0.  fixed!
+ * BUG in regs.h: missing #include "z80-global" to define seznam_type  fixed!
+ * BUG in execute.c: f_neg: PV_flag wrongly calculated  fixed!
+ * BUG in execute.c: f_neg: H_flag setiing typo: F_N must be F_NH  fixed!
+ * BUG in execute.c: f_inc/f_dec: PV_flag wrongly calculated for 8-bit register
+                           (last fix affected only 8-bit memory access)  fixed!
+ * BUG in execute.c: add/adc/sub/sbc/cp/adc16/sbc16:  V_flag inverted mapped on
+                                                      P_flag  fixed!
+ * in all Makefile:  -malign-function=0 replaced by -falign-function=0  and
+                     Makefile-Variable CC  set to  gcc.
+ * doc/execute_timing.tex  to  doc/execute_timing.txt  renamed
+ * BUG in z80-mon.c: main: counter b & s for argv wrongly increased  fixed!
+ * BUG in memory.c: init_banks: map must be 0-pointer for first realloc  fixed!
+ * BUG in memory.c: init_banks: tok[3] must be tok[4] in two lines  fixed!
+ * BUG in memory.c: init_banks: superfluious else prohibited  bank[id].back_up
+                    allocation.  fixed!
+ * BUG in memory.c: init_banks:  strtoul(..) needs check of *p if p is defined
+                    after scanning tok2 and tok4 for numbers  fixed!
+ * BUG in memory.c: _uchar memory_at: logic for bank_access is missing  fixed!
+ * in hardware/banks-*:  new bank-mask notation introduced
+ * in doc/man/z80-banks.5  default bank after reset/initialisation documentated.
+ * in memory.c  bank-mask must now be a 2 hexadecimal number
+ * in doc/man/z80-mon.1  execution-mode preciser defined. 
+ * in z80-cpu.c/z80-cpu.h:  new cpu-flag  cpu_is_in_x_mode  defined
+ * in z80-mon.c: main: cpu_is_in_x_mode is set if 'Execute instruction'-Key
+ * in execute.c:  cpu_is_in_x_mode  used for jr/djnz/halt/cp-, ld-, out-, in-
+                  block instructions used
+ * BUG in memory.c: init_banks: variable i will be used later; rename it  fixed!
+ * BUG in memory.c: init_banks: all error messages need to be displayed via
+                    error() from z80-mon.c   fixed!
+ * BUG in z80-mon.c: main: in x-mode decode() may only be called on valid
+                     instruction  fixed!
+ * BUG in hardware/port_buffer.c:  each  '#ifdef  OLD_SYTLE'  must be
+                     '#ifdef  OLD_SYTLE'   fixed
+ * BUG in hardware/port_buffer.h:  each  '#ifdef  OLD_SYTLE'  must be
+                     '#ifdef  OLD_SYTLE'   fixed
+ * doc/INSTALL created. The user-definable build-variable documented
+ * in z80-memory.c:  in init_banks() further parameter bank_mapping_descr
+                     added for the description file (no default or fixed
+                     filename "banks" )
+ * BUG in hardware/port_buffer.c:  send_pulse_to_port_buffer:  EACH time a byte
+                     must be read from / write to the Z80_PORTS file!   fixed
+ * BUG in hardware/port_buffer.c:  send_pulse_to_port_buffer: file_descriptor
+                     ports is not flushed before each new fread(..)   fixed!
+ * BUG in memory.c:  in init_banks()  in strtoul(...) last paramter must be
+                     16 because bank-id is always hexadecimal.  fixed!

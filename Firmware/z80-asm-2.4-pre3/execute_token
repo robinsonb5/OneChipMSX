@@ -1,0 +1,32 @@
+#ifndef __DISASS_TOKEN
+#define __DISASS_TOKEN
+
+/* argument types */
+
+#define A_EMPTY 0
+#define A_REG 7
+#define A_CONST 8
+#define A_STRING 9
+#define A_NUM 1
+#define A_PODLE_REG 2
+#define A_PODLE_NUM 3
+#define A_PODLE_IX_PLUS 4
+#define A_PODLE_IY_PLUS 5
+#define A_FLAG 6
+
+/* special tics */
+
+#define TICS_LD_SP           2
+#define TICS_LD_IR           1
+#define TICS_SP_DEC          1
+#define TICS_CPDI            3  /* calculate flags & DEC 16 */
+#define TICS_HALVE_SWAP      4  /* calculate RRL RRD byte swap */
+#define TICS_JR              5  /* calculate PC */
+#define TICS_INC_DEC_16      2
+#define TICS_IXY_PLUS        5  /* calculate IX+disp */
+#define TICS_FLAG            1
+#define TICS_LATE_ALU        1  /* dec/inc 8bit or rotate/shift in no refresh */
+#define TICS_ADD_SUB_16_PRE  4
+#define TICS_ADD_SUB_16_POST 3
+#define TICS_INTERNAL_LD     1  /* used by ex (sp), HL */
+#endif

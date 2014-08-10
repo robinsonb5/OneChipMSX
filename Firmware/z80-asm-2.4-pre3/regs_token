@@ -1,0 +1,56 @@
+/* REGISTER AND FLAG DEFINITIONS FOR LEXICAL ANALYSIS (PART OF ASSEMBLING) */
+
+#ifndef __REGS_TOKEN
+#define __REGS_TOKEN
+
+/** if you permutate the FLAGS-defines or the REGISTER-defines  **/
+/** then update in regs.c *flag_name[N_FLAGS+1] and *reg_name[N_REGISTERS+1] **/
+
+/*** all 8 Bit registers must preceed the 16-bit registers ! ***/
+#define R_EMPTY 0
+#define R_A 1
+#define R_B 2
+#define R_C 3
+#define R_D 4
+#define R_E 5
+#define R_H 6
+#define R_L 7
+#define R_IXh  8
+#define R_IXl  9
+#define R_IYh 10
+#define R_IYl 11
+#define R_I   12
+#define R_R   13
+#define R_AF 14
+#define R_BC 15
+#define R_DE 16
+#define R_HL 17
+#define R_SP 18
+#define R_IX 19
+#define R_IY 20
+#define R_AF_ 21      /* used only in syntax for EX AF,AF' */
+#define R_ILLEGAL -1
+
+#define N_8BIT_REGS 13
+#define N_REGISTERS 21   /* N_8BIT_REGS+1 is the first 16-bit register */
+
+
+#define F_EMPTY 0
+#define F_NZ 8
+#define F_Z  1
+#define F_NC 2
+#define F_C  3  /* !! must be R_C, because symbol C is carry or C-register !!*/
+#define F_PO 4  /* asm.c: inside convert_arg: convert(reg,.. convert(flag,.. */
+#define F_PE 5
+#define F_P  6
+#define F_M  7
+
+#define F_H 9
+#define F_NH 10
+#define F_N 11
+#define F_NN 12
+#define F_ILLEGAL -1
+
+#define N_FLAGS 8 /* number of flags in table flag (used by jp, ret and call) */
+
+#endif

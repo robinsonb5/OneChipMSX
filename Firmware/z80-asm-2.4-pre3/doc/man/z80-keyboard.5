@@ -1,0 +1,36 @@
+.TH Z80-KEYBOARD 5 "12 Feb 2004" "Z80-PORTS Version 2.0" "Keyboard mapping"
+
+.SH NAME 
+description of keyboard mapping used by IN on port 0.
+
+.SH DESCRIPTION
+
+If there is no readable file
+.I keyboard_map
+then there is a one-to-one mapping of characters to key codes. The key code
+.I 0
+means no character input.
+
+If there is a readable the file
+.I keyboard_map
+, it must contain a mapping of key codes to characters.
+Each line of this file is either a comment line or a mapping line.
+A line starting with two hexadecimal digits followed by a Space is a
+mapping line else it is considered as a comment line and ignored.
+
+The first two hexadecimal digits of a mapping line indicate the keycode.
+This must be unique in the file. Next in column 5 follows a printable character (Ascii code > 32)
+and a Space or in column 5 and 6 are two hexadecimal digits or columns 5 and
+6 contain both a Space. The last case indicates that this key code is unused
+by the keyboard. In the first two cases the character in column 5
+respectively the character identified by the hexadecimal number in column 5 and
+6 is mapped to the key code.
+If colum 7 exists it must be a Space and further columns in the line are
+ignored.
+
+The first two mapping lines must describe unused key codes. The first key code
+is used to denote the case no key was pressed on the key board and the second
+mapping line denote the case an unknown character is to map to a key code.
+
+.SH SEE ALSO
+z80-ports(5)

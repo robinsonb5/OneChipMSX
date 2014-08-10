@@ -1,0 +1,28 @@
+Version 2.4-pre3 of package Z80-asm from 2006-Oct-04
+
+[outdated: http://freshmeat.net/projects/z80-asm/]
+
+Look for the latest source at the URL
+    http://wwwhomes.uni-bielefeld.de/achim/z80-asm/
+or
+    http://artax.karlin.mff.cuni.cz/~brain/z80-asm/
+or mail  Petr Kulhavy at Charles University, Prague, Czech Republic
+    brain@artax.karlin.mff.cuni.cz
+or mail  Achim Flammenkamp at University of Bielefeld, Bielefeld, Germany
+    achim@mathematik.uni-bielefeld.de
+
+for documentation of the Z80 system/CPU see the excellent URLs
+    http://www.geocities.com/SiliconValley/Peaks/3938/z80_home.htm
+    http://z80.info
+
+In few sentences: Z80-asm is a C-source code availible package which contains
+a 2-pass Z80 assembler and a sofisticated Z80 monitor. This monitor can be used
+as debugger, disassembler, emulator and more for a Z80-CPU.
+The hardware supported is in principle only the raw CPU with 64 kB memory
+(optional with bank switching) and the quartz --- thus independendly of any
+real operating system. But there exists already some add-ons, like 
+LCD-display, direct keyboard access, daisy-chain interrupt-logic and even a
+(probably buggy) Z80-CTC emulation.
+
+We hope you have fun ...
+2004-07-03

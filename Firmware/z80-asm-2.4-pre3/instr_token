@@ -1,0 +1,32 @@
+/* INSTRUCTION TYPES FOR LEXICAL ANALYSIS (DURING ASSEMBLING) */
+
+#ifndef __INSTR_TOKEN
+#define __INSTR_TOKEN
+
+#define I_ILLEGAL -1   /* illegal instruction must be -1 */
+enum { I_EMPTY /* must be first */ ,
+       I_LD, I_LDD, I_LDI, I_LDDR, I_LDIR,
+       I_EX, I_EXX, I_POP, I_PUSH,
+       I_INC, I_DEC,
+       I_ADC, I_SBC, I_ADD,
+       I_SUB, I_CP, I_AND, I_OR, I_XOR,
+       I_CPD, I_CPDR, I_CPI, I_CPIR,
+       I_JR, I_DJNZ, I_JP,
+       I_CALL, I_RST, I_RET, I_RETI, I_RETN,
+       I_RL, I_RLA, I_RLC, I_RLCA, I_RR, I_RRA, I_RRC, I_RRCA,
+       I_SLA, I_SLL, I_SRA, I_SRL,
+       I_DAA, I_RLD, I_RRD,
+       I_BIT, I_RES, I_SET,
+       I_CPL, I_NEG, I_CCF, I_SCF,
+       I_IN, I_IND, I_INI, I_INDR, I_INIR,
+       I_OUT, I_OTDR, I_OTIR, I_OUTD, I_OUTI,
+       I_NOP, I_HALT, I_DI, I_EI, I_IM,
+/** starting with I_END all pseudoinstructions must follow **/
+       I_END, I_ORG, I_ALIGN, I_DEFS, I_DEFB, I_DEFW, I_DEFM,
+       I_EQU, I_DEFL,
+       I_COND, I_ENDC
+     } ;
+
+#define N_INSTRUCTIONS 79  /* also highest valid number in enum */
+
+#endif

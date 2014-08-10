@@ -1,0 +1,114 @@
+.TH Z80-BANKS 5 "29 Jun 2006" "Z80-BANKS Version 2.3" "Bank layout format"
+
+.SH NAME 
+description of file format used by z80-mon for bank layout
+
+.SH DESCRIPTION
+The file compounds of lines each is either a comment line or a bank- or a page
+description. A comment line starts with a 
+.I #
+and may appear anywhere in the file.
+A line containing a bank description consists of the following 4 entries: 
+\fIaccess_type bank_id log2_size bank_name\fR.
+A line containing a page description consists of these 4 entries: 
+either
+.I offset
+or 
+.I bank_id
+followed by \fIport_no mask\fR and a non empty list of \fIbank_id\fRs.
+
+All bank description lines must preceed the page description lines and must be
+ordered ascending by their unique \fIbank_id\fR.
+The following page description lines are ordered ascending by their first
+item which is typically an
+.I offset
+or in the case of a virtuel bank a \fIbank_id\fR. If lines have the same 
+first entry then they must be ordered ascending by their \fIport_id\fR with \fI-\fR
+regarded less than any other port_id. And in the case even their second entries
+equals each other, then these lines will be ordered by their \fImask\fR.
+A list of \fIbank_id\fRs is an ascending sequence of \fIbank_id\fRs separated only by
+\fI,\fR (comma), not any whitespace.
+
+.B access_type
+   is the type of the bank. Only the four types
+.I +
+for
+   read/write memory,
+.I r
+for read only memory,
+.I w
+for write
+   only memory and
+.I -
+for a virtuel bank are valid.
+
+.B bank_id
+   is a 2 digit hexadecimal byte value.
+
+.B log2_size
+   gives the size of the bank in bytes as its log2-value.
+   Currently only banks whose
+.I log2_size
+equals 14 (16 kB)
+   or 12 (4 kB) are supported. Due to hardware complexity
+   all banks must have currently the same size!
+
+.B bank_name
+   must either indicate a readable file which contains the
+   machine code for the bank or the special value
+.I - (minus)
+   which indicates either undefined storage, typically RAM,
+   or in the case of a virtuel bank no file name. If the corres-
+   sponding file is smaller than the bank size the remaining
+   bytes at the end of the bank will be undefined. If the file
+   size is larger than the bank size only the first bytes in
+   the file will be used.
+
+.B offset
+   is a 4 digit hexadecimal value telling the hardware the
+   start address the bank to be mapped on. Furthermore
+   each
+.I offset 
+must be a multiple of 
+.I 1<<log2_size
+of the
+   bank size it can be mapped to.
+
+.B port_no
+   is a decimal or hexadecimal number of value < 256 or
+   the character - (minus). In the second case the
+   following
+.I mask
+must be 0.
+
+.B mask
+   is a 2 digit hexadecimal byte value which covers the relevant
+   part of value send to the corresponding port. The 
+.I port_no
+   together with the given
+.I mask
+must have a unique
+.I offset
+   respectively \fIbank_id\fR.
+
+Each used \fIbank_id\fR in a page description must be defined in a previous
+bank description.
+Summarizing, this file describes how the banks are mapped to
+memory or other (virtuel) banks.
+If a byte value is put to a port which has a corresponding page description
+then a mapping occurs if
+the
+.I bank_id
+matches the value and-ed with the
+.I mask
+of the port.
+Therefore page description lines with the same
+.I port_no
+should have different 
+.I bank_id
+s for a unique mapping. The default \fIbank_id\fR of a page is the one with
+the lowest \fIbank_id\fR. This is selected at hardware initialisation and after
+a bank reset.
+
+.SH SEE ALSO
+z80-memory(5)

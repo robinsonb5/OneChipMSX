@@ -1,0 +1,16 @@
+ * INCLUDE pseudo instruction
+   label declarations with : are local  (nested hash-tables needed ?)
+
+ * MACRO / ENDM pseudo instruction (macro extension)
+
+ * STRING_LABELS for DEFM  (predefined  STRING_LABELS, &filename, &date, &time)
+
+ * LABEL und STRING_LABEL definition as option for z80-asm like -D PORT12=0x1234
+
+ * set the (unused) 3rd and 5th bit of the F-register correctly
+ 
+ * in hardware: provide a realistic DMA access model
+
+ * in hardware: implement  Z80-DMA, Z80-PIO, Z80-SIO
+
+If you wanna do something of it (or something more) you're welcome.

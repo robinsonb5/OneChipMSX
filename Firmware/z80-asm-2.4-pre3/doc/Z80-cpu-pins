@@ -1,0 +1,25 @@
+40 pins:
+
+
+           pins active high                                      z80-cpu
+  GND           ground                   (output)
+  V_cc          +5 V                     (input)
+  CLK           clock                     input                  ticks(summed)
+  A0-A15     16 address pins              output                 ADDR
+  D0-D7       8 data pins                 in-/out-put            DATA
+
+           pins active low
+
+ _RD       cpu wants to read data         output                 cpu_rd
+ _WR       cpu wants to write data        output                 cpu_wr
+ _MREQ     address pins hold valid memory output                 cpu_mreq
+ _IORQ     address pins hold valid io     output                 cpu_iorq
+ _INT      maskable interrupt requested   input                  cpu_int
+ _NMI      nonmaskable interrupt occurs   input[edge triggered]  IFF3(stored)
+ _HALT     CPU executes HALT              output                 cpu_halts
+ _RFSH     (together with _MREQ) IR on busoutput                 *USED*/cpu_rfsh
+ _M1       opcode-fetch/acknowledge inter output                 cpu_m1
+ _RESET    resets the CPU (3T at least)   input                  cpu_reset
+ _BUSREQ   requests bus control (no refr) input                  cpu_busrq
+ _WAIT     pauses CPU (no memo refresh)   input                  cpu_wait
+ _BUSACK   acknowledge bus control        output                 cpu_busack

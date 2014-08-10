@@ -1,0 +1,63 @@
+#ifndef __KEY_LAYOUT_H
+#define __KEY_LAYOUT_H
+
+c_goto(0,i);    c_print("?,h     this help");
+c_goto(40,i);   c_print("Q       quit");
+i++;
+c_goto(0,i);    c_print("Space   move to next instruction");
+c_goto(40,i);   c_print("Esc     generate a NMI");
+i++;
+c_goto(0,i);    c_print("Backsp  execute current instruction");
+c_goto(40,i);   c_print("x       execute instruction from input");
+i++;
+c_goto(0,i);    c_print("@       reset CPU");
+c_goto(40,i);   c_print("*       clear CPU and reset banks");
+i++;
+c_goto(0,i);    c_print("#       clear total memory");
+c_goto(40,i);   c_print("$       clear tick counter");
+i++;
+c_goto(0,i);    c_print("&       fffc->SP  fffe,DI,HALT->(SP)");
+i++;
+i++;
+c_goto(0,i);    c_print("p       set PC");
+c_goto(40,i);   c_print("s       set SP");
+i++;
+c_goto(0,i);    c_print("=       set any cpu register");
+c_goto(40,i);   c_print("f       toggle flag");
+i++;
+c_goto(0,i);    c_print("^       toggle EI/DI");
+c_goto(40,i);   c_print("i       change IM");
+i++;
+c_goto(0,i);    c_print("m       set memory address");
+i++;
+c_goto(0,i);    c_print("Enter   put instruction at PC");
+c_goto(40,i);   c_print(".       put instruction into memory");
+i++;
+c_goto(0,i);    c_print("u       define string in memory");
+c_goto(40,i);   c_print("%       set breakpoint into memory");
+i++;
+c_goto(0,i);    c_print("v       define byte in memory");
+c_goto(40,i);   c_print("w       define word in memory");
+i++;
+i++;
+c_goto(0,i);    c_print("r       toggle run");
+c_goto(40,i);   c_print("R       break HALT");
+i++;
+c_goto(0,i);    c_print("+       increase clock speed");
+c_goto(40,i);   c_print("-       decrease clock speed");
+i++;
+c_goto(0,i);    c_print("Tab     toggle follow");
+c_goto(40,i);   c_print("t       toggle disassembling constants");
+i++;
+c_goto(0,i);    c_print("!       DANGER toggle monitor keyboard");
+c_goto(40,i);   c_print("j       toggle jr/djnz disassembling");
+i++;
+i++;
+c_goto(0,i);    c_print("S       save from current address");
+c_goto(40,i);   c_print("L       load into memory");
+i++;
+c_goto(0,i);    c_print("D       disassemble from current address");
+c_goto(40,i);   c_print("\"       protocol instructions to file");
+i++;
+
+#endif

@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.0//EN">
+<html>
+<head>
+<title>Z80-MON</title>
+</head>
+<body>
+<h1>Z80-MON - the Z80 monitor/disassembler</h1>
+
+<h2><a name="content">0. Content</a></h2>
+<ul>
+<li><a href="#content">0. Content</a>
+<li><a href="#intro">1. Introduction</a>
+<li><a href="#works">2. How it works</a>
+<li><a href="#disasm">3. Disassembling</a>
+<li><a href="#compile">4. Compiling</a>
+<li><a href="#console">5. Console</a>
+<li><a href="#functions">6. Functions</a>
+<li><a href="#data">7. Data</a>
+</ul>
+
+<h2><a name="intro">1. Introduction</a></h2>
+<p>
+This file describes essenial parts of the Z80 monitor/disassembler. Things in
+this document not described can be found in sources or man pages.
+
+<h2><a name="works">2. How it works</a></h2>
+
+<p> Debugger controls 64KB of memory as the Z80 CPU. All registers are stored in
+variables including <i>SP</i>, <i>PC</i> (program counter). There are special
+"registers" like <i>IM</i> and <i>MEMP</i>. <i>IM</i> is
+only for user's information. <i>MEMP</i> is starting address of memory dump.
+Registers and flags are displayed on screen
+together with the status of the <i>IFF1</i>-flipflop, the <i>CPU-halt pin</i>
+and the clock counter <i>T</i>. An important thing is
+disassembling.
+
+<h2><a name="disasm">3. Disassembling</a></h2>
+
+<p>In file <i>simul.c</i> machine code is interpreted. Sequentially bytes are
+read from memory
+(generally IO-address) and looked up into disassembling tables until the
+entire instruction has been decoded.
+Tables are in <i>decode-table.c</i> file, headers are in <i>decode-table.h</i> file. 
+
+<p> First one or two bytes select disassembling table. There are several
+tables, each for different prefix. For no prefix, for CB prefix, and ED prefix.
+Instructions with FD prefix use <i>IY</i> register, instructions with DD prefix
+use <i>IX</i> register modifying <i>HL</i>-access interpretation.
+
+<p> When table is given, one byte is read for instruction body. This byte is
+line in the table. Line contains pointer to disassembling function and four
+arguments passed to this function. Arguments are type and value of first and
+second instruction operand. Then appropriate number of bytes is read from
+memory. Function and arguments are stored in <i>current_instr</i> structure,
+which is of type <a href="#instruction_type"><i>instruction_type</i></a>.
+
+<p> All this is done in the <a href="#decode"><i>decode</i></a> function.
+
+<p> Disassembling functions are in <i>execute.c</i> file, headers are in
+<i>execute.h</i> file. These functions names start with <i>f_</i> prefix. There
+are several auxiliary functions as <a href="#set_flag"><i>set_flag</i></a>, 
+<a href="#is_flag"><i>is_flag</i></a> or <a href="#reg_str"><i>reg_str</i></a> 
+in the <i>z80-mon.c</i> file.
+
+<p> Disassembling functions can be called in two modes: print and exec mode.  
+Modes are switched with global variable <i>cpu_wait</i>. 
+
+<p> In print mode disassembling functions return only the disassembled
+instruction. Next decode() calls the
+global function <a href="#print"><i>print</i></a>, which prints string to appropriate position on screen.
+This position is stored in global variable <i>row</i>. 
+
+<p> In exec mode instructions are interpreted. This means modifying registers
+and memory. Block instructions as <i>djnz</i> or <i>ldir</i> are executed step
+by step. In case of <i>djnz</i> register B is decreated and if B is non-zero PC
+is changed according to djnz offset. <i>ldir</i> is similar, it decreases BC
+and on non-zero it subtracts length of ldir instruction from PC.
+
+<p> Disassembling is realized forward only because it's impossible to
+disassemble code backward unambiguously. This is due to we don't know length of
+disassembled instruction. So if you wanna list backward in code you must enter
+exact value to <i>PC</i> register.
+
+<h2><a name="compile">4. Compiling</a></h2>
+
+<p> z80-mon enables putting instructions to memory. Instruction is read from
+input to a text buffer. Then function <i>compile</i> from Z80 compiler library
+is called. Output is written to memory. If an error occurs an error function 
+<a href="#error"><i>error</i></a> is called . This function writes an error
+message and waits for a key. 
+
+<p>The same principle is used in executing
+instructions. If you press the "x" key you're asked for an instruction.
+Instruction is compiled by the <i>compile</i> function, output is written to
+temporary memory <a href="#tmp_memory"><i>tmp_memory</i></a>. Then function
+<a href="#decode"><i>decode</i></a> is called on compiled instruction.
+Instruction is executed. Moreover <i>compile</i> needs at least the functions
+<a href="#takeline"><i>take_line</i></a> for its input and <a href="#writeto"><i>write_to_memory</i></a> for its output.
+
+<h2><a name="console">5. Console interface</a></h2>
+
+<p> I will not describe which functions print what on the screen and how they
+do it, I'll neither describe functions for user interface. I'll describe
+low-level interface which maintains writing to console, moving cursor, setting
+colors, cleaning screen, clearing block of screen, reading keys, etc. All these
+functions start with <i>c_</i> prefix.
+
+<p> Low level interface is in file <i>console.c</i>, headers are in
+<i>console.h</i> file. The interface is the only operating system dependent
+part. In DO$ functions from <i>conio.h</i> are simply called. Under UNIX
+console is controlled with ANSI escape sequencies. 
+
+<p> Console must be initialized before use and shut down after use. For this
+purposes there are functions <i>c_init</i> and <i>c_shutdown</i>.
+
+<p> Function <i>c_getkey</i> returns pressed key, if it's a special key as
+ENTER, ESCAPE, BACKSPACE, etc. it returns value <i>K_ENTER</i>,
+<i>K_ESCAPE</i>, ....  These values are declared in <i>console.h</i> file.
+
+<h2><a name="functions">6. Functions</a></h2>
+
+<p> Not all functions are mentioned here. Only the ones mentioned above or the
+important ones. Other functions aren't worth mentioning. You can see them in
+sources.
+<p>
+<ul>
+<li><a name="error"><b>void error(int n,char *line,char* message)</b></a> -
+prints error messsage to the bottom of the screen and waits for a key.
+<li><a name="print"><b>void print(char *str)</b></a>
+</ul>
+
+<h2><a name="data">7. Data</a></h2>
+
+<p>Here are important data structures and variables. Other can be found and
+explained in sources.
+<p>
+<ul>
+<li><a name="instruction_type"><b>struct instruction_type</b></a>
+<ul>
+<li><b>void (*func)(unsigned short a1,unsigned char t1,unsigned short a2,unsigned char</b>
+- disassembling function for the instruction
+<li><b>unsigned char arg1,type1,arg2,type2;</b> - value and type of instruction 
+argument 1 and argument 2
+</ul>
+<li><a name="tmp_memory"><b>_uchar tmp_memory[64]</b></a> - temporary memory
+
+</ul>
+<hr>
+updated: 2004-Feb-13
+</body>
+</html>

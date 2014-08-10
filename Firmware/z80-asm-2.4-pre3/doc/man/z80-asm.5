@@ -1,0 +1,297 @@
+.TH Z80-ASM 5 "31 May 2005" "Z80-ASM Version 2.3" "Assembly language description"
+
+.SH NAME 
+description of the z80-asm assembly language
+
+.SH DESCRIPTION
+Source code compounds of lines. Each line contains max. one instruction.  Line
+can be divided into three parts: label, instruction and arguments. These parts
+are separated by whitespace (whitespace is one or more tab, space or comma), arguments are
+separated by whitespace too. With the exception of strings whole line is case insensitive.
+And except inside strings, whitespace can never appear inside an argument.
+
+.SH INSTRUCTIONS
+Assembler accepts all usual Z80 instructions:
+.PP
+adc, add, and, bit, call, ccf, cp, cpd, cpdr, cpi, cpir, cpl, daa, dec, di,
+djnz, ei, ex, exx, halt, im, in, inc, ind, ini, indr, inir, jp, jr, ld, ldd,
+ldi, lddr, ldir, neg, nop, or, otdr, otir, out, outd, outi, pop, push, res, ret,
+reti, retn, rl, rla, rlc, rlca, rld, rr, rra, rrc, rrca, rrd, rst, sbc, scf,
+set, sla, sll, sra, sub, xor
+.PP
+and pseudo (not Z80) instructions:
+.PP
+.B * org
+-  org accepts one address argument; it tells 
+         the compiler to write following code to memory 
+         from mentioned address; if there's no org 
+         instruction at the start of the source, 
+         assembler stores code starting from address 0.
+         The argument must be evaluable in pass 1.
+
+.B * defb
+- defb means 8-bit data; after defb instruction
+         follow discretionary number of 8-bit numbers 
+         (or character constants); separate several by ,
+
+.B * defw
+- defw is similar to defb; it means 16-bit data; 
+         this instruction takes 16-bit numbers as 
+         arguments; separate several by , (comma).
+
+.B * defm
+- defm is only instruction accepting string 
+         arguments; it accepts arbitrary number of 
+         strings; strings are stored in memory 
+         character after character as they are written 
+         in string. (abbreviation from define message)
+
+.B * defs
+- defs is used to reserve storage; it is followed
+         by a nonnegative numerical argument, indicating
+         the number of bytes the
+.I PC
+should be increased.
+         The argument must be evaluable in pass 1.
+
+.B * align
+- align is used also to reserve memory; but it is
+         followed by only one hexadecimal digit.
+         If the current
+.I PC
+isn't divisible by 2^arg, it
+         will be increased to the next value which
+         satisfies this condition. So the new
+.I PC
+will have
+         cleared its lowest arg-many bits.
+
+.B * equ
+-  equ defines a name to be a value; thus an equ
+         instruction must have a label which is taken
+         as its name; this label gets the value of the
+         following expression or number argument which
+         is a 8- or 16-bit data (or character constant).
+
+.B * defl
+-  defl defines a name to be a value; thus an defl
+         instruction must have a label which is taken
+         as its name; in contrast to the equ instruction
+         this name may be redefined by following defl   
+         instructions.
+
+.B * end
+-  end indicates the assembler that source ends
+         here.
+
+.B * cond
+- cond indicates a block of statements follow for
+         conditionel compilation. It needs one numerical
+         argument which means in the case 0 that the
+         following statements up to the corresponding
+         endc with the exception of further cond and endc
+         opcodes are ignored. The argument must be
+         evaluable in pass 1 of the assembler.
+
+.B * endc
+- endc indicates the end of a block of statements
+         of a condc statment.
+
+A remark for the arguments of the jr and the djnz instruction:
+only if its address is a constant number starting with a + or - sign
+this value is interpreted as a signed 8 bit relative jump distance. In all
+other cases it is considered as an unsigned 16 bit address which must lay
+in the signed 8 bit distance of the instruction.
+
+.PP
+.SH ARGUMENTS
+ Instruction argument can be one of the following:
+
+    * register
+    * flag
+    * number or character constant
+    * label
+    * expression
+    * indirect (number, label, expression or register)
+    * string
+
+.SH REGISTERS
+Standard Z80 register identifiers are allowed:
+ 8-bit register names:
+.B A, B, C, D, E, H, L, I, R
+ 16-bit register names:
+.B AF, AF', BC, DE, HL, IX, IY, SP
+
+.SH FLAGS
+Assembler uses standard Z80 flag identifiers:
+.B C, NC, Z, NZ, P, M, PE, PO.
+Meaning is in sequence: carry, non carry, zero, non zero, plus, minus, parity 
+even and parity odd.
+
+.SH NUMBERS
+Assembler accepts integer numbers in binary, decimal, and hexadecimal scale.
+.PP
+Binary numbers must be prefaced with
+.B #
+(number sign) or postfixed by
+.B b
+or
+.B B
+, decimal numbers are without
+prefix and hexadecimal numbers are either prefaced with
+.B 0x
+or
+.B $
+prefix or with 
+.B h
+or
+.B H
+postfix.
+.PP
+Number can be also a
+character constant. Character constants are quoted in 
+.B '
+(apostrophes).
+Inside
+apostrophes there is exactly one character. Such character constants are
+considered as an unsigned eight-bit number.
+.PP
+If there is no hexadecimal prefix given, the first digit of a
+number must be one of 0 - 9.
+Numbers (except for character constants) can also be
+negative.  Negative numbers are created by writing a
+.B -
+(minus) symbol in
+front of the number (binary, decimal or hexadecimal).
+Then their value is represented/interpreted as 2-complement.
+A leading 
+.B +
+(plus) is ignored but valid if no minus follows.
+.PP
+Valid examples: -0x29a, -#10011011, 1234, +34H, $ffff
+
+.SH LABELS
+Label is a string consisting of characters 0-9 (digits), a-z (lower case letters), A-Z (upper case letters) or the character _ (underscore).
+It may not start with a digit, must contain at least one alphanumerical
+character but at most 63 characters.
+Moreover it must be different from any number, register and flag identifiers.
+A label is declared by writing it at the beginning of a line, no character
+(nor whitespace) can precede. There's no colon needed behind a label declaration, but if there
+is one trailing colon in the declaration it is disgarded.
+Each label is separated from instruction by whitespace.
+.PP
+If you want to use a label as an instruction argument, you simply write its 
+name. Labels can be used as (or inside) arguments before they are declared.
+The special label 
+.I @
+refers to the current value of the program counter.
+.PP
+Label example: 
+
+        djnz @
+ test1: sub 10
+        cp 42
+        jr z,ok
+
+.SH EXPRESSIONS
+For every argument where a label may appear an expression may appear.
+An expression is an algebraic expression
+consisting of labels and/or numbers (possibly prefixed by monadic operators)
+which are connected by binary operators.
+Also you may use parentheses to change the order of evaluation of
+an expression. Operators are
+.I **
+for power,
+.I //
+for bitsize (equivalently log_2 strictly rounded up to the next integer),
+.I +
+for addition (and also as a monadic +),
+.I - 
+for subtraction and also for the negation (2-complement) of an operand,
+.I *
+for multiplication,
+.I /
+for integer division (result will always round down if it is non integral),
+.I %
+for modulo (result will always non negative if modulus is non negative),
+.I ~
+for 1-complement (binary representation is inverted bitwise),
+.I !
+for boolean negation (only zero becomes true each other value becomes false),
+.I &
+for bitwise and,
+.I |
+for bitwise or,
+and 
+.I ^
+for bitwise exclusive or.
+The the monadic operators
+.I + - ~ ! //
+have highest priority, then follow
+the binary operator
+.I **
+, the binary operators
+.I * / %
+which are left associative,
+next the left associative binary operators
+.I + -
+, the left associative binary shift operators
+.I >>
+and
+.I <<
+then the binary left associative operator
+.I &
+and finally the binary left associative operators
+.I | ^
+which have even lower priority.
+Moreover there are the six boolean comparision operators for signed values
+.I == != > < >= <=
+which are also left associative as well as the boolean operators
+.I &&
+for logical and and
+.I ||
+for logical or which have the lowest priority. The boolean value false is 
+.I 0
+and boolean true is represented as
+.I ~0.
+The evaluation of expressions is done in 32-bit signed arithmetic.
+Except the right operand of
+.I <<
+.I >>
+.I **
+and
+.I //
+which is always interpreted as unsigned, all other operands are considered
+signed. In the case an arithmetic overflow occurs the result will be undefined.
+.br
+Lastly there is the monadic boolean operator
+.I ?
+which must be followed by a label. It evaluates to true if the label is defined
+else false.
+
+
+
+.SH INDIRECT
+An argument which starts with a 
+.I (
+(opening parenthesis) and ends with a
+.I )
+(closing parenthesis) describes an indirect memory addressing.
+
+.SH STRINGS
+Strings are written in quotes. Inside quotes are allowed all character codes 32-255.
+A
+.B """
+(quote character) inside must be doubled. Strings are allowed only as argument of a defm instruction and
+may contain at most 255 characters.
+.PP
+String example: "hello world"
+
+.SH COMMENTS
+A comment starts with a
+.B ;
+(semicolon) character and ends at the end of a line.
+Comments are ignored, they are only for programmer's use.
+
+.SH SEE ALSO
+z80-asm(1), z80-mon(1), z80-file(5)

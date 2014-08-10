@@ -1,0 +1,294 @@
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+  86ports.txt      A Programmer's Guide to the TI-86 Ports      Version 0.1
+                       Copyright (c) 1997  Alan Bailey
+----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+
+You may ask why I put this file together with TI supporting asm on the 86.  Well,
+I'm pretty sure TI won't release information on the ports, as they did with the
+TI-83.  Much of it is related to the TI-85, so you can check the file ti-ports.txt
+for further information.  The most useful information is probably the info on 
+ports 5 and 6.  
+
+Here is a summary:
+
+    port 0 - Screen Offset, WRITE ONLY
+    port 1 - Keypad 
+    port 2 - Contrast, WRITE ONLY
+    port 3 - ON Status, LCD Power
+    port 4 - Power Mode 
+    port 5 - Page change at $4000-$7FFF
+    port 6 - Page change at $8000-$BFFF
+    port 7 - Link Port
+
+Bit Terminology:
+    %00110101
+     76543210 - bitnumber
+
+    X - unused bit
+    . - used bit
+    1 - set bit
+    0 - clear bit
+    ? - bit of unknown use
+
+Additions are welcome and needed.  Comments are useful and helpful.  Flames are 
+unnecessary and rude.  
+    bailala@mw.sisna.com
+    bailela@charlie.cns.iit.edu
+    ebailey@kiwi.dep.anl.gov
+
+----------------------------------------------------------------------------------
+port 0 - Screen Offset, WRITE ONLY
+----------------------------------------------------------------------------------
+
+Write - 
+    XX......
+    Value from $00-$3F is used.  LCD shows screen based at $100*($C0+Value).  
+
+Notes - 
+    EX: 
+        ld a,$3C
+        out (0),a       ;screen now shows $100*($C0+$3C) = $FC00, normal
+        ld a,$00
+        out (0),a       ;screen now shows $100*($C0) = $C000
+
+
+----------------------------------------------------------------------------------
+port 1 - Keypad 
+----------------------------------------------------------------------------------
+
+Write -
+    X.......
+    each bit masks out a set of keys, refer to the Notes section
+
+Read - 
+    ........
+    each bit represents a key pressed in a certain set, refer to the Notes section
+
+Notes - 
+    This port can be represented by a 7*8 matrix:
+
+        ROWS represent the bit you don't want to mask out when writing to the port
+        COLUMNS represent the bit set when reading from the port
+
+         7     6     5     4     3     2     1     0     
+    6  [ MORE  EXIT  2nd   F1    F2    F3    F4    F5   ]
+    5  [ ALPHA GRAPH LOG   LN    x^2   ,     STO   --   ]
+    4  [ x-var TABLE SIN   EE    7     4     1     0    ]
+    3  [ DEL   PRGM  COS   (     8     5     2     .    ]
+    2  [ --   CUSTOM TAN   )     9     6     3     (-)  ]
+    1  [ --   CLEAR  ^     /     *     -     +    ENTER ]
+    0  [ --    --    --    --    UP    RIGHT LEFT DOWN  ]
+
+    EX:  If you want to see if CLEAR is pressed, do this:
+
+        ld a,%01111101  ;bit 1 is zero, checking for {CLEAR,^,/,*,-,+,ENTER}
+        out (1),a       ;put it out the port
+        nop
+        nop             ;you should put in one or two nops to wait for the port
+        in a,(1)        ;reading...
+        bit 6,a         ;checking if key is {CLEAR,CUSTOM,PRGM,TABLE,GRAPH,EXIT}
+        jr nz,dostuff   ;if the bit was set, the common key in both sets (CLEAR)
+                        ;was pressed.
+
+
+
+----------------------------------------------------------------------------------
+port 2 - Contrast, WRITE ONLY
+----------------------------------------------------------------------------------
+
+Write - 
+    XXX.....
+    Value in range of $00-$1F (0d-31d), higher number makes darker
+
+Notes - 
+    NO READING FROM THE PORT, however, $C008 contains the contrast, so if
+    you read from there, inc or dec it, then load it into the port AND $C008, all
+    will be fine, and your screen will change contrast
+    EX:
+        ld a,($C008)
+        inc a
+        ld ($C008),a
+        out (2),a
+
+----------------------------------------------------------------------------------
+port 3 - ON Status, LCD Power
+----------------------------------------------------------------------------------
+
+Write - 
+    XXXX.???
+    bit 3 - 1: turns LCD off, I think
+            0: turn LCD on, I think
+            
+Read - 
+    0000.???
+    bit 3 - 1: ON not pressed
+            0: ON is being pressed
+
+Notes - 
+    I don't have much info on this port.  I've seen the ROM use 0,1,2,and $b in
+    different spots.  I think $b is used to restart the screen.  The other values
+    are probably used for similar shut-downs.  You can also refer to ti-ports.txt
+    for information on the TI-85, port 3
+
+    I do know one thing :)
+    EX:  to check if ON is being pressed
+        in a,(3)
+        and $8          ;mask out everything but ON status
+        or 0            ;cp 0
+        jr z,ONpressed  ;
+
+    ONpressed:
+        res 4,(IY+$09)  ;After ON is pressed, this command should be executed to 
+                        ;'turn it off' again, or else the TI-OS will detect it too.
+
+
+----------------------------------------------------------------------------------
+port 4 - Power Mode 
+----------------------------------------------------------------------------------
+
+Write -
+    ???????.
+    bit 0 - 1: put it in normal power, I think
+            0: put it in low power, I think
+
+Read - 
+    ???????.
+    bit 0 - 1: calc in normal power, I think
+            0: calc in low power, I think
+
+Notes - 
+    I don't have much info on this port.  The ROM uses $56 near what appear to be
+    shut-down routines, and $57 near start-up routines.  Those are the only two
+    values I've seen.  I'm also assuming it is similar to port 6 on the TI-85.
+
+
+----------------------------------------------------------------------------------
+port 5 - Page change at $4000-$7FFF
+----------------------------------------------------------------------------------
+port 6 - Page change at $8000-$BFFF
+----------------------------------------------------------------------------------
+These two ports are very similar, the only thing to remember is this:
+    port 5 memory area = $4000-$7FFF (second 16K of memory)
+    port 6 memory area = $8000-$BFFF (third 16K of memory)
+
+Write - 
+    X.XX....
+    bit 7 - 1: nonsense pages returned, filled with FF's and similars
+            0: normal execution, read on...
+    bit 6 - 1: get page from RAM
+            0: get page from ROM
+    bottom nibble (4 bits) -
+        if bit 6 set: Put RAM page (0-7) into memory area
+        if bit 6 clear: Put ROM page (0-F) into memory area
+
+
+Read - 
+    0.00....
+    bit 6 - 1: page is from RAM
+            0: page is from ROM
+    bottom nibble (4 bits) -
+        if bit 6 set: RAM page (0-7) is in use at memory area
+        if bit 6 clear: ROM page (0-F) is in use at memory area
+
+Notes -
+    There are 16 pages of read-only memory, and 8 pages of random-access memory.  
+    It doesn't matter which area you load it into, it will have the same write
+    limits.  On the TI-85, the area $4000-$7FFF is designated as ROM, but on the
+    86, you can load RAM pages there and edit them there.
+
+    If you have the same RAM page in both locations, changes will be evident in
+    both areas.  
+    EX:
+        ld a,%01000110
+        out (6),a
+        out (5),a
+        ld a,$AA
+        ld ($4000),a        ;($4000) now contains $AA
+                            ;geuss what, ($8000) contains $AA also
+
+
+
+Rom page info - first four bytes of each then description of ROM 1.2
+    $00 - 3e57d304 - Permanently set at $0000-$3FFF, can also be put at other
+                   - two memory areas   
+    $01 - 212b40cd -
+    $02 - cd6339cd -
+    $03 - 95424249 -
+    $04 - cdfd2119 -
+    $05 - 371801af -
+    $06 - 215f40cd -   all pages padded with FF's to the end
+    $07 - d7e578eb -   Loaded with lots of system routines
+    $08 - fdcb145e -
+    $09 - 3e06ed53 -
+    $0a - cd7a1118 -
+    $0b - 3a3ed121 -
+    $0c - 7cbdc8e6 -
+    $0d - cd0b00c9 - page for users; lots of calls to rom page 0 at $0000-$3FFF
+                   - This page will have the same format in all rom versions
+    $0e - ffffffff - whole page padded with FF's
+    $0f - ffffffff - whole page padded with FF's, final byte of this page is $13
+
+RAM page info - description
+    $00 - The page permanently at $B000-$FFFF, this contains all of the system 
+        - variables, I think, and then space for running asm programs, then
+        - the stack, then video memory
+    $01 - page in use when asm program is called, I think most of it is not used,
+        - so that us people making asm programs won't mess up things ;)
+    $02 - The start of user memory, starts with xStat, and all those
+    $03 - More user memory
+    $04 - More user memory
+    $05 - More user memory
+    $06 - More user memory
+    $07 - More user memory, with the vat at the end of page 7, notice that there
+        - are 6 pages of 16k which equals 96k, the space limit of user memory
+
+
+----------------------------------------------------------------------------------
+port 7 - Link Port
+----------------------------------------------------------------------------------
+
+Write - 
+    11....00
+    bits 2 & 4 - 1: makes red wire inactive
+                 0: makes red wire possibly active if other calc says so 
+    bits 3 & 5 - 1: makes white wire inactive
+                 0: makes white wire possibly active if other calc says so
+
+Read - 
+    0000....
+    bit 3 - 1: white wire current stopped because this calc said so
+            0: white wire possibly active
+    bit 2 - 1: red wire current stopped because this calc said so
+            0: red wire possibly active
+    bit 1 - 1: white wire active
+            0: white wire inactive
+    bit 0 - 1: red wire active
+            0: red wire inactive
+
+Notes - 
+    This is the same as port 7 on the TI-85.  Basically, to make certain wires active,
+    do the following:
+    EX:                                          ;these are the values 
+        ld a,%11010100      ;White wire ON                $D4  ;you should use
+        out (7),a
+        ld a,%11000000      ;White wire ON, Red wire ON   $C0
+        out (7),a
+        ld a,%11101000      ;Red wire ON                  $E8
+        out (7),a
+        ld a,%11111100      ;nothing ON                   $FC
+        out (7),a
+
+    To check certain wires, do the following:
+    EX:
+        in a,(7)
+        and %00000011       ;only the lower two bits matter
+        cp 3                ;bits 0 and 1 set
+        jr z,BothActive     
+        cp 0                
+        jr z,NoneActive
+
+
+
+

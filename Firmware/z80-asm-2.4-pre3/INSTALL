@@ -1,0 +1,27 @@
+Requirements:
+-------------
+
+All you need is not love but following:
+
+  * DO$ or operating system UNIX
+  * GCC compiler (under DO$ it's DJGPP)
+  * GNU make
+  
+This program wasn't tested on other platforms/compilers. But it's possible it
+would work.
+
+
+Installation:
+-------------
+Installation is very simple:
+
+  * edit Makefile and set your operating system
+  * type make
+  * copy z80-asm, z80-mon, z80-asm.1, z80-asm.5, z80-mon.1 wherever you want
+  * read the doc directory
+  * enjoy the z80-asm or z80-mon program
+  * if you need examples of assembler source, see the programs directory
+
+If you wanna use this program under DO$ you may convert all sources including 
+makefile to CR/LF end of line. If you don't know how, it's your problem. 
+Don't use DO$!

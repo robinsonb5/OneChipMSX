@@ -1,0 +1,34 @@
+.TH Z80-FILE 5 "02 May 2000" "Z80-ASM Version 1.0" "File format"
+
+.SH NAME 
+description of file format used by z80-asm
+
+.SH DESCRIPTION
+The recommended filename extension should be 
+.I .z80
+The file consists of header, address and data. 
+
+.SH HEADER
+Header is 8 bytes long. It contains string 
+.B Z80ASM 
+(6 bytes - without trailing zero)
+followed by 
+.B 0x1a
+character and linefeed character (
+.B 0x0a
+). The 
+.B 0x1a
+character is to persuade DO$ viewers to stop viewing the file. 
+The newline character terminates the header.
+
+.SH ADDRESS
+Address follows the header as 2 bytes. These are interpretated as a 16-bit
+start address of the data(code) to load.
+The less significant byte comes first, most significant byte follows.
+
+.SH DATA
+Data come after address. Data are raw compiled program. Length of data can be 
+simply calculated: length of file-10 bytes.
+
+.SH SEE ALSO
+z80-asm(1), z80-mon(1), z80-asm(5)

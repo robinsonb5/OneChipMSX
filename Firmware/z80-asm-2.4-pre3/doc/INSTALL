@@ -1,0 +1,31 @@
+For simple usage and first testing the default seting of the user-changeable
+build-variables should be already okay. Else change some of these 5 variables
+at the beginning of the global Makefile to your disposal:
+
+SYSTEM     the external OS running the emulator
+           only two choices currently availible:  either  DOS  or  UNIX
+Z80_PORTS  the total path to the port-buffer-file
+           e.g.  "./.Z80_ports"
+DEFINES    here you can put in global defines to activate special hardware
+           it is a blank separated list of -D directives for the C-compiler
+
+     FURTHER_HARDWARE   must be defined to get a true system quartz if further
+                        hardware besides the CPU and memory is attached
+     PORT_BUFFER        hardware for I/O-port buffering via the port-buffer-file
+     NO_EXTERN_PORTFILE_WRITE  no external program will change port-buffer-file
+     LOGIC_ANALYZER     a logic analyzer connected to the Z80-cpu pins
+     SSL_ZDS            single step logic (from ZilogDevelopmentSystem)
+     Z80_CTC            Z80 CTC (still experimental)
+
+     OLD_STYLE          deprecated!!  the z80-emulator does port-io-buffering
+     NEEDED             to buffer port-io if special extern support is needed
+                        in the case of actual bank switching
+
+In case you make the Z80-asm package for several users and like to install it
+globaly, then have a look at these two defines
+MAN_DIR
+BIN_DIR
+whether it matches your prefered locations.
+
+Do a 'make' which should build everything you want and finally --  if wanted --
+a 'make install' to install the binaries (perhaps libraries) and the documantation.

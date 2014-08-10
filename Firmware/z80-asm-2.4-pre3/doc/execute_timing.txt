@@ -1,0 +1,74 @@
+TICS_IXY_PLUS   or  TICS_JR:
+
+(1 tic:   select low registers)       ; done during opcode decode
+ 1 tic:   LD [accu],destination_low   ; destination one of  PC, IX, IY
+          LD [summand],displacement   ; displacement is a signed 8-bit constant
+          clear_carry
+ 1 tic:   ADC
+ 1 tic:   LD destination_low,[accu]   ; destination one of  PC, IX, IY
+ 1 tic:   if (carry)  INC destination_high
+ 1 tic:   if (summand&128)  DEC destination_high
+
+
+
+TICS_IXY_PLUS   or  TICS_JR:
+
+2 tics:  LD [high,low], 16_bit-reg   ; 16_bit-reg one of  PC, IX, IY
+         LD  offlow, displacement    ; displacement is a signed 8-bit constant
+
+2 tics:  if (offlow&128)  DEC high
+         ADD low,offlow              ; parallel to  DEC high instruction
+         if (carry)  INC  high
+1 tic:   LD destination, [high,low]  ; destination is either PC or ADDRESS
+
+
+
+TICS_ADD_SUB_16:
+
+(1 tic:   select low registers)       ; done during opcode decode
+ 1 tic:   LD [accu],destination_low   ; destination one of  HL, IX, IY
+          LD [summand],source_low     ; source one of HL,IX,IY,BC,DE,SP
+ 		  clear_carry
+ 1 tic:   ADC                         ; 8 bit addition
+ 1 tic:   LD destination_low,[accu]   ; destination one of  HL, IX, IY
+ 1 tic:   select high_registers
+ 1 tic:   LD [accu],destination_high  ; destination one of  HL, IX, IY
+          LD [summand],source_high    ; source one of HL,IX,IY,BC,DE,SP
+ 1 tic:   ADC                         ; 8 bit addition
+ 1 tic:   LD destination_high,[high]  ; destination one of  HL, IX, IY
+
+
+
+TICS_ADD_SUB_16:
+
+2 tics:  LD [high,low],16_bit-reg    ; 16_bit-reg one of  HL, IX, IY
+         LD [offhigh,offlow],source  ; source one of HL,IX,IY,BC,DE,SP
+ 		 clear_carry
+4 tics:  ADC                         ; 8 bit addition of low arguments
+         switch  high<->low
+		 ADC                         ; 8 bit addition of low arguments
+         switch  high<->low
+1 tics:  LD 16_bit-reg,[high,low]    ; 16_bit-reg one of  HL, IX, IY
+
+
+
+timing of EX HL,(SP)
+
+(4 T     refresh, read opcode)       ; opcode is read and decoded
+ 3 T     LD  accu,(SP)
+ 3 T     LD  (SP++),L                ; that's the reason pop is fast than push
+ 1 T	 LD  L,accu
+ 3 T     LD  accu,(SP)
+ 3 T	 LD  (SP),H                  ; suppressed  INC SP
+ 1 T	 LD  H,accu
+ 1 T	 DEC SP
+
+
+timing of LDI
+
+(8 T     refresh, 2 x read opcode)     ; opcode is read and decoded
+ 3 T     LD  accu,(HL)
+ 0 T     INC  HL                       ; parallel to load
+ 3 T     LD  (DE),accu                 ; HL latches flushed also
+ 0 T     INC  DE                       ; parallel to load
+ 2 T     DEC  BC                       ; DE latches flushed also

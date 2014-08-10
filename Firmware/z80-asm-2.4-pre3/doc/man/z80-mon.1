@@ -1,0 +1,323 @@
+.TH Z80-MON 1 "01 Oct 2006" "Z80-MON Version 2.4" "Z80 Monitor"
+
+.SH NAME
+z80-mon \- an interactive Z80 monitor with disassembler and emulator for UNIX,
+Linux and DO$
+
+.SH SYNOPSIS
+.B z80-mon [-h] [-E] [-R path] [filename[:startaddress] ...]
+
+.SH DESCRIPTION
+.I z80-mon
+simulates the Z80 CPU on instruction level. It is attached with
+64 KB memory, where data and instructions are stored. With the bank switching
+feature it even can access more memory.
+
+The monitor displays in the upper left content of memory,
+lower left the list of instructions in front of PC, followed by the stack.
+In the right half it shows in the first line the flags and status of IFF and IM.
+Below follows the content of all registers together with the value of the tick
+counter. The last but one line is reserved for the (up to 8) breakpoints and
+finally in the last line either monitor error messages or the current status
+of the monitor is displayed (FOLLOW-toggle RUN-status CPU-speed PROTO-status
+KEYBOARD-toggle).
+Using
+.I z80-mon
+you can trace your program (and even protocol this), change
+content of registers and memory, change the program, save it, load others e.t.c. 
+It even supports bank switching via the file
+.I banks.
+
+
+Content of registers is displayed in binary, hexadecimal and decimal scale.
+All addresses are displayed in hexadecimal scale.
+
+The
+.I z80-mon
+executes instructions exactly as the Z80 CPU. Instructions for
+input/output (
+.I in, out, ini, ind, inir, indr, outi, outd, otir, otdr
+) can be used to communicate with the outer-world via file descriptors.
+
+The
+.I Halt 
+instruction tests if the interrupt is disabled. If yes it makes an error
+message and put CPU into wait, otherwise it keeps running. The Halt-pin
+active symbol is displayed in both cases in the upper right corner of the
+monitor.
+If you press the R key, flag 
+.I RUN
+is turned off.
+
+Interrupt handling and bank switching is still experimental. Use signals under
+UNIX/Linux or certain key strokes to generate interrupts.
+
+On default
+.I z80-mon
+controls a Z80-cpu (with a build in oscillator) and at least 64 KB memory
+including bank switching hardware;
+but further hardware may be attached.
+.I hardware.
+Currently there is an external
+.I quartz
+,needed for synchronisation of several components, a
+.I daisy-chain
+IO-curcuit, needed for interrupt handling of several components and an (experimental)
+.I Z80-ctc
+availible.
+
+.SH ARGUMENTS
+If a couple
+.I filename:address
+is supplied, file
+.I filename
+is loaded to virtual Z80 memory from address
+.I address.
+If file contents
+exceeds address 65535, it will be clipped. Any number of files can be loaded.
+Files are loaded sequentially, later file overwrites previous memory content.
+
+.SH OPTIONS
+The monitor called with a  
+.I -h
+option prints usage and exits. The option
+.I -E
+forces emulator mode. This means, after loading an optional Z80 executable
+the CPU gets a reset and starts immediately execution. Moreover keyboard
+input is disabled.
+The option
+.I -B
+must be followed by a 
+.B filename
+containing a bank description and
+.I -R
+must be followed by a 
+.B path
+pointing to an accessable directory which contains the binaery bank files.
+If omitted, the current working directory is used.
+
+.SH KEYS
+.B ? or h - help
+  Shows the key help screen.
+
+.B Q -quit
+  Ends the program. Memory content will be discarded.
+
+.B * - clear
+  clears all CPU registers, resets banks (if bank
+  switching was used) and finally resets the CPU.
+
+.B @ - reset
+  resets the CPU (pin RES high for at least 3 clock
+  cycles)
+
+.B # - zero
+  fills whole memory with zeros
+
+.B $ - null
+  set the tick (clock cycle) counter to zero
+
+.B & - stop
+  set stack pointer
+.I SP
+to 0xFFFC and store at this address
+  the value 0xFFFE followed by the 2 bytes for DI, HALT.
+  This serves as a fall back trap for the final RET.
+
+.B % - breakpoint
+  set a breakpoint at memory dump address together with
+  a run counter. In run-mode this counter will be
+  decreased if positive each time its address is reached.
+  If it becomes 0 the CPU is immediately stopped.
+
+.B L - load
+  Loads file to memory. After pressing this key, you'll
+  be asked about filename. For abort press escape.
+
+.B S - save
+  Saves memory from current address (in program 
+  counter), first enter filename then length.
+  Escape aborts saving.
+
+.B Backspace - execute current instruction
+  Executes instruction pointed by the program counter.
+
+.B """ - set protocol file
+  After pressing this key, you'll be asked about 
+  filename. For abort press escape. Else it opens the file
+  for append and protocols each executed instruction
+  together with the current CPU register values. Sets the
+  PROTO switch. To disable the protocol mode select a new
+  protocol file with empty file name.
+
+.B r - run
+  Toggle start/stop executing instructions. Effectively
+  toggles the WAIT-pin of the CPU. :) Also, the following
+  keys activate WAIT-pin:
+.I @ s p =
+
+.B R - toggle run
+  this stops a running CPU if it is catched in a HALT
+  and IFF0=1 (if monitor keyboard read is enabled).
+
+.B Space - skip instruction
+  Moves to the next instruction.
+
+.B D - disassemble
+  Disassemble memory from current address (in program 
+  counter), first enter filename then length.
+  Escape aborts disassembling and saving.
+
+.B x - execute instruction
+  Asks about instruction and executes it. Except jump,
+  call and return instructions, the 
+.I PC
+is not changed.
+
+.B Enter - put instruction
+  Asks about instruction and puts it on address in
+.I PC.
+  When you press the key, a prompt appears.
+
+.B . - put instruction
+  Asks about instruction and puts it at address of
+  the memory dump. When you press the key, a prompt
+  appears.
+
+.B u - defm
+  Puts string to memory starting at address of the 
+  memory dump. When you press the key, a prompt appears.
+  Enter comma or whitespace separated list of strings.
+
+.B v - defb
+  Same as
+.I u
+, but instead of strings you must enter bytes.
+  Accepted numbers are described in
+.B z80-asm(5)
+
+.B w - defw
+  Same as
+.I b
+, but instead of bytes 16-bit numbers will be
+  stored.
+
+.B p - set PC
+  After pressing this key you can enter new value of the
+  program counter. Numbers are by default in decimal 
+  scale. For hexadecimal scale you must write prefix
+.I 0x
+  first. Octal numbers are accepted too but with prefix
+.I 0.
+
+.B s - set SP
+  Same as
+.I p
+, but changes stack pointer.
+
+.B m - set memory dump address
+  Same as
+.I s
+or
+.I p
+but affects start of the memory dump.
+
+.B + - increase clock speed
+  Depending on the clock speed, memory dump, stack and
+  instruction list may not be refreshed. At higher
+  frequencies only the
+.I tick counter
+  ,
+.I PC, SP
+and the
+.I Halt-pin
+status are refreshed.
+
+.B - - decrease clock speed
+
+.B Tab - toggle FOLLOW
+  Toggles the FOLLOW switch. When the FOLLOW switch is on,
+  memory dump starts automatically at address in the
+  program counter.
+
+.B t - toggle disassembling of constants
+  Cyclic switches the constant representation base:
+  mixed(default), each decimal, each hexadecimal, each
+  hexadecimal with prexfix 0x.
+
+.B j - toggle disassembling of addresses
+  Cyclic switches JR/DJNZ instructions between relative
+  and absolute, or switches all JR/DJNZ/CALL/JP and LD
+  memory accesses (....) into K-prefixed labels or guess
+  even LD 16-bit constants as labels. In the last two
+  cases a K-prefixed label resp. a V-prefixed label will
+  be generated. Also here we have a two-pass disassembler.
+
+.B ^ - toggle EI/DI
+  Toggles enable/disable interrupt.
+
+.B i - change IM
+  Cyclic switches the interrupt mode. Values are 0, 1, 2.
+
+.B Esc - generates nonmaskable interrupt
+  generates a nonmaskable interrupt (pin NMI of CPU high).
+
+.B ! - toggle keyboard read
+  disables monitor read from keyboard if CPU is running
+  (dangerous!). CPU will only stop if running into HALT
+  and interrupts are disabled.
+
+.B = - set CPU registers
+  promtes for a name of an 8-bit register (A,B,C,D,E,F,
+  H,L,I,A or A',B',C',D',E',F',H') or a 16-bit register
+  (type
+.I =
+again).
+
+.SH SIGNALS
+Most process signals (not system signals SIGKILL, SIGSTOP, SIGCONT)
+are mapped to maskable interrupts. There are six exceptions:
+.I SIGTERM
+and
+.I SIGHUP
+will terminate z80-mon,
+.I SIGABRT
+will set the monitor in interactive dissamble mode (stops running CPU),
+.I SIGUSR1
+will cause a reset and
+.I SIGUSR2
+will cause a NMI. Lastly
+.I SIGTRAP
+will force the CPU immediately to dump its state into the file
+.I .CPU.
+This enables online monitoring of the running CPU.
+
+.SH FILES
+ ./.CPU
+ ./.Z80_ports
+ ./keyboard_map
+
+The file 
+.I .Z80_ports
+is used as buffer for the IO-port addresses, if hardware IO-buffering is enabled. The file
+.I keyboard_map
+is used to remap key binding for the IN instruction accessing the stdin port.
+
+.SH BUGS
+Interrupt mode 0 isn't working. If you find some bugs, please feel free to send me a bugreport.
+
+.SH AUTHORS
+Z80-MON was written by Brainsoft <brain@artax.karlin.mff.cuni.cz> and
+Achim Flammenkamp <achim@mathematik.uni-bielefeld.de>
+
+.SH COPYING
+Copying of this software must be under terms of the GNU General Public
+License. There's absolutely no warranty on this software. For more details see
+file
+.B doc/COPY
+
+.PP
+(c) 1999-2004 Brainsoft
+
+.SH SEE ALSO
+z80-asm(1), z80-asm(5), z80-file(5), z80-ports(5), z80-banks(5)

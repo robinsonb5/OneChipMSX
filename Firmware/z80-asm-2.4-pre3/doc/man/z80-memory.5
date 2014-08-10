@@ -1,0 +1,16 @@
+.TH Z80-MEMORY 5 "12 Feb 2004" "Z80-MEMORY Version 2.0" "Memory access"
+
+.SH NAME 
+description of memory access via the address bus
+
+.SH DESCRIPTION
+
+All memory access is done here. Memory read/write enabled
+is checked and also DATA-pins are controled.
+
+.SH bank switching
+Bank sizes should be either multiples of 16 kB or 4 kB  and start at a 16 kB
+respectively 4 kB memory boundary (adress divisible by 2^14 resp. 2^12).
+
+.SH SEE ALSO
+z80-mon(1), z80-banks(5), z80-ports(5), z80-memory(3)

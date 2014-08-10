@@ -1,0 +1,62 @@
+asm.c           main assembling functions, lexical analysis, etc.
+asm.h           assembling functions declarations, control variables
+asm_interface.h output functions for usage of asm.c 
+asm_token       assembly error codes and defines for expression.c
+compile.c       executive assembling functions
+compile.h       declarations to use functions of compile.c
+console.c       terminal (keyboard/tty/cursor/colors) interface 
+console.h       console function interface
+console_token   key tokens and color tokens
+decode.c        decoding of machine code and Z80 interrupt processing
+decode.h        declarations to use data of simul.c
+decode-table.c  machine decoding tables for executing/disassembling purpose
+decode-table.h  declarations to use data of decode-table.c
+dummy.c         to satisfy print_ticks() used by non z80-mon routines
+execute.c       execute or disassemble functions
+execute.h       declarations to use functions of execute.c
+expression.c    parser to evaluate labels, numbers and arithmetic expressions
+expression.h    declarations to use functions of expression.c 
+file.c          functions accessing Z80ASM files
+file.h          declarations to use functions of file.c
+hash.c          hash table functions
+hash.h          declarations to use functions of hash.c
+help_layout     display help screen content
+instr.c         instruction table for lexical analysis
+instr.h         declarations to use data of instr.c
+instr_token     instruction tokens
+interrupt.c     system interrupt/signal trapping and handling, not Z80 interrupt
+                processing
+interrupt.h     declarations to use functions of interrupt.c
+keyboard.c      initialize keyboard mapping from file 'keyboard_map'
+keyboard.h      declarations to use functions of keyboard.c
+memory.c        bank switching and memory access
+memory.h        declarations to use functions of memory.c
+mini-display.c  special access of port mapped to stdout
+mini-display.h  declarations to use functions of mini-display.h
+ports.c         port access via IN and OUT
+ports.h         declarations to use functions of port.c
+regs_token      register and flag tokens
+regs.c          register and flag tables for lexical analysis purposes
+regs.h          declarations to use data of regs.c
+z80-asm.c       assembler main
+z80-asm.h       declarations to use functions of z80-asm.c
+z80-cpu.c       z80 hardware variables
+z80-cpu.h       declarations to use variables of z80-cpu.c
+z80-mon.c       monitor main and some auxiliary functions
+z80-mon.h       declarations to use functions of z80-mon.c
+z80-global      global typedef and structs and defines
+
+in hardware:
+analyzer.c      logic analyzer to protocoll all CPU pins with tick-resolution
+analyzer.h      declarations to use functions of analyzer.c
+daisy_chain.c   the hardware IO-circuit to handle interrupts correctly
+daisy_chain.h   declarations to use functions of daisy_chain.c
+port_buffer.c   buffering all 256 ports --- enables asychron access by others
+port_buffer.h   declarations to use functions of port_buffer.c
+ssl_zds.c       single_step_logic to trigger NMI after 2 m1_cycles
+ssl_zds.h       declarations to use functions of ssl_zds.c
+quartz.c        oscillator
+quartz.h        declarations to use functions of quartz.c
+z80-ctc.c       a z80-ctc with channel 2 cascaded to channel 3
+z80-ctc.h       declarations to use variables of z80-ctc.c
+zds_token       defines for use of zds-files

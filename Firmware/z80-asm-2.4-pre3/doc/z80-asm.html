@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.0//EN">
+<html>
+<head>
+<title>Z80-ASM</title>
+</head>
+<body>
+<h1>Z80-ASM - the Z80 assembler</h1>
+
+<h2><a name="content">0. Content</a></h2>
+<ul>
+<li><a href="#content">0. Content</a>
+<li><a href="#principle">1. How it works</a>
+<li><a href="#labels">2. Labels</a>
+<li><a href="#functions">3. Functions</a>
+<li><a href="#data">4. Data</a>
+<li><a href="#library">5. The compiler library</a>
+</ul>
+
+<h2><a name="principle">1. How it works</a></h2>
+The z80-asm is a double pass syntax controlled compiler. All is controlled from
+<a href="#compile"><i>compile</i></a> function. 
+
+<p>
+This function first calls <a href="#lexical_analysis"><i>lexical_analysis</i></a>
+which parses another line from the source and fills global structure <a
+href="#struct_lex"><i>lex</i></a>. It performs lexical analysis and syntactical
+analysis. Syntactical analysis is very simple because of simple assembler
+syntax (line oriented source, max. one instruction per line, fixed order of
+label, instruction and arguments) so syntactical analysis is done at the same
+time as lexical analysis.
+
+
+<p>
+After return from lexical analysis the <a href="#compile"><i>compile</i></a> function
+calls special translating function according to the instruction body.
+Each translating function can translate group of instructions (e.g. arithmetical
+instructions, load instructions, bit instructions ...) and it also performs
+semantical analysis. It tests if there is a correct number of arguments, it
+tests types of arguments and so on. When everything's OK translaing instruction
+translates instruction and returns. Translating functions can be found in files
+<i>compile.c</i> and <i>compile.h</i> (where headers are).
+
+<p>
+Compiler has 64Kb memory buffer representing Z80's memory. Translating functions write translated
+code to this buffer. This buffer is in variable <i>unsigned char memory[65536];</i> in z80-asm.c
+file.
+
+
+<h2><a name="labels">2. Labels</a></h2>
+
+Because labels can be used before they're defined this compiler passes through
+the source code twice. During first pass are labels collected to a table, where
+label text and label address is stored. This table is hashed so access is
+immediate and adding is quite simple. I think it's the best way to store
+labels. If labels were found binary it would be in logarithmic time. And storing
+labels as they come has linear complexity for searching.
+
+<p>
+During first pass nothing's put to memory but translating functions don't know
+it. They "translate" normally. So possible errors are revealed already in first
+pass. What happens when an instruction uses label during first pass? Hashing
+function replies current address on a query, so everything's OK.
+
+<p>
+During second pass instructions are completely translated. If a label
+occurs it's searched in the table and address of label is used. If there's not
+such label error message is generated.
+
+<h2><a name="functions">3. Functions</a></h2>
+
+<ul>
+<li><a name="convert"><b>int convert(const struct seznam_type *seznam,int len,char *txt);</b></a>  
+<p>
+Binary finds <i>txt</i> in <i>seznam</i> list, length of <i>seznam</i> is
+<i>len</i>. This is called to convert string (instruction name, register name,
+flag name, ...) to token. In files <i>instr.c</i>, <i>instr.h</i>,
+<i>regs.c</i>, <i>regs.h</i> and <i>z80-asm.h</i> are tables for converting
+these strings to tokens. Tokens are represented by numbers, in sources macros.
+<p>
+
+<li><b>int test_number(char *txt,int *value);</b>
+<p>
+Converts string <i>txt</i> to integer number pointed by <i>value</i>.
+Recognized numbers are signed, unsigned; numbers in decimal, hexadecimal
+(prefixed with <i>0x</i>) and binary (prefixed with <i>%</i>) scale. It accepts
+characters too. Character is enclosed in apostrophes same as in the C language.
+Value of character is it's ascii code. If string <i>txt</i> isn't recognized as
+a number 0 is returned. Otherwise 1 is returned.
+<p>
+
+<li><a name="convert_arg"><b>int convert_arg(struct argument_type *arg,char *txt);</b></a>
+<p>
+Converts string <i>txt</i> to struct <a href="#argument_type">
+<i>argument_type</i></a>. This function is called from lexical parser to
+convert arguments. It determines type of argument and it's value. If argument
+can't be recognized 1 is returned. On success 0 is returned.
+<p>
+There's a problem how to recognize carry flag and C register in lexical
+analysis. Lexical parser doesn't know which "C" is it, it knows semantical
+parser. This problem is solved using simple but a bit dirty trick: value of
+token "C register" and token "carry flag" are the same. Competent translating functions
+then accept both types: register and flag. 
+<p>
+
+<li><a name="lexical_analysis"><b>int lexical_analysis(char *line);</b></a>
+<p>
+This function performes whole lexical analysis. On input it gets string
+containing line from the source code. Parser reads string from left to righ,
+skips whitespace. If semicolon is read parser ends. Instruction parts are
+expected in this order: label, instruction body, arguments. Labels are added to
+the table in first pass.  Instruction body is parsed by
+<a href="#convert"><i>convert</i></a> function. Arguments are parsed by 
+<a href="#convert_arg"><i>convert_arg</i></a> function.
+<p>
+
+<li><a name="compile"><b>int compile(void);</b></a>
+<p>
+This is main compiling function. It controlls entire translation. It's
+described in <a href="#principle">section 1.</a>
+</ul>
+
+<h2><a name="data">4. Data</a></h2>
+<p>
+<ul>
+<li><a name="argument_type"><b>struct argument_type</b></a>
+<ul>
+<li><b>unsigned char type</b> - type of the argument. It can be for example A_REG, A_NUM, A_CONST, A_STRING, ...
+<li><b>int value</b> - value of the argument
+<li><b>char *text</b> - this variable is only for string arguments. If argument is a string, value is not used and variable text
+is used. Otherwise text is unused.
+<li><b>unsigned char label</b> - flag to recognize if number was a constant or a label (for arguments of type A_NUM or
+A_PODLE_NUM). Using this flag translating functions for <i>jr</i> and <i>djnz</i> instructions can decide between writing fixed address
+and computing relative address.
+<li><b>struct argument_type *next,*previous</b> - pointer to next and previous member of the argument list. Argument list
+is a bidirectional list. End of list is signed with zero value of either next or previous variable.
+</ul>
+<li><a name="struct_lex"><b>struct lex_type</b></a> - structure for communication between <a href="#lexical_analysis"><i>lexical_analysis</i></a> function and <a href="#compile"><i>compile</i></a> function.
+<ul>
+<li><b>int instruction</b> - instruction token. For example: I_NOP, I_LD, I_RET, I_EX, I_HALT, ...
+<li><b>struct argument_type *arg</b> - bidirectional list of arguments
+</ul>
+</ul>
+Other compiler variables are <a href="#other_data">here</a>.
+
+
+<h2><a name="library">5. The compiler library</a></h2>
+<p>
+Main compiler functions are made as a library functions so they can be simply
+called from a separate program. 
+
+<p>
+To use compiler as a library you must compile the <i>asm.a</i> library typing
+<i>make asm.a</i>, include file <i>asm.h</i> to your source and define
+following functions:
+
+<ul>
+<li><b>void take_line(char *line);</b>
+<ul>
+<li>this function loads one line of the source code to line variable
+<li>warning: this function doesn't alloc memory, memory allocation is made 
+in the compiler
+<li>maximal length of line is MAX_TEXT
+</ul>
+  
+<li><b>void error(int line_number,char *line,char* err_message);</b>
+<ul>
+<li>this function prints an errror message to output
+<li>line_number is number of the line, where the error occured
+<li>line is source line where the error occured
+<li>err_message is an error message from the compiler
+</ul>
+</ul>
+<p>
+<a name="other_data">
+There are some variables for controlling the compiler, these variables must be
+set before calling the compiler:</a>
+<ul>
+
+<li><b>int WARNINGS;</b>
+<ul>
+<li>if this flag is on compiler checks if you overwrite code on any address 
+and writes warning message to stderr
+<li>0 means off
+<li>1 means on
+</ul>
+  
+<li><b>int pruchod;</b>
+<ul>
+<li>number of compiler pass
+<li>1 is first pass when source is compiled and labels are read and stored to
+label table, if labels are as an instruction argument zero value is written
+to memory instead of real label value; this allows using labels before these
+are defined
+<li>2 means code isn't compiled and only label addresses are written to memory
+</ul>
+
+<li><b>int disable_defx;</b>
+<ul>
+<li>with this this flag you can prohibit using of defb, defw and defm
+instructions, using these instructions when they're prohibited causes an
+error
+<li>1 is disable using defx instructions
+<li>0 is enable
+</ul>
+
+<li><b>unsigned short address;</b>
+<ul>
+<li>address of lowest used memory byte
+<li>this is good especially for saving code to a file
+<li>this variable is only for reading
+</ul>
+
+<li><b>unsigned short end;</b>
+<ul>
+<li>address of highest used memory byte
+<li>similar meaning as the above one
+<li>this variable is only for reading
+</ul>
+
+<li><b>unsigned char *memory_ptr;</b>
+<ul>
+<li>pointer to start of the Z80 memory
+<li>this variable MUST be set before using the compiler
+</ul>
+
+<li><b>int line;</b>
+<ul>
+<li>number of currently compiled line
+<li>read only variable
+</ul>
+
+</ul>
+<p>
+And now to start compiling:
+<ul>
+<li>first run the <i>asm_init</i> function
+<li>then you can call the <i>compile</i> function; this function returns 0 when
+everything's OK; otherwise it returns 1
+<li>after all call the <i>asm_close</i> function which cleans after the compiler
+</ul>
+
+  
+</body>
+</html>

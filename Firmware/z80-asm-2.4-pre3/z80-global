@@ -1,0 +1,31 @@
+#ifndef __GLOBAL
+#define __GLOBAL
+
+#ifdef  OLD_STYLE
+#ifndef  Z80_PORTS
+#define  Z80_PORTS  ".Z80_ports"
+#endif
+#endif
+
+#define  TIME_STAMP  "2006-10-04"
+#define  _Z80HEADER  "Z80ASM\032\n"
+
+typedef unsigned char _uchar;
+typedef unsigned char bit;
+typedef unsigned char bool;
+typedef unsigned short _ushort;
+
+#define  NO_CPU_CONTROL_PINS  12
+
+#define TICS_MEMO         3
+#define TICS_WAIT         1
+
+struct seznam_type{ char *name; int code; };
+
+struct instruction_type{
+unsigned char* (*func)(unsigned short a1,unsigned char t1,
+                       unsigned short a2,unsigned char t2);
+unsigned char arg1,type1,arg2,type2;
+};
+
+#endif

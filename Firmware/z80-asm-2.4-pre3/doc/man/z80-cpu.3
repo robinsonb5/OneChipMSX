@@ -1,0 +1,124 @@
+.TH Z80-CPU 3 "03 Jun 2005" "Z80-CPU Version 2.3" "Z80 CPU layout"
+
+.SH NAME
+F, A, B, C, D, E, H, L, F_, A_, B_, C_, D_, E_, H_, L_,
+IXl, IXh, IYl, IYh, IX, IY, SP, PC, 
+I, R, IM
+DATA, ADDRESS,
+IFF0, IFF1,IFF2, IFF3,
+cpu_rd, cpu_wr, cpu_iorq, cpu_mreq, cpu_m1, cpu_halts, cpu_wait, cpu_int, cpu_reset, cpu_busrq, cpu_busack
+.SH SYNOPSIS
+.BI "#include <z80-global>"
+.sp 2
+.BI "unsigned char F, A, B, C, D, E, H, L;"
+.sp
+.BI "unsigned char F_, A_, B_, C_, D_, E_, H_, L_;"
+.sp
+.BI "unsigned char IXl, IXh, IYl, IYh;"
+.sp
+.BI "unsigned short  IX, IY, SP, PC;"
+.sp
+.BI "unsigned char I, R, IM;"
+.sp
+.BI "unsigned char DATA;"
+.sp
+.BI "unsigned short ADDRESS;"
+.sp
+.BI "bit  IFF0, IFF1,IFF2, IFF3;"
+.sp
+.BI "bit cpu_rd, cpu_wr, cpu_iorq, cpu_mreq, cpu_m1, cpu_halts,"
+.BI "    cpu_wait, cpu_int, cpu_reset, cpu_busrq, cpu_busack"
+.sp
+.BI "unsigned long ticks;"
+.sp
+
+.SH DESCRIPTION
+These variables allow direct CPU manipulation.
+.PP
+.I F
+indicates the F-register.
+.PP
+.I A, B, C, D, E, H, L
+indicate the general purpose 8bit registers.
+.PP
+.I F_
+indicates the F'-register.
+.PP
+.I A_, B_, C_, D_, E_, H_, L_
+indicate the 2nd bank general purpose 8bit registers.
+.PP
+.I IXl, IXh, IYl, IYh
+indicate the 8bit registers made up the index registers.
+.PP
+.I IX, IY
+indicate the two 16bit index registers.
+.PP
+.I SP
+indicates the 16bit stack pointer register.
+.PP
+.I PC
+indicates the 16bit program counter register.
+.PP
+.I I
+indicates the 8bit interrupt register.
+.PP
+.I R
+indicates the 8bit refresh register.
+.PP
+.I IM
+indicates the 2bit interrupt mode.
+.PP
+.I IFF0
+indicates the internal EI-flipflop.
+.PP
+.I IFF1, IFF2
+indicate the internal interrupt flipflops.
+.PP
+.I IFF3
+indicates the internal edge-triggred interrupt NMI-flipflop.
+.PP
+.I DATA
+indicates the 8 CPU-DATA pins.
+.PP
+.I ADDR
+indicates the 16 CPU-ADDRESS pins.
+.PP
+The following 5 pins represent the system control bus:
+.PP
+.I cpu_rd
+indicates the CPU-READ pin.
+.PP
+.I cpu_wr
+indicates the CPU-WRITE pin.
+.PP
+.I cpu_iorq
+indicates the CPU-IO_REQUEST pin.
+.PP
+.I cpu_mreq
+indicates the CPU-MEMORY_REQUEST pin.
+.PP
+.I cpu_m1
+indicates the CPU-MACHINE-CYCLE-1 pin.
+.PP
+.I cpu_halts
+indicates the CPU-HALT pin.
+.PP
+.I cpu_wait
+indicates the CPU-WAIT pin.
+.PP
+.I cpu_int
+indicates the CPU-INTERRUPT pin.
+.PP
+.I cpu_reset
+indicates the CPU-RESET pin.
+.PP
+.I cpu_busrq
+indicates the CPU-BUS_RQ pin.
+.PP
+.I cpu_busack
+indicates the CPU-BUS_ACK pin.
+.PP
+.SH FILES
+ .CPU is a binary file which contains at least 32 byte coding the current CPU status.
+.SH SEE ALSO
+z80-memory(3), z80-mon(1)

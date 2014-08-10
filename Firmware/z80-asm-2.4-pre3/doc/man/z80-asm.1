@@ -1,0 +1,79 @@
+.TH Z80-ASM 1 "13 May 2005" "Z80-ASM Version 2.2" "Z80 Assembler"
+
+.SH NAME
+z80-asm \- command-line Z80 CPU assember for Unix and DO$
+
+.SH SYNOPSIS
+.B z80-asm [-wlhcf XX] inputfile[.asm] [startaddress[[:length] :outputfile] ]
+
+.B z80-asm [-wlhcf XX] inputfile startaddress[:length]:outputfile ...
+
+.SH DESCRIPTION
+z80-asm is a two pass compiler of the Z80 CPU assembly language. It's first
+argument is name of an input (source) file. If no sections follow no code is
+generated.
+In the case of exactly one section follows and the inputfile name ends with
+.I .asm
+the
+.I outputfile
+with its leading colon delimiter and the optional
+.I length
+may be omitted. Then the output is written to a file named
+.I inputfilename.z80
+Generally each section tells the compiler to save code to file 
+.I outputfile
+from address
+.I start address
+and with len
+.I length.
+Format of the file is described in
+.B z80-file(5).
+
+If an obligate
+.I outputfile
+is missing compilation is aborted after this section but error checking of the
+code is done.
+If
+.I length
+is ommited, compiler saves code from start address to furthest byte stored to
+memory (inclusive). 
+.PP
+All addresses are given decimal in range from 0 to 65535 or hexadecimal in the range
+from 0x0000 to 0xffff.
+.PP
+For assembler syntax see section
+.B z80-asm(5).
+
+.SH OPTIONS
+Compiler called with no options or 
+.I -h
+option prints usage. Option
+.I -w
+turns on warning messages, when overwriting code in memory. Option
+.I -l
+writes a source listing in pass 2 to stdout. Each input line is prepended
+by PC, generated machine code and line no of 5 digits. Option
+.I -f
+which must be followed by a 2 digit hexadecimal value XX sets the undefined
+bytes in gaps created by DEFS and ORG statements to the given fill value XX.
+Finally option
+.I -c
+prints a cross reference listing of the labels to stdout in case of no errors.
+
+.SH BUGS
+No bugs are known. :-) If you find some, please feel free to send me a bugreport.
+
+.SH AUTHORS
+Z80-ASM was written by Brainsoft <brain@artax.karlin.mff.cuni.cz> and Achim Flammenkamp <achim@mathematik.uni-bielefeld.de>
+
+.SH COPYING
+Copying of this software must be under terms of the GNU General Public
+License. There's absolutely no warranty on this software. For more details see
+file
+.B doc/COPY
+
+.PP
+(c) 1999-2004 Brainsoft
+
+.SH SEE ALSO
+z80-asm(5), z80-mon(1), z80-file(5)

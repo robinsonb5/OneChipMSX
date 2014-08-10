@@ -1,0 +1,28 @@
+/* KEYCODES AND COLORS */
+
+/* special key values */
+#define K_TAB 9
+#define K_BACKSPACE 8
+#define K_ENTER 10
+#define K_ESCAPE 27
+#define K_UP 128
+#define K_DOWN 129
+#define K_LEFT 130
+#define K_RIGHT 131
+
+/* cursor modes */
+#define C_NORMAL 0
+#define C_HIDE 1
+
+/* character colors */
+#define  BRIGHT  15
+#define  CYAN    14
+#define  PURPLE  13
+#define  BLUE    12
+#define  YELLOW  11
+#define  GREEN   10
+#define  RED      9
+#define  GRAY     8
+#define  WHITE    7
+#define  D_CYAN   6
+#define  BLACK    0
