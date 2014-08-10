@@ -166,7 +166,7 @@ end emsx_top;
 architecture rtl of emsx_top is
 
   component pll4x2                      -- Altera specific component
-    port(								-- 50*3/7 = 21428571 Ãö
+    port(								-- 50*3/7 = 21428571 ï¿½ï¿½
       inclk0 : in std_logic := '0';     -- 50.00MHz input to PLL    (external I/O pin, from crystal oscillator)
       c0     : out std_logic ;          -- 21.43MHz output from PLL (internal LEs, for VDP, internal-bus, etc.)
       c1     : out std_logic ;          -- 85.72MHz output from PLL (internal LEs, for SD-RAM)
@@ -462,9 +462,9 @@ architecture rtl of emsx_top is
 
   component scc_mix_mul
 	port(
-		a	: in	std_logic_vector( 15 downto 0 );	-- 16bit ÂQÂ¦ÕòÐÔ
-		b	: in	std_logic_vector(  2 downto 0 );	-- 3bit ÃoÃCÃiÃÊ
-		c	: out	std_logic_vector( 18 downto 0 )		-- 19bit ÂQÂ¦ÕòÐÔ
+		a	: in	std_logic_vector( 15 downto 0 );	-- 16bit ï¿½QÂ¦ï¿½ï¿½ï¿½ï¿½
+		b	: in	std_logic_vector(  2 downto 0 );	-- 3bit ï¿½oï¿½Cï¿½iï¿½ï¿½
+		c	: out	std_logic_vector( 18 downto 0 )		-- 19bit ï¿½QÂ¦ï¿½ï¿½ï¿½ï¿½
 	);
   end component;
 
@@ -2128,8 +2128,8 @@ pMemDat		<= SdrDat;
              EPC_CK, EPC_CS, EPC_OE, EPC_DI, EPC_DO);
     pSd_Dt0 <= 'Z';
 
-  U04 : cyclone_asmiblock
-    port map(EPC_CK, EPC_CS, EPC_DI, EPC_OE, EPC_DO);
+--  U04 : cyclone_asmiblock
+--    port map(EPC_CK, EPC_CS, EPC_DI, EPC_OE, EPC_DO);
 
   U05 : mapper
     port map(clk21m, reset, clkena, MapReq, Open, mem, wrt, adr, MapDbi, dbo,
