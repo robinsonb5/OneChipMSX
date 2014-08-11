@@ -2128,8 +2128,8 @@ pMemDat		<= SdrDat;
              EPC_CK, EPC_CS, EPC_OE, EPC_DI, EPC_DO);
     pSd_Dt0 <= 'Z';
 
---  U04 : cyclone_asmiblock
---    port map(EPC_CK, EPC_CS, EPC_DI, EPC_OE, EPC_DO);
+  U04 : cyclone_asmiblock
+    port map(EPC_CK, EPC_CS, EPC_DI, EPC_OE, EPC_DO);
 
   U05 : mapper
     port map(clk21m, reset, clkena, MapReq, Open, mem, wrt, adr, MapDbi, dbo,
