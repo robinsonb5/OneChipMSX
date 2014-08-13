@@ -44,8 +44,8 @@ entity DE1_Toplevel is
 		SRAM_WE_N		:	 out STD_LOGIC;
 		SRAM_CE_N		:	 out STD_LOGIC;
 		SRAM_OE_N		:	 out STD_LOGIC;
-		SD_DAT		:	 in STD_LOGIC;
-		SD_DAT3		:	 out STD_LOGIC;
+		SD_DAT		:	 inout STD_LOGIC;	-- in
+		SD_DAT3		:	 inout STD_LOGIC; -- out
 		SD_CMD		:	 out STD_LOGIC;
 		SD_CLK		:	 out STD_LOGIC;
 		TDI		:	 in STD_LOGIC;
@@ -89,9 +89,9 @@ signal ps2k_clk_out : std_logic;
 signal ps2k_dat_in : std_logic;
 signal ps2k_dat_out : std_logic;
 
-signal vga_red : unsigned(7 downto 0);
-signal vga_green : unsigned(7 downto 0);
-signal vga_blue : unsigned(7 downto 0);
+signal vga_red : std_logic_vector(7 downto 0);
+signal vga_green : std_logic_vector(7 downto 0);
+signal vga_blue : std_logic_vector(7 downto 0);
 signal vga_window : std_logic;
 signal vga_hsync : std_logic;
 signal vga_vsync : std_logic;
@@ -155,145 +155,152 @@ I2C_SDAT	<= 'Z';
 GPIO_0 <= (others => 'Z');
 GPIO_1 <= (others => 'Z');
 
-ps2m_dat_in<=PS2_MDAT;
-PS2_MDAT <= '0' when ps2m_dat_out='0' else 'Z';
-ps2m_clk_in<=PS2_MCLK;
-PS2_MCLK <= '0' when ps2m_clk_out='0' else 'Z';
-
-ps2k_dat_in<=PS2_DAT;
-PS2_DAT <= '0' when ps2k_dat_out='0' else 'Z';
-ps2k_clk_in<=PS2_CLK;
-PS2_CLK <= '0' when ps2k_clk_out='0' else 'Z';
-
-mypll : entity work.PLL_50to100Split
-port map
-(
-	inclk0 => CLOCK_50,
-	c0 => DRAM_CLK,
-	c1 => sysclk,
-	c2 => slowclk,
-	locked => pll_locked
-);
---pll_locked<='1';
---sysclk<=CLOCK_50;
-
 reset<=(not SW(0) xor KEY(0)) and pll_locked;
 
-hexdigit0 : component SEG7_LUT
-	port map (oSEG => HEX0, iDIG => hex(3 downto 0));
-hexdigit1 : component SEG7_LUT
-	port map (oSEG => HEX1, iDIG => hex(7 downto 4));
-hexdigit2 : component SEG7_LUT
-	port map (oSEG => HEX2, iDIG => hex(11 downto 8));
-hexdigit3 : component SEG7_LUT
-	port map (oSEG => HEX3, iDIG => hex(15 downto 12));
+--hexdigit0 : component SEG7_LUT
+--	port map (oSEG => HEX0, iDIG => hex(3 downto 0));
+--hexdigit1 : component SEG7_LUT
+--	port map (oSEG => HEX1, iDIG => hex(7 downto 4));
+--hexdigit2 : component SEG7_LUT
+--	port map (oSEG => HEX2, iDIG => hex(11 downto 8));
+--hexdigit3 : component SEG7_LUT
+--	port map (oSEG => HEX3, iDIG => hex(15 downto 12));
 
-myVirtualToplevel : entity work.VirtualToplevel
-generic map
-(
-	sdram_rows => 12,
-	sdram_cols => 8,
-	sysclk_frequency => 250 -- sysclk * 10
-)
-port map
-(	
-	clk => slowclk,
-	clk_fast => sysclk,
-	reset_in => reset,
+emsx_top : entity work.emsx_top
+  port map(
+    -- Clock, Reset ports
+    CLOCK_50 => CLOCK_50,
+    CLOCK_27 => CLOCK_27(0),
 
-	-- video
-	vga_hsync => vga_hsync,
-	vga_vsync => vga_vsync,
-	vga_red => vga_red,
-	vga_green => vga_green,
-	vga_blue => vga_blue,
-	vga_window => vga_window,
-	
-	-- sdram
-	sdr_data => DRAM_DQ,
-	sdr_addr => DRAM_ADDR,
-	sdr_dqm(1) => DRAM_UDQM,
-	sdr_dqm(0) => DRAM_LDQM,
-	sdr_we => DRAM_WE_N,
-	sdr_cas => DRAM_CAS_N,
-	sdr_ras => DRAM_RAS_N,
-	sdr_cs => DRAM_CS_N,
-	sdr_ba(1) => DRAM_BA_1,
-	sdr_ba(0) => DRAM_BA_0,
---	sdr_clk => DRAM_CLK,
-	sdr_cke => DRAM_CKE,
+--    -- MSX cartridge slot ports
+--    pSltClk     : out std_logic;	-- pCpuClk returns here, for Z80, etc.
+--    pSltRst_n   : in std_logic :='1';		-- pCpuRst_n returns here
+--    pSltSltsl_n : inout std_logic:='1';
+--    pSltSlts2_n : inout std_logic:='1';
+--    pSltIorq_n  : inout std_logic:='1';
+--    pSltRd_n    : inout std_logic:='1';
+--    pSltWr_n    : inout std_logic:='1';
+--    pSltAdr     : inout std_logic_vector(15 downto 0):=(others=>'1');
+--    pSltDat     : inout std_logic_vector(7 downto 0):=(others=>'1');
+--    pSltBdir_n  : out std_logic;	-- Bus direction (not used in master mode)
+--
+--    pSltCs1_n   : inout std_logic:='1';
+--    pSltCs2_n   : inout std_logic:='1';
+--    pSltCs12_n  : inout std_logic:='1';
+--    pSltRfsh_n  : inout std_logic:='1';
+--    pSltWait_n  : inout std_logic:='1';
+--    pSltInt_n   : inout std_logic:='1';
+--    pSltM1_n    : inout std_logic:='1';
+--    pSltMerq_n  : inout std_logic:='1';
+--
+--    pSltRsv5    : out std_logic;            -- Reserved
+--    pSltRsv16   : out std_logic;            -- Reserved (w/ external pull-up)
+--    pSltSw1     : inout std_logic:='1';          -- Reserved (w/ external pull-up)
+--    pSltSw2     : inout std_logic:='1';          -- Reserved
 
-	-- RS232
-	rxd => UART_RXD,
-	txd => UART_TXD,
+    -- SDRAM DE1 ports
+	 pMemClk => DRAM_CLK,
+    pMemCke => DRAM_CKE,
+    pMemCs_n => DRAM_CS_N,
+    pMemRas_n => DRAM_RAS_N,
+    pMemCas_n => DRAM_CAS_N,
+    pMemWe_n => DRAM_WE_N,
+    pMemUdq => DRAM_UDQM,
+    pMemLdq => DRAM_LDQM,
+    pMemBa1 => DRAM_BA_1,
+    pMemBa0 => DRAM_BA_0,
+    pMemAdr => DRAM_ADDR,
+    pMemDat => DRAM_DQ,
 
-	-- SD Card
-	spi_cs => SD_DAT3,
-	spi_miso => SD_DAT,
-	spi_mosi => SD_CMD,
-	spi_clk => SD_CLK,
+    -- PS/2 keyboard ports
+    pPs2Clk => PS2_CLK,
+    pPs2Dat => PS2_DAT,
+	 
+--    -- Joystick ports (Port_A, Port_B)
+--    pJoyA       : inout std_logic_vector( 5 downto 0):=(others=>'1');
+--    pStrA       : out std_logic;
+--    pJoyB       : inout std_logic_vector( 5 downto 0):=(others=>'1');
+--    pStrB       : out std_logic;
 
-	-- PS/2
-	ps2k_clk_in => ps2k_clk_in,
-	ps2k_dat_in => ps2k_dat_in,
-	ps2k_clk_out => ps2k_clk_out,
-	ps2k_dat_out => ps2k_dat_out,
-	ps2m_clk_in => ps2m_clk_in,
-	ps2m_dat_in => ps2m_dat_in,
-	ps2m_clk_out => ps2m_clk_out,
-	ps2m_dat_out => ps2m_dat_out,
+    -- SD/MMC slot ports
+    pSd_Ck => SD_CLK,
+    pSd_Cm => SD_CMD,
+--  pSd_Dt	    : inout std_logic_vector( 3 downto 0);  -- pin 1(D3), 9(D2), 8(D1), 7(D0)
+    pSd_Dt3	=> SD_DAT3,
+    pSd_Dt0	=> SD_DAT,
 
-	audio_l => audio_l,
-	audio_r => audio_r,
-	
-	hex => hex
+
+		-- DIP switch, Lamp ports
+    pSW => KEY,
+    pDip => SW,
+    pLedG => LEDG,
+    pLedR => LEDR,
+
+    -- Video, Audio/CMT ports
+    pDac_VR => vga_red(7 downto 2),
+    pDac_VG => vga_green(7 downto 2),
+    pDac_VB => vga_blue(7 downto 2),
+--    pDac_S 		: out   std_logic;						-- Sound
+--    pREM_out	: out   std_logic;						-- REM output; 1 - Tape On
+--    pCMT_out	: out   std_logic;						-- CMT output
+--    pCMT_in		: in    std_logic :='1';						-- CMT input
+
+    pVideoHS_n => vga_hsync,
+    pVideoVS_n => vga_vsync,
+
+    -- DE1 7-SEG Display
+    HEX0 => HEX0,
+    HEX1 => HEX1,
+    HEX2 => HEX2,
+    HEX3 => HEX3,
+
+    -- DE1 i2c
+    I2C_SCLK => I2C_SCLK,
+    I2C_SDAT => I2C_SDAT,
+
+    AUD_ADCLRCK => AUD_ADCLRCK,
+    AUD_ADCDAT	=> AUD_ADCDAT,
+    AUD_XCK => AUD_XCK,
+    AUD_DACLRCK => AUD_DACLRCK,
+    AUD_DACDAT => AUD_DACDAT,
+    AUD_BCLK => AUD_BCLK
 );
 
-
-video1: if Toplevel_UseVGA=true generate
 	VGA_HS<=vga_hsync;
 	VGA_VS<=vga_vsync;
+	vga_window<='1';
 
 	mydither : component video_vga_dither
 		generic map(
 			outbits => 4
 		)
 		port map(
-			clk=>sysclk,
+			clk=>CLOCK_50, -- FIXME - sysclk
 			hsync=>vga_hsync,
 			vsync=>vga_vsync,
 			vid_ena=>vga_window,
-			iRed => vga_red,
-			iGreen => vga_green,
-			iBlue => vga_blue,
+			iRed => unsigned(vga_red),
+			iGreen => unsigned(vga_green),
+			iBlue => unsigned(vga_blue),
 			oRed => VGA_R,
 			oGreen => VGA_G,
 			oBlue => VGA_B
 		);
-end generate;
 
-sound1: if Toplevel_UseAudio=true generate
-
-myaudio: component audio_top
-port map(
-  clk=>slowclk,
-  rst_n=>reset,
-  -- audio shifter,
-  rdata=>audio_r,
-  ldata=>audio_l,
-  aud_bclk=>AUD_BCLK, -- CODEC data clock
-  aud_daclrck=>AUD_DACLRCK, -- CODEC data clock
-  aud_dacdat=>AUD_DACDAT, -- CODEC data
-  aud_xck=>AUD_XCK, -- CODEC data clock
-  -- I2C audio config
-  i2c_sclk=>I2C_SCLK, -- CODEC config clock
-  i2c_sdat=>I2C_SDAT -- CODEC config data
-);
-
-end generate;
-
-sound2: if Toplevel_UseAudio=false generate
--- FIXME - set safe defaults for the audio codec
-end generate;
+--myaudio: component audio_top
+--port map(
+--  clk=>slowclk,
+--  rst_n=>reset,
+--  -- audio shifter,
+--  rdata=>audio_r,
+--  ldata=>audio_l,
+--  aud_bclk=>AUD_BCLK, -- CODEC data clock
+--  aud_daclrck=>AUD_DACLRCK, -- CODEC data clock
+--  aud_dacdat=>AUD_DACDAT, -- CODEC data
+--  aud_xck=>AUD_XCK, -- CODEC data clock
+--  -- I2C audio config
+--  i2c_sclk=>I2C_SCLK, -- CODEC config clock
+--  i2c_sdat=>I2C_SDAT -- CODEC config data
+--);
 
 end architecture;

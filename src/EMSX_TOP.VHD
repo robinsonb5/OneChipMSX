@@ -2045,21 +2045,7 @@ pMemDat		<= SdrDat;
 -- Reserved ports
 ----------------------------------------------------------------
 
-	SRAM_DQ		<= (OTHERS => 'Z');
-	SRAM_ADDR	<= (OTHERS => '0');
-	SRAM_UB_N	<= '1';
-	SRAM_LB_N	<= '1';
-	SRAM_WE_N	<= '1';
-	SRAM_CE_N	<= '1';
-	SRAM_OE_N	<= '1';
-
-	FL_DQ		<= (OTHERS => 'Z');
-	FL_ADDR		<= (OTHERS => '0');
-	FL_RST_N	<= '1';
-	FL_WE_N		<= '1';
-	FL_OE_N		<= '1';
-
-    AUD_ADCLRCK	<= 'Z';
+   AUD_ADCLRCK	<= 'Z';
 
 ----------------------------------------------------------------
 -- Connect components
