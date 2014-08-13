@@ -42,40 +42,32 @@ entity emsx_top is
     -- Clock, Reset ports
     CLOCK_50	: in std_logic;		-- Input clock DE1 50 MHz
     CLOCK_27	: in std_logic;		-- Input clock DE1 27 MHz
-    CLOCK_24	: in std_logic;		-- Input clock DE1 24 MHz
-    pClk24m	    : in std_logic;		-- Input clock DE1 24 MHz
-    pClk27m     : in std_logic;		-- Input clock DE1 27 MHz
-    pExtClk     : in std_logic;		-- Input external clock
-    
---  pClk21m     : in std_logic;		-- VDP clock ... 21.48MHz
---  pCpuClk     : out std_logic;	-- CPU clock ... 3.58MHz (up to 10.74MHz/21.48MHz)
---  pCpuRst_n   : out std_logic;	-- CPU reset
 
     -- MSX cartridge slot ports
     pSltClk     : out std_logic;	-- pCpuClk returns here, for Z80, etc.
-    pSltRst_n   : in std_logic;		-- pCpuRst_n returns here
-    pSltSltsl_n : inout std_logic;
-    pSltSlts2_n : inout std_logic;
-    pSltIorq_n  : inout std_logic;
-    pSltRd_n    : inout std_logic;
-    pSltWr_n    : inout std_logic;
-    pSltAdr     : inout std_logic_vector(15 downto 0);
-    pSltDat     : inout std_logic_vector(7 downto 0);
+    pSltRst_n   : in std_logic :='1';		-- pCpuRst_n returns here
+    pSltSltsl_n : inout std_logic:='1';
+    pSltSlts2_n : inout std_logic:='1';
+    pSltIorq_n  : inout std_logic:='1';
+    pSltRd_n    : inout std_logic:='1';
+    pSltWr_n    : inout std_logic:='1';
+    pSltAdr     : inout std_logic_vector(15 downto 0):=(others=>'1');
+    pSltDat     : inout std_logic_vector(7 downto 0):=(others=>'1');
     pSltBdir_n  : out std_logic;	-- Bus direction (not used in master mode)
 
-    pSltCs1_n   : inout std_logic;
-    pSltCs2_n   : inout std_logic;
-    pSltCs12_n  : inout std_logic;
-    pSltRfsh_n  : inout std_logic;
-    pSltWait_n  : inout std_logic;
-    pSltInt_n   : inout std_logic;
-    pSltM1_n    : inout std_logic;
-    pSltMerq_n  : inout std_logic;
+    pSltCs1_n   : inout std_logic:='1';
+    pSltCs2_n   : inout std_logic:='1';
+    pSltCs12_n  : inout std_logic:='1';
+    pSltRfsh_n  : inout std_logic:='1';
+    pSltWait_n  : inout std_logic:='1';
+    pSltInt_n   : inout std_logic:='1';
+    pSltM1_n    : inout std_logic:='1';
+    pSltMerq_n  : inout std_logic:='1';
 
     pSltRsv5    : out std_logic;            -- Reserved
     pSltRsv16   : out std_logic;            -- Reserved (w/ external pull-up)
-    pSltSw1     : inout std_logic;          -- Reserved (w/ external pull-up)
-    pSltSw2     : inout std_logic;          -- Reserved
+    pSltSw1     : inout std_logic:='1';          -- Reserved (w/ external pull-up)
+    pSltSw2     : inout std_logic:='1';          -- Reserved
 
     -- SDRAM DE1 ports
     pMemClk     : out std_logic;            -- SD-RAM Clock
@@ -89,16 +81,16 @@ entity emsx_top is
     pMemBa1     : out std_logic;            -- SD-RAM Bank select address 1
     pMemBa0     : out std_logic;            -- SD-RAM Bank select address 0
     pMemAdr     : out std_logic_vector(11 downto 0);    -- SD-RAM Address
-    pMemDat     : inout std_logic_vector(15 downto 0);  -- SD-RAM Data
+    pMemDat     : inout std_logic_vector(15 downto 0):=(others=>'1');  -- SD-RAM Data
 
     -- PS/2 keyboard ports
-    pPs2Clk     : inout std_logic;
-    pPs2Dat     : inout std_logic;
+    pPs2Clk     : inout std_logic:='1';
+    pPs2Dat     : inout std_logic:='1';
 
     -- Joystick ports (Port_A, Port_B)
-    pJoyA       : inout std_logic_vector( 5 downto 0);
+    pJoyA       : inout std_logic_vector( 5 downto 0):=(others=>'1');
     pStrA       : out std_logic;
-    pJoyB       : inout std_logic_vector( 5 downto 0);
+    pJoyB       : inout std_logic_vector( 5 downto 0):=(others=>'1');
     pStrB       : out std_logic;
 
     -- SD/MMC slot ports
@@ -115,33 +107,17 @@ entity emsx_top is
     pLedR	    : out std_logic_vector( 9 downto 0);    -- 0=OFF, 1=ON(red) ...Power & SD/MMC access lamp
 
     -- Video, Audio/CMT ports
-    pDac_VR     : inout std_logic_vector( 5 downto 0);  -- RGB_Red / Svideo_C
-    pDac_VG     : inout std_logic_vector( 5 downto 0);  -- RGB_Grn / Svideo_Y
-    pDac_VB     : inout std_logic_vector( 5 downto 0);  -- RGB_Blu / CompositeVideo
+    pDac_VR     : out std_logic_vector( 5 downto 0);  -- RGB_Red / Svideo_C
+    pDac_VG     : out std_logic_vector( 5 downto 0);  -- RGB_Grn / Svideo_Y
+    pDac_VB     : out std_logic_vector( 5 downto 0);  -- RGB_Blu / CompositeVideo
     pDac_S		: out   std_logic;						-- Sound
     pREM_out	: out   std_logic;						-- REM output; 1 - Tape On
     pCMT_out	: out   std_logic;						-- CMT output
-    pCMT_in		: in    std_logic;						-- CMT input
+    pCMT_in		: in    std_logic :='1';						-- CMT input
 
     pVideoHS_n  : out std_logic;                        -- Csync(RGB15K), HSync(VGA31K)
     pVideoVS_n  : out std_logic;                        -- Audio(RGB15K), VSync(VGA31K)
 
-    -- DE1 SRAM
-    SRAM_DQ		: inout std_logic_vector(15 downto 0);
-    SRAM_ADDR	: out std_logic_vector(17 downto 0);
-    SRAM_UB_N	: out std_logic;
-    SRAM_LB_N	: out std_logic;
-    SRAM_WE_N	: out std_logic;
-    SRAM_CE_N	: out std_logic;
-    SRAM_OE_N	: out std_logic;
-	
-    -- DE1 FLASH
-    FL_DQ	    : inout std_logic_vector(7 downto 0);
-    FL_ADDR	    : out std_logic_vector(21 downto 0);
-    FL_RST_N	: out std_logic;
-    FL_WE_N	    : out std_logic;
-    FL_OE_N	    : out std_logic;
-	
     -- DE1 7-SEG Display
     HEX0	    : out std_logic_vector(6 downto 0);
     HEX1	    : out std_logic_vector(6 downto 0);
