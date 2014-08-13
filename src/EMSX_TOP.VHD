@@ -40,8 +40,12 @@ use work.vdp_package.all;
 entity emsx_top is
   port(
     -- Clock, Reset ports
-    CLOCK_50	: in std_logic;		-- Input clock DE1 50 MHz
-    CLOCK_27	: in std_logic;		-- Input clock DE1 27 MHz
+--    CLOCK_50	: in std_logic;		-- Input clock DE1 50 MHz
+--    CLOCK_27	: in std_logic;		-- Input clock DE1 27 MHz
+
+	clk21m : in std_logic;
+	memclk : in std_logic;
+	lock_n	: in std_logic;
 
     -- MSX cartridge slot ports
     pSltClk     : out std_logic;	-- pCpuClk returns here, for Z80, etc.
@@ -70,7 +74,7 @@ entity emsx_top is
     pSltSw2     : inout std_logic:='1';          -- Reserved
 
     -- SDRAM DE1 ports
-    pMemClk     : out std_logic;            -- SD-RAM Clock
+--    pMemClk     : out std_logic;            -- SD-RAM Clock
     pMemCke     : out std_logic;            -- SD-RAM Clock enable
     pMemCs_n    : out std_logic;            -- SD-RAM Chip select
     pMemRas_n   : out std_logic;            -- SD-RAM Row/RAS
@@ -124,32 +128,25 @@ entity emsx_top is
     HEX2	    : out std_logic_vector(6 downto 0);
     HEX3	    : out std_logic_vector(6 downto 0);
 
-    -- DE1 i2c
-    I2C_SCLK	: out std_logic;
-    I2C_SDAT	: inout std_logic;
-
-    -- DE1 Audio Codec
-    AUD_ADCLRCK	: out std_logic;
-    AUD_ADCDAT	: in std_logic;
-    AUD_XCK	    : out std_logic;
-    AUD_DACLRCK	: out std_logic;
-    AUD_DACDAT	: out std_logic;
-    AUD_BCLK	: out std_logic	
+	SOUND_L : out std_logic_vector(15 downto 0);
+	SOUND_R : out std_logic_vector(15 downto 0);
+	CmtIn : in std_logic
+--    -- DE1 i2c
+--    I2C_SCLK	: out std_logic;
+--    I2C_SDAT	: inout std_logic;
+--
+--    -- DE1 Audio Codec
+--    AUD_ADCLRCK	: out std_logic;
+--    AUD_ADCDAT	: in std_logic;
+--    AUD_XCK	    : out std_logic;
+--    AUD_DACLRCK	: out std_logic;
+--    AUD_DACDAT	: out std_logic;
+--    AUD_BCLK	: out std_logic	
 );
 end emsx_top;
 
 -- ====================================================================
 architecture rtl of emsx_top is
-
-  component pll4x2                      -- Altera specific component
-    port(								-- 50*3/7 = 21428571 ��
-      inclk0 : in std_logic := '0';     -- 50.00MHz input to PLL    (external I/O pin, from crystal oscillator)
-      c0     : out std_logic ;          -- 21.43MHz output from PLL (internal LEs, for VDP, internal-bus, etc.)
-      c1     : out std_logic ;          -- 85.72MHz output from PLL (internal LEs, for SD-RAM)
-      c2     : out std_logic ;          -- 85.72MHz output from PLL (external I/O pin, for SD-RAM)
-	  locked : out std_logic
-    );
-  end component;
 
   component t80a
     port(
@@ -504,30 +501,6 @@ end component;
 
 -- DE1 COMPONENTS ------------------------------------------------
 
-  component a_codec
-	port(
-	  iCLK	    : in std_logic;
-	  iSL       : in std_logic_vector(15 downto 0);	-- left chanel
-	  iSR       : in std_logic_vector(15 downto 0);	-- right chanel
-	  oAUD_XCK	: out std_logic;
-	  oAUD_DATA : out std_logic;
-	  oAUD_LRCK : out std_logic;
-	  oAUD_BCK  : out std_logic;
-	  iAUD_ADCDAT	: in std_logic;
-	  oAUD_ADCLRCK	: out std_logic;
-	  o_tape	: out std_logic	  
-	);
-  end component;
-
-  component I2C_AV_Config
-	port(
-	  iCLK	    : in std_logic;
-	  iRST_N    : in std_logic;
-	  oI2C_SCLK : out std_logic;
-	  oI2C_SDAT : inout std_logic
-	);
-  end component;
-
   component seg7_lut_4
 	port(
 	  oSEG0	  : out std_logic_vector(6 downto 0);
@@ -561,14 +534,14 @@ end component;
   alias  DispMode    : std_logic_vector(1 downto 0) is iDipLed(1 downto 0);	-- '0x': VGA out; '1x': TV out
 
   -- Clock, Reset control signals
-  signal clk21m      : std_logic;
-  signal memclk      : std_logic;
+--  signal clk21m      : std_logic;
+--  signal memclk      : std_logic;
   signal cpuclk      : std_logic;
   signal clkena      : std_logic;
   signal clkdiv      : std_logic_vector(1 downto 0);
   signal ff_turbo    : std_logic;
   signal reset       : std_logic;
-  signal lock_n       : std_logic;
+--  signal lock_n       : std_logic;
   signal RstEna      : std_logic := '0';
   signal RstSeq      : std_logic_vector(4 downto 0) := (others => '0');
   signal RstPower	 : std_logic := '1'; -- reset from POWER ON
@@ -699,7 +672,7 @@ end component;
   signal Fkeys       : std_logic_vector(7 downto 0);
 
   -- CMT signals
-  signal CmtIn       : std_logic;
+--  signal CmtIn       : std_logic;
   alias  CmtOut      : std_logic is PpiPortC(5);
   alias  REMOut      : std_logic is PpiPortC(4);
 
@@ -776,8 +749,8 @@ end component;
   signal DACin_R     : std_logic_vector(DAC_MSBI downto 0);
   signal DACout      : std_logic;
   signal Sound_level : std_logic_vector(8 downto 0);
-  signal Sound_L     : std_logic_vector(15 downto 0);
-  signal Sound_R     : std_logic_vector(15 downto 0);
+--  signal Sound_L     : std_logic_vector(15 downto 0);
+--  signal Sound_R     : std_logic_vector(15 downto 0);
 
   signal MstrVol     : std_logic_vector(2 downto 0);
   signal PsgVol     : std_logic_vector(2 downto 0);
@@ -2045,19 +2018,10 @@ pMemDat		<= SdrDat;
 -- Reserved ports
 ----------------------------------------------------------------
 
-   AUD_ADCLRCK	<= 'Z';
 
 ----------------------------------------------------------------
 -- Connect components
 ----------------------------------------------------------------
-  U00 : pll4x2
-    port map(					-- for Altera DE1
-      inclk0 => CLOCK_50,       -- 50 MHz external
-      c0     => clk21m,         -- 21.43MHz internal (50*3/7)
-      c1     => memclk,         -- 85.72MHz = 21.43MHz x 4
-      c2     => pMemClk,        -- 85.72MHz external
-      locked => lock_n
-    );
 
   U01 : t80a
     port map(
@@ -2199,27 +2163,7 @@ pMemDat		<= SdrDat;
   U34: seg7_lut_4
     port map (HEX0,HEX1,HEX2,HEX3,PpiPortA & EXPSLOT3);
 
-  U35: a_codec
-	port map (
-	  iCLK	  => CLOCK_27,
-	  iSL     => SOUND_L,
-	  iSR     => SOUND_R,
-	  oAUD_XCK  => AUD_XCK,
-	  oAUD_DATA => AUD_DACDAT,
-	  oAUD_LRCK => AUD_DACLRCK,
-	  oAUD_BCK  => AUD_BCLK,
-	  iAUD_ADCDAT => AUD_ADCDAT,
-	  oAUD_ADCLRCK => AUD_ADCLRCK,
-	  o_tape => CmtIn
-	);
 
-  U36: I2C_AV_Config
-	port map (
-	  iCLK	  => CLOCK_27,
-	  iRST_N  => NOT reset,
-	  oI2C_SCLK => I2C_SCLK,
-	  oI2C_SDAT => I2C_SDAT
-	);
 
   U37: system_timer
 	port map (

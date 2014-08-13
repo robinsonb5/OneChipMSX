@@ -74,9 +74,33 @@ END entity;
 
 architecture rtl of DE1_Toplevel is
 
+  component a_codec
+	port(
+	  iCLK	    : in std_logic;
+	  iSL       : in std_logic_vector(15 downto 0);	-- left chanel
+	  iSR       : in std_logic_vector(15 downto 0);	-- right chanel
+	  oAUD_XCK	: out std_logic;
+	  oAUD_DATA : out std_logic;
+	  oAUD_LRCK : out std_logic;
+	  oAUD_BCK  : out std_logic;
+	  iAUD_ADCDAT	: in std_logic;
+	  oAUD_ADCLRCK	: out std_logic;
+	  o_tape	: out std_logic	  
+	);
+  end component;
+
+  component I2C_AV_Config
+	port(
+	  iCLK	    : in std_logic;
+	  iRST_N    : in std_logic;
+	  oI2C_SCLK : out std_logic;
+	  oI2C_SDAT : inout std_logic
+	);
+  end component;
+
 signal reset : std_logic;
-signal sysclk : std_logic;
-signal slowclk : std_logic;
+signal clk21m      : std_logic;
+signal memclk      : std_logic;
 signal pll_locked : std_logic;
 
 signal ps2m_clk_in : std_logic;
@@ -101,6 +125,10 @@ signal audio_r : signed(15 downto 0);
 
 signal hex : std_logic_vector(15 downto 0);
 
+signal SOUND_L : std_logic_vector(15 downto 0);
+signal SOUND_R : std_logic_vector(15 downto 0);
+signal CmtIn : std_logic;
+
 alias PS2_MDAT : std_logic is GPIO_1(19);
 alias PS2_MCLK : std_logic is GPIO_1(18);
 
@@ -112,39 +140,6 @@ COMPONENT SEG7_LUT
 	);
 END COMPONENT;
 
-COMPONENT audio_top
-	PORT
-	(
-		clk		:	 IN STD_LOGIC;
-		rst_n		:	 IN STD_LOGIC;
-		rdata		:	 IN SIGNED(15 DOWNTO 0);
-		ldata		:	 IN SIGNED(15 DOWNTO 0);
-		aud_bclk		:	 OUT STD_LOGIC;
-		aud_daclrck		:	 OUT STD_LOGIC;
-		aud_dacdat		:	 OUT STD_LOGIC;
-		aud_xck		:	 OUT STD_LOGIC;
-		i2c_sclk		:	 OUT STD_LOGIC;
-		i2c_sdat		:	 INOUT STD_LOGIC
-	);
-END COMPONENT;
-
-COMPONENT video_vga_dither
-	generic (
-		outbits : integer :=4
-	);
-	port (
-		clk : in std_logic;
-		hsync : in std_logic;
-		vsync : in std_logic;
-		vid_ena : in std_logic;
-		iRed : in unsigned(7 downto 0);
-		iGreen : in unsigned(7 downto 0);
-		iBlue : in unsigned(7 downto 0);
-		oRed : out unsigned(outbits-1 downto 0);
-		oGreen : out unsigned(outbits-1 downto 0);
-		oBlue : out unsigned(outbits-1 downto 0)
-	);
-end COMPONENT;
 
 begin
 
@@ -166,11 +161,25 @@ reset<=(not SW(0) xor KEY(0)) and pll_locked;
 --hexdigit3 : component SEG7_LUT
 --	port map (oSEG => HEX3, iDIG => hex(15 downto 12));
 
+  U00 : entity work.pll4x2
+    port map(					-- for Altera DE1
+		areset => not KEY(0),
+      inclk0 => CLOCK_50,       -- 50 MHz external
+      c0     => clk21m,         -- 21.43MHz internal (50*3/7)
+      c1     => memclk,         -- 85.72MHz = 21.43MHz x 4
+      c2     => DRAM_CLK,        -- 85.72MHz external
+      locked => pll_locked
+    );
+
+
 emsx_top : entity work.emsx_top
   port map(
     -- Clock, Reset ports
-    CLOCK_50 => CLOCK_50,
-    CLOCK_27 => CLOCK_27(0),
+--    CLOCK_50 => CLOCK_50,
+--    CLOCK_27 => CLOCK_27(0),
+		clk21m => clk21m,
+		memclk => memclk,
+		lock_n => pll_locked,
 
 --    -- MSX cartridge slot ports
 --    pSltClk     : out std_logic;	-- pCpuClk returns here, for Z80, etc.
@@ -199,7 +208,7 @@ emsx_top : entity work.emsx_top
 --    pSltSw2     : inout std_logic:='1';          -- Reserved
 
     -- SDRAM DE1 ports
-	 pMemClk => DRAM_CLK,
+--	 pMemClk => DRAM_CLK,
     pMemCke => DRAM_CKE,
     pMemCs_n => DRAM_CS_N,
     pMemRas_n => DRAM_RAS_N,
@@ -254,23 +263,16 @@ emsx_top : entity work.emsx_top
     HEX2 => HEX2,
     HEX3 => HEX3,
 
-    -- DE1 i2c
-    I2C_SCLK => I2C_SCLK,
-    I2C_SDAT => I2C_SDAT,
-
-    AUD_ADCLRCK => AUD_ADCLRCK,
-    AUD_ADCDAT	=> AUD_ADCDAT,
-    AUD_XCK => AUD_XCK,
-    AUD_DACLRCK => AUD_DACLRCK,
-    AUD_DACDAT => AUD_DACDAT,
-    AUD_BCLK => AUD_BCLK
+	 SOUND_L => SOUND_L,
+	 SOUND_R => SOUND_R,
+	 CmtIn => CmtIn
 );
 
 	VGA_HS<=vga_hsync;
 	VGA_VS<=vga_vsync;
 	vga_window<='1';
 
-	mydither : component video_vga_dither
+	mydither : entity work.video_vga_dither
 		generic map(
 			outbits => 4
 		)
@@ -286,21 +288,30 @@ emsx_top : entity work.emsx_top
 			oGreen => VGA_G,
 			oBlue => VGA_B
 		);
+		
+		
+  AUD_ADCLRCK	<= 'Z';
+		
+  U35: a_codec
+	port map (
+	  iCLK	  => clk21m,
+	  iSL     => SOUND_L,
+	  iSR     => SOUND_R,
+	  oAUD_XCK  => AUD_XCK,
+	  oAUD_DATA => AUD_DACDAT,
+	  oAUD_LRCK => AUD_DACLRCK,
+	  oAUD_BCK  => AUD_BCLK,
+	  iAUD_ADCDAT => AUD_ADCDAT,
+	  oAUD_ADCLRCK => AUD_ADCLRCK,
+	  o_tape => CmtIn
+	);
 
---myaudio: component audio_top
---port map(
---  clk=>slowclk,
---  rst_n=>reset,
---  -- audio shifter,
---  rdata=>audio_r,
---  ldata=>audio_l,
---  aud_bclk=>AUD_BCLK, -- CODEC data clock
---  aud_daclrck=>AUD_DACLRCK, -- CODEC data clock
---  aud_dacdat=>AUD_DACDAT, -- CODEC data
---  aud_xck=>AUD_XCK, -- CODEC data clock
---  -- I2C audio config
---  i2c_sclk=>I2C_SCLK, -- CODEC config clock
---  i2c_sdat=>I2C_SDAT -- CODEC config data
---);
+  U36: I2C_AV_Config
+	port map (
+	  iCLK	  => clk21m,
+	  iRST_N  => NOT reset,
+	  oI2C_SCLK => I2C_SCLK,
+	  oI2C_SDAT => I2C_SDAT
+	);
 
 end architecture;
