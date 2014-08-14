@@ -1,0 +1,12 @@
+Need a simple ZPU-based module to handle loading a boot rom from SD card,
+then handle a simple OSD which will be used to control DIP switches.
+The ZPU module needs to have the ability to pause the main CPU
+so it can load DIP switch settings before allowing the OCMSX to boot.
+
+OSD will comprise a single M4K character RAM, allowing 32 x 16 character
+text display, or alternatively, 64x8 character.
+The character ROM will contain 128 characters, 8 bytes per character, 
+so 1024 bytes, 8192 bits, so 2 M4Ks.
+
+The OSD ROM will probably end up being in the region of 16 M4ks.
+

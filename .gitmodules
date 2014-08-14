@@ -1,3 +1,6 @@
 [submodule "z80asm"]
 	path = z80asm
 	url = git://git.savannah.nongnu.org/z80asm.git
+[submodule "ZPUFlex"]
+	path = ZPUFlex
+	url = https://github.com/robinsonb5/ZPUFlex.git
