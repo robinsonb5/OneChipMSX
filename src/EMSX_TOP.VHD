@@ -122,11 +122,8 @@ entity emsx_top is
     pVideoHS_n  : out std_logic;                        -- Csync(RGB15K), HSync(VGA31K)
     pVideoVS_n  : out std_logic;                        -- Audio(RGB15K), VSync(VGA31K)
 
-    -- DE1 7-SEG Display
-    HEX0	    : out std_logic_vector(6 downto 0);
-    HEX1	    : out std_logic_vector(6 downto 0);
-    HEX2	    : out std_logic_vector(6 downto 0);
-    HEX3	    : out std_logic_vector(6 downto 0);
+    -- Hex display
+    hex	    : out std_logic_vector(15 downto 0);
 
 	SOUND_L : out std_logic_vector(15 downto 0);
 	SOUND_R : out std_logic_vector(15 downto 0);
@@ -498,18 +495,6 @@ end component;
 		ODATA	: OUT	STD_LOGIC_VECTOR( MSBO DOWNTO 0 )
 	);
   END COMPONENT;
-
--- DE1 COMPONENTS ------------------------------------------------
-
-  component seg7_lut_4
-	port(
-	  oSEG0	  : out std_logic_vector(6 downto 0);
-	  oSEG1   : out std_logic_vector(6 downto 0);
-	  oSEG2   : out std_logic_vector(6 downto 0);
-	  oSEG3   : out std_logic_vector(6 downto 0);
-	  iDIG	  : in std_logic_vector(15 downto 0)
-	);
-  end component;
 
 -- ///////////////////////////////////////////////////////////////////
 -- *******************************************************************
@@ -2160,10 +2145,7 @@ pMemDat		<= SdrDat;
   U33: esepwm
     generic map (DAC_MSBI) port map (clk21m, reset, lpf5_wave, DACout);
 
-  U34: seg7_lut_4
-    port map (HEX0,HEX1,HEX2,HEX3,PpiPortA & EXPSLOT3);
-
-
+	 hex<=PpiPortA & EXPSLOT3;
 
   U37: system_timer
 	port map (

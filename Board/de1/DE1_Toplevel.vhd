@@ -98,6 +98,16 @@ architecture rtl of DE1_Toplevel is
 	);
   end component;
 
+  component seg7_lut_4
+	port(
+	  oSEG0	  : out std_logic_vector(6 downto 0);
+	  oSEG1   : out std_logic_vector(6 downto 0);
+	  oSEG2   : out std_logic_vector(6 downto 0);
+	  oSEG3   : out std_logic_vector(6 downto 0);
+	  iDIG	  : in std_logic_vector(15 downto 0)
+	);
+  end component;
+
 signal reset : std_logic;
 signal clk21m      : std_logic;
 signal memclk      : std_logic;
@@ -258,10 +268,7 @@ emsx_top : entity work.emsx_top
     pVideoVS_n => vga_vsync,
 
     -- DE1 7-SEG Display
-    HEX0 => HEX0,
-    HEX1 => HEX1,
-    HEX2 => HEX2,
-    HEX3 => HEX3,
+    hex => hex,
 
 	 SOUND_L => SOUND_L,
 	 SOUND_R => SOUND_R,
@@ -288,7 +295,13 @@ emsx_top : entity work.emsx_top
 			oGreen => VGA_G,
 			oBlue => VGA_B
 		);
+
 		
+-- Hex display		
+	U34: seg7_lut_4
+    port map (HEX0,HEX1,HEX2,HEX3,hex);
+
+-- Audio
 		
   AUD_ADCLRCK	<= 'Z';
 		
