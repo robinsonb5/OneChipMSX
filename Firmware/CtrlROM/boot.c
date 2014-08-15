@@ -17,8 +17,6 @@ void _break();
 
 /* Load files named in a manifest file */
 
-static unsigned char Manifest[2048];
-
 int main(int argc,char **argv)
 {
 	int i;
@@ -28,7 +26,7 @@ int main(int argc,char **argv)
 	{
 		puts("Hunting for partition\n");
 		FindDrive();
-		if(LoadFile("BIOS____SYS",Manifest))
+		if(LoadFile("BIOS_M2PROM",100000))
 		{
 			// Spoonfeed data to OCMSX here
 		}

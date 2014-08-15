@@ -273,6 +273,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
             {
                 if (!(pEntry->Attributes & (ATTR_VOLUME | ATTR_DIRECTORY))) // not a volume nor directory
                 {
+					puts(pEntry->Name);
                     if (compare((const char*)pEntry->Name, name,11) == 0)
                     {
                         file->size = SwapBBBB(pEntry->FileSize); 		// for 68000
