@@ -547,7 +547,6 @@ set_global_assignment -name VHDL_FILE ../../../RTL/simple_uart.vhd
 set_global_assignment -name VHDL_FILE ../../../ZPUFlex/RTL/zpupkg.vhd
 set_global_assignment -name VHDL_FILE ../../../ZPUFlex/RTL/zpu_core_flex.vhd
 set_global_assignment -name VHDL_FILE ../../RTL/DE1_CtrlTest_Toplevel.vhd
-set_global_assignment -name VHDL_FILE ../../RTL/CtrlTest.vhd
 set_global_assignment -name VHDL_FILE ../../../Firmware/CtrlROM/CtrlROM_ROM.vhd
 set_global_assignment -name QIP_FILE ../../../src/peripheral/PLL4X2.qip
 set_global_assignment -name VHDL_FILE ../../RTL/spi.vhd
@@ -665,5 +664,6 @@ set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=00
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=147" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_LOWORD=56378" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_HIWORD=65305" -section_id auto_signaltap_0
-set_global_assignment -name SLD_FILE stp1_auto_stripped.stp
+set_global_assignment -name VHDL_FILE ../../RTL/CtrlModule.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name SLD_FILE /home/amr/FPGA/DE1/OCMSX/CtrlModule/fpga/de1/stp1_auto_stripped.stp

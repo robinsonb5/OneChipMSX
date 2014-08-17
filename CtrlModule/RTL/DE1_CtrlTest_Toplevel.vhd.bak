@@ -44,8 +44,8 @@ entity DE1_Toplevel is
 		SRAM_WE_N		:	 out STD_LOGIC;
 		SRAM_CE_N		:	 out STD_LOGIC;
 		SRAM_OE_N		:	 out STD_LOGIC;
-		SD_DAT		:	 in STD_LOGIC;	-- in
-		SD_DAT3		:	 out STD_LOGIC; -- out
+		SD_DAT		:	 inout STD_LOGIC;	-- in
+		SD_DAT3		:	 inout STD_LOGIC; -- out
 		SD_CMD		:	 out STD_LOGIC;
 		SD_CLK		:	 out STD_LOGIC;
 		TDI		:	 in STD_LOGIC;
@@ -182,7 +182,7 @@ reset<=(not SW(0) xor KEY(0)) and pll_locked;
     );
 
 
-emsx_top : entity work.Virtual_Toplevel
+emsx_top : entity work.emsx_top
   port map(
     -- Clock, Reset ports
 --    CLOCK_50 => CLOCK_50,
@@ -272,10 +272,7 @@ emsx_top : entity work.Virtual_Toplevel
 
 	 SOUND_L => SOUND_L,
 	 SOUND_R => SOUND_R,
-	 CmtIn => CmtIn,
-	 
-	 RS232_RxD => UART_RXD,
-	 RS232_TxD => UART_TXD
+	 CmtIn => CmtIn
 );
 
 	VGA_HS<=vga_hsync;

@@ -101,8 +101,8 @@ entity emsx_top is
     pSd_Ck      : out std_logic;                        -- pin 5
     pSd_Cm      : out std_logic;                        -- pin 2
 --  pSd_Dt	    : inout std_logic_vector( 3 downto 0);  -- pin 1(D3), 9(D2), 8(D1), 7(D0)
-    pSd_Dt3	    : inout std_logic;						-- pin 1
-    pSd_Dt0	    : inout std_logic;						-- pin 7
+    pSd_Dt3	    : out std_logic;						-- pin 1
+    pSd_Dt0	    : in std_logic;						-- pin 7
 
     -- DIP switch, Lamp ports
     pSW		    : in std_logic_vector( 3 downto 0);	    -- 0 - press; 1 - unpress
@@ -127,18 +127,11 @@ entity emsx_top is
 
 	SOUND_L : out std_logic_vector(15 downto 0);
 	SOUND_R : out std_logic_vector(15 downto 0);
-	CmtIn : in std_logic
---    -- DE1 i2c
---    I2C_SCLK	: out std_logic;
---    I2C_SDAT	: inout std_logic;
---
---    -- DE1 Audio Codec
---    AUD_ADCLRCK	: out std_logic;
---    AUD_ADCDAT	: in std_logic;
---    AUD_XCK	    : out std_logic;
---    AUD_DACLRCK	: out std_logic;
---    AUD_DACDAT	: out std_logic;
---    AUD_BCLK	: out std_logic	
+	CmtIn : in std_logic;
+	
+	boot_req : out std_logic;
+	boot_ack : in std_logic;
+	boot_data : in std_logic_vector(7 downto 0)
 );
 end emsx_top;
 
@@ -205,7 +198,10 @@ architecture rtl of emsx_top is
       epc_cs  : out std_logic;
       epc_oe  : out std_logic;
       epc_di  : out std_logic;
-      epc_do  : in std_logic
+      epc_do  : in std_logic;
+		boot_req : out std_logic;
+		boot_ack : in std_logic :='1';
+		boot_data : in std_logic_vector(7 downto 0) := (others=>'0')
     );
   end component;
 
@@ -815,7 +811,7 @@ end component;
   signal portF4_bit7 : std_logic; -- 1 - hard reset; 0 - soft reset
   
   signal ff_ldbios   : std_logic; -- 1 - load BIOS
-
+  
 -- ***************************************************************
 begin
 ----------------------------------------------------------------
@@ -1077,7 +1073,7 @@ begin
 			pSltWait_n <= '0';
 		elsif (ff_turbo = '1' and OpllReq = '1' and OpllAck = '0') then
 			pSltWait_n <= '0';
-		elsif (ErmReq = '1' and adr(15 downto 13) = "010" and MmcAct = '1') then
+		elsif (ErmReq = '1' or (adr(15 downto 13) = "010" and MmcAct = '1')) then  -- ErmReq is not a constant signal
 			pSltWait_n <= '0';
 		elsif (SdPaus = '1') then
 			pSltWait_n <= '0';
@@ -2036,11 +2032,10 @@ pMemDat		<= SdrDat;
     port map(clk21m, reset, clkena, ErmReq, Open, wrt, adr, Open, dbo,
              ErmRam, ErmWrt, ErmAdr, RamDbi, Open,
              MmcDbi, MmcEna, MmcAct, pSd_Ck, pSd_Dt3, pSd_Cm, pSd_Dt0,
-             EPC_CK, EPC_CS, EPC_OE, EPC_DI, EPC_DO);
-    pSd_Dt0 <= 'Z';
-
-  U04 : cyclone_asmiblock
-    port map(EPC_CK, EPC_CS, EPC_DI, EPC_OE, EPC_DO);
+             EPC_CK, EPC_CS, EPC_OE, EPC_DI, EPC_DO,boot_req,boot_ack,boot_data);
+--
+--  U04 : cyclone_asmiblock
+--    port map(EPC_CK, EPC_CS, EPC_DI, EPC_OE, EPC_DO);
 
   U05 : mapper
     port map(clk21m, reset, clkena, MapReq, Open, mem, wrt, adr, MapDbi, dbo,

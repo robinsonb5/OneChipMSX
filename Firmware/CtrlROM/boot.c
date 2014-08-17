@@ -18,8 +18,8 @@ fileTYPE file; // Use the file defined in minfat.h to avoid another instance tak
 int main(int argc,char **argv)
 {
 	int i;
-	HW_HOST(HW_HOST_SW)=0x39; // Default DIP switch settings
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
+	HW_HOST(HW_HOST_SW)=0x39; // Default DIP switch settings
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
 	puts("Initializing SD card\n");
@@ -34,13 +34,15 @@ int main(int argc,char **argv)
 			int filesize=(file.size+511)/512;
 			int c=0;
 
+
 			while(c<filesize)
 			{
-				putchar('.');
 				if(FileRead(&file,sector_buffer))
 				{
 					int i;
 					int *p=(int *)&sector_buffer;
+					if(!c)
+						HW_HOST(HW_HOST_BOOTDATA)=0; // Write one dummy byte since firmware discards the first byte
 					for(i=0;i<512;i+=4)
 					{
 						int t=*p++;
@@ -52,12 +54,14 @@ int main(int argc,char **argv)
 						HW_HOST(HW_HOST_BOOTDATA)=t3;
 						HW_HOST(HW_HOST_BOOTDATA)=t2;
 						HW_HOST(HW_HOST_BOOTDATA)=t1;
+						putchar('+');
 					}
 				}
 				else
 					puts("Read block failed\n");
 				FileNextSector(&file);
 				++c;
+				putchar('.');
 			}
 		}
 		else

@@ -2,7 +2,7 @@
 #define HOST_H
 
 #define HOSTBASE 0xFFFFFF40
-#define HW_HOST(x) *(volatile unsigned int *)(SPIBASE+x)
+#define HW_HOST(x) *(volatile unsigned int *)(HOSTBASE+x)
 
 /* SPI registers */
 

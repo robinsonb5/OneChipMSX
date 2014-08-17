@@ -155,7 +155,7 @@ reset<=(not SW(0) xor KEY(0)) and pll_locked;
     );
 
 
-top : entity work.CtrlTest
+top : entity work.CtrlModule
 	generic map(
 		sysclk_frequency => 857
 	)
@@ -174,11 +174,14 @@ top : entity work.CtrlTest
 	 
 		-- PS/2
 		ps2k_clk_in => ps2k_clk_in,
-		ps2k_dat_in => ps2k_dat_in,
-		ps2k_clk_out => ps2k_clk_out,
-		ps2k_dat_out => ps2k_dat_out
+		ps2k_dat_in => ps2k_dat_in
+--		ps2k_clk_out => ps2k_clk_out,
+--		ps2k_dat_out => ps2k_dat_out
 
 );
+
+ps2k_clk_out<='1';
+ps2k_dat_out<='1';
 
 -- Audio
 		

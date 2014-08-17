@@ -5,7 +5,7 @@ use IEEE.numeric_std.ALL;
 library work;
 use work.zpupkg.ALL;
 
-entity CtrlTest is
+entity CtrlModule is
 	generic (
 		sysclk_frequency : integer := 1000 -- Sysclk frequency * 10
 	);
@@ -29,8 +29,8 @@ entity CtrlTest is
 		-- PS2 keyboard
 		ps2k_clk_in : in std_logic := '1';
 		ps2k_dat_in : in std_logic := '1';
-		ps2k_clk_out : out std_logic;
-		ps2k_dat_out : out std_logic;
+--		ps2k_clk_out : out std_logic;
+--		ps2k_dat_out : out std_logic;
 		
 		-- Host control
 		host_reset_n : out std_logic;
@@ -44,7 +44,7 @@ entity CtrlTest is
 );
 end entity;
 
-architecture rtl of CtrlTest is
+architecture rtl of CtrlModule is
 
 constant sysclk_hz : integer := sysclk_frequency*1000;
 constant uart_divisor : integer := sysclk_hz/1152;
@@ -91,6 +91,7 @@ signal zpu_to_rom : ZPU_ToROM;
 signal zpu_from_rom : ZPU_FromROM;
 
 signal host_bootdata_pending : std_logic;
+signal host_bootdata_ack_r : std_logic;
 
 
 -- Interrupt signals
@@ -117,6 +118,8 @@ signal kbdrecvbyte : std_logic_vector(10 downto 0);
 --signal kbdsendbyte : std_logic_vector(7 downto 0);
 
 begin
+
+	host_bootdata_ack<=host_bootdata_ack_r;
 
 -- ROM
 
@@ -215,8 +218,8 @@ spi : entity work.spi_interface
 			reset => not reset, -- active high!
 			ps2_clk_in => ps2k_clk_in,
 			ps2_dat_in => ps2k_dat_in,
-			ps2_clk_out => ps2k_clk_out,
-			ps2_dat_out => ps2k_dat_out,
+--			ps2_clk_out => ps2k_clk_out, -- Receive only
+--			ps2_dat_out => ps2k_dat_out,
 			
 			inIdle => open,
 			sendTrigger => '0',
@@ -287,20 +290,13 @@ begin
 		spi_active<='0';
 		int_enabled<='0';
 		kbdrecvreg <='0';
+		host_bootdata_ack_r<='0';
+		host_bootdata_pending<='0';
 	elsif rising_edge(clk) then
 		mem_busy<='1';
 		ser_txgo<='0';
 		spi_trigger<='0';
 		int_ack<='0';
-
-		if host_bootdata_req<='1' then
-			if host_bootdata_pending='1' then
-				host_bootdata_ack<='1';
-				host_bootdata_pending<='0';
-			end if;
-		else
-			host_bootdata_ack<='0';
-		end if;
 		
 		-- Write from CPU?
 		if mem_writeEnable='1' then
@@ -338,11 +334,9 @@ begin
 							mem_busy<='0';
 							
 						when X"48" => -- Host boot data
-							if host_bootdata_pending='0' then
-								host_bootdata<=mem_write(7 downto 0);
-								host_bootdata_pending<='1';
-								mem_busy<='0';
-							end if;
+							host_bootdata<=mem_write(7 downto 0);
+							host_bootdata_pending<='1';
+--								mem_busy<='0';
 
 						when others =>
 							mem_busy<='0';
@@ -411,6 +405,14 @@ begin
 			kbdrecvreg <= '1'; -- remains high until cleared by a read
 		end if;
 
+		if host_bootdata_req='1' and host_bootdata_pending='1' then
+			host_bootdata_ack_r<='1';
+			host_bootdata_pending<='0';
+		elsif host_bootdata_ack_r='1' and host_bootdata_req='0' then
+			host_bootdata_ack_r<='0';
+			mem_busy<='0';
+		end if;
+		
 	end if; -- rising-edge(clk)
 
 end process;

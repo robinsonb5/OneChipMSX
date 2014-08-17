@@ -65,7 +65,11 @@ entity megasd is
     epc_cs  : out std_logic;
     epc_oe  : out std_logic;
     epc_di  : out std_logic;
-    epc_do  : in std_logic
+    epc_do  : in std_logic;
+	 
+	 boot_req : out std_logic;
+	 boot_ack : in std_logic :='1';
+	 boot_data : in std_logic_vector(7 downto 0) := (others=>'0')
   );
 end megasd;
 
@@ -76,7 +80,11 @@ architecture rtl of megasd is
   signal ErmBank2    : std_logic_vector(7 downto 0);
   signal ErmBank3    : std_logic_vector(7 downto 0);
 
+  signal boot_req_r : std_logic;
+  
 begin
+
+	boot_req<=boot_req_r;
   ----------------------------------------------------------------
   -- ESE-RAM bank register access
   ----------------------------------------------------------------
@@ -141,6 +149,8 @@ begin
       epc_ck <= '1';
       epc_cs <= '1';
       epc_di <= 'Z';
+		
+		boot_req_r<='0';
     elsif (clk21m'event and clk21m = '1') then
       if (ErmBank0(7 downto 6) = "01") then		-- 40h (4000..5fff)
         MmcEnx := '1';
@@ -226,11 +236,16 @@ begin
         if (EpcEna = '0') then
           mmc_cs <= adr(12);		-- /CS MMC (4000h..47ff)
           epc_cs <= '1';
+			 MmcSeq := "10101";
         else
           mmc_cs <= '1';
-          epc_cs <= adr(12);		-- /CS EPC (4000h..47ff)
+          epc_cs <= '1';
+--			 if wrt='0' then
+				boot_req_r<=not(adr(12) or wrt); -- Needs to be 1 when adr(12) and wrt are both zero
+--			 else
+--           epc_cs <= adr(12);		-- /CS EPC (4000h..47ff)
+--			 end if;
         end if;
-        MmcSeq := "10101";
       elsif (MmcSeq /= "00000") then
         MmcSeq := MmcSeq - 1;
       end if;
@@ -241,7 +256,15 @@ begin
         MmcMod := dbo(1 downto 0);	-- 
       end if;
 -- generate /WAIT for Z80
-      if (MmcSeq = "00000") then
+		-- Read data from boot channel
+		if boot_req_r='1' then
+			mmcact<='1';
+			if boot_ack='1' then
+				mmcdbi <= boot_data;		-- RD data EPC
+				boot_req_r<='0';
+				MmcSeq := "10101";
+			end if;
+		elsif (MmcSeq = "00000") then
         mmcact <= '0';
       else
         mmcact <= '1';
