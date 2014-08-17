@@ -21,7 +21,26 @@ entity CtrlTest is
 		
 		-- UART
 		rxd	: in std_logic;
-		txd	: out std_logic
+		txd	: out std_logic;
+		
+		-- DIP switches
+		dipswitches : out std_logic_vector(9 downto 0);
+
+		-- PS2 keyboard
+		ps2k_clk_in : in std_logic := '1';
+		ps2k_dat_in : in std_logic := '1';
+		ps2k_clk_out : out std_logic;
+		ps2k_dat_out : out std_logic;
+		
+		-- Host control
+		host_reset_n : out std_logic;
+		host_inhibit_n : out std_logic;
+		host_divert_sdcard : out std_logic;
+		
+		-- Host boot data
+		host_bootdata : out std_logic_vector(7 downto 0);
+		host_bootdata_req : in std_logic:='0';
+		host_bootdata_ack : out std_logic
 );
 end entity;
 
@@ -70,6 +89,32 @@ signal mem_readEnable       : std_logic;
 
 signal zpu_to_rom : ZPU_ToROM;
 signal zpu_from_rom : ZPU_FromROM;
+
+signal host_bootdata_pending : std_logic;
+
+
+-- Interrupt signals
+
+constant int_max : integer := 0;
+signal int_triggers : std_logic_vector(int_max downto 0);
+signal int_status : std_logic_vector(int_max downto 0);
+signal int_ack : std_logic;
+signal int_req : std_logic;
+signal int_enabled : std_logic :='0'; -- Disabled by default
+signal int_trigger : std_logic;
+
+
+-- PS2 signals
+signal ps2_int : std_logic;
+
+signal kbdidle : std_logic;
+signal kbdrecv : std_logic;
+signal kbdrecvreg : std_logic;
+signal kbdrecvbyte : std_logic_vector(10 downto 0);
+--signal kbdsendbusy : std_logic;
+--signal kbdsendtrigger : std_logic;
+--signal kbdsenddone : std_logic;
+--signal kbdsendbyte : std_logic_vector(7 downto 0);
 
 begin
 
@@ -159,6 +204,46 @@ spi : entity work.spi_interface
 		spiclk_out => spi_clk
 	);
 
+	-- PS2 keyboard
+		mykeyboard : entity work.io_ps2_com
+		generic map (
+			clockFilter => 15,
+			ticksPerUsec => sysclk_frequency/10
+		)
+		port map (
+			clk => clk,
+			reset => not reset, -- active high!
+			ps2_clk_in => ps2k_clk_in,
+			ps2_dat_in => ps2k_dat_in,
+			ps2_clk_out => ps2k_clk_out,
+			ps2_dat_out => ps2k_dat_out,
+			
+			inIdle => open,
+			sendTrigger => '0',
+			sendByte => (others=>'X'),
+			sendBusy => open,
+			sendDone => open,
+			recvTrigger => kbdrecv,
+			recvByte => kbdrecvbyte
+		);
+
+-- Interrupt controller
+
+intcontroller: entity work.interrupt_controller
+generic map (
+	max_int => int_max
+)
+port map (
+	clk => clk,
+	reset_n => reset,
+	trigger => int_triggers, -- Again, thanks ISE.
+	ack => int_ack,
+	int => int_req,
+	status => int_status
+);
+
+int_triggers<=(0=>kbdrecv,
+					others => '0');
 	
 -- Main CPU
 
@@ -189,25 +274,43 @@ spi : entity work.spi_interface
 		out_mem_bEnable     => mem_writeEnableb,
 		out_mem_readEnable  => mem_readEnable,
 		from_rom => zpu_from_rom,
-		to_rom => zpu_to_rom
+		to_rom => zpu_to_rom,
+		interrupt => int_trigger
 	);
 
+int_trigger<=int_req and int_enabled;	
 
 process(clk)
 begin
 	if reset='0' then
 		spi_cs<='1';
 		spi_active<='0';
+		int_enabled<='0';
+		kbdrecvreg <='0';
 	elsif rising_edge(clk) then
 		mem_busy<='1';
 		ser_txgo<='0';
 		spi_trigger<='0';
+		int_ack<='0';
 
+		if host_bootdata_req<='1' then
+			if host_bootdata_pending='1' then
+				host_bootdata_ack<='1';
+				host_bootdata_pending<='0';
+			end if;
+		else
+			host_bootdata_ack<='0';
+		end if;
+		
 		-- Write from CPU?
 		if mem_writeEnable='1' then
 			case mem_addr(maxAddrBit)&mem_addr(10 downto 8) is
 				when X"F" =>	-- Peripherals at 0xFFFFFF00
 					case mem_addr(7 downto 0) is
+						when X"B0" => -- Interrupts
+							int_enabled<=mem_write(0);
+							mem_busy<='0';
+
 						when X"C0" => -- UART
 							ser_txdata<=mem_write(7 downto 0);
 							ser_txgo<='1';
@@ -223,6 +326,23 @@ begin
 							spi_trigger<='1';
 							host_to_spi<=mem_write(7 downto 0);
 							spi_active<='1';
+							
+						when X"40" => -- Host SW
+							mem_busy<='0';
+							dipswitches<=mem_write(9 downto 0);
+							
+						when X"44" => -- Host control
+							host_reset_n<=not mem_write(0);
+							host_inhibit_n<=not mem_write(1);
+							host_divert_sdcard <= mem_write(2);
+							mem_busy<='0';
+							
+						when X"48" => -- Host boot data
+							if host_bootdata_pending='0' then
+								host_bootdata<=mem_write(7 downto 0);
+								host_bootdata_pending<='1';
+								mem_busy<='0';
+							end if;
 
 						when others =>
 							mem_busy<='0';
@@ -237,6 +357,12 @@ begin
 
 				when X"F" =>	-- Peripherals
 					case mem_addr(7 downto 0) is
+						when X"B0" => -- Interrupt
+							mem_read<=(others=>'X');
+							mem_read(int_max downto 0)<=int_status;
+							int_ack<='1';
+							mem_busy<='0';
+
 						when X"C0" => -- UART
 							mem_read<=(others=>'X');
 							mem_read(9 downto 0)<=ser_rxrecv&ser_txready&ser_rxdata;
@@ -250,6 +376,13 @@ begin
 
 						when X"D4" => -- SPI read (blocking)
 							spi_active<='1';
+
+						-- Read from PS/2 regs
+						when X"E0" =>
+							mem_read<=(others =>'X');
+							mem_read(11 downto 0)<=kbdrecvreg & '1' & kbdrecvbyte(10 downto 1);
+							kbdrecvreg<='0';
+							mem_busy<='0';
 
 						when others =>
 							mem_busy<='0';
@@ -272,6 +405,10 @@ begin
 		-- Set this after the read operation has potentially cleared it.
 		if ser_rxint='1' then
 			ser_rxrecv<='1';
+		end if;
+
+		if kbdrecv='1' then
+			kbdrecvreg <= '1'; -- remains high until cleared by a read
 		end if;
 
 	end if; -- rising-edge(clk)

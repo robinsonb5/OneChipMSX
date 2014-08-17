@@ -10,31 +10,75 @@
 #include "spi.h"
 #include "minfat.h"
 #include "small_printf.h"
+#include "host.h"
 
+fileTYPE file; // Use the file defined in minfat.h to avoid another instance taking up ROM space
 
-void _boot();
-void _break();
-
-/* Load files named in a manifest file */
 
 int main(int argc,char **argv)
 {
 	int i;
+	HW_HOST(HW_HOST_SW)=0x39; // Default DIP switch settings
+	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
+	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
 	puts("Initializing SD card\n");
 	if(spi_init())
 	{
 		puts("Hunting for partition\n");
 		FindDrive();
-		if(LoadFile("BIOS_M2PROM",100000))
+
+		if(FileOpen(&file,"BIOS_M2PROM"))
 		{
-			// Spoonfeed data to OCMSX here
+			puts("Opened file, loading...\n");
+			int filesize=(file.size+511)/512;
+			int c=0;
+
+			while(c<filesize)
+			{
+				putchar('.');
+				if(FileRead(&file,sector_buffer))
+				{
+					int i;
+					int *p=(int *)&sector_buffer;
+					for(i=0;i<512;i+=4)
+					{
+						int t=*p++;
+						int t1=t*255;
+						int t2=(t>>8)&255;
+						int t3=(t>>16)&255;
+						int t4=(t>>24)&255;
+						HW_HOST(HW_HOST_BOOTDATA)=t4;
+						HW_HOST(HW_HOST_BOOTDATA)=t3;
+						HW_HOST(HW_HOST_BOOTDATA)=t2;
+						HW_HOST(HW_HOST_BOOTDATA)=t1;
+					}
+				}
+				else
+					puts("Read block failed\n");
+				FileNextSector(&file);
+				++c;
+			}
 		}
 		else
 		{
 			puts("Loading BIOS failed\n");
 		}
 	}
+	HW_HOST(HW_HOST_CTRL)=0;	// Release SD card
+
+	puts("Initialising PS/2 interface...\n");
+
+	PS2Init();
+	EnableInterrupts();
+	while(1)
+	{
+		int k;
+		k=HandlePS2RawCodes();
+		if(k)
+			putchar(k);
+	}
+
 	puts("Returning\n");
 
 	return(0);

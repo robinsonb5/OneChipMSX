@@ -116,7 +116,6 @@ COMPONENT SEG7_LUT
 	);
 END COMPONENT;
 
-
 begin
 
 --	All bidir ports tri-stated
@@ -125,6 +124,14 @@ SRAM_DQ <= (others => 'Z');
 I2C_SDAT	<= 'Z';
 GPIO_0 <= (others => 'Z');
 GPIO_1 <= (others => 'Z');
+
+
+-- PS2 keyboard & mouse
+ps2k_dat_in<=PS2_DAT;
+PS2_DAT <= '0' when ps2k_dat_out='0' else 'Z';
+ps2k_clk_in<=PS2_CLK;
+PS2_CLK <= '0' when ps2k_clk_out='0' else 'Z';
+
 
 reset<=(not SW(0) xor KEY(0)) and pll_locked;
 
@@ -152,18 +159,25 @@ top : entity work.CtrlTest
 	generic map(
 		sysclk_frequency => 857
 	)
-  port map(
-	clk => memclk,
-	reset_n => pll_locked,
+	port map(
+		clk => memclk,
+		reset_n => pll_locked,
 
-    -- SD/MMC slot ports
-    spi_clk => SD_CLK,
-    spi_mosi => SD_CMD,
-    spi_cs => SD_DAT3,
-    spi_miso => SD_DAT,
+		-- SD/MMC slot ports
+		spi_clk => SD_CLK,
+		spi_mosi => SD_CMD,
+		spi_cs => SD_DAT3,
+		spi_miso => SD_DAT,
+		 
+		txd => UART_TXD,
+		rxd => UART_RXD,
 	 
-	 txd => UART_TXD,
-	 rxd => UART_RXD
+		-- PS/2
+		ps2k_clk_in => ps2k_clk_in,
+		ps2k_dat_in => ps2k_dat_in,
+		ps2k_clk_out => ps2k_clk_out,
+		ps2k_dat_out => ps2k_dat_out
+
 );
 
 -- Audio

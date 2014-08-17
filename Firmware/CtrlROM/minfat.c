@@ -305,8 +305,6 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
     return(0);
 }
 
-#if 0
-
 unsigned char FileNextSector(fileTYPE *file)
 {
     unsigned long sb;
@@ -317,11 +315,7 @@ unsigned char FileNextSector(fileTYPE *file)
 
     // cluster's boundary crossed?
     if ((file->sector&cluster_mask) == 0)
-    {
 		file->cluster=GetCluster(file->cluster);
-//        file->cluster = fat32 ? fat_buffer.fat32[i] & 0x0FFFFFFF: fat_buffer.fat16[i]; // get FAT link
-//        file->cluster = fat32 ? SwapBBBB(fat_buffer.fat32[i]) & 0x0FFFFFFF : SwapBB(fat_buffer.fat16[i]); // get FAT link for 68000 
-    }
 
     return(1);
 }
@@ -339,8 +333,8 @@ unsigned char FileRead(fileTYPE *file, unsigned char *pBuffer)
     else
         return(1);
 }
-#endif
 
+#if 0
 fileTYPE file;
 
 int LoadFile(const char *fn, unsigned char *buf)
@@ -388,4 +382,5 @@ int LoadFile(const char *fn, unsigned char *buf)
 	}
 	return(1);
 }
+#endif
 
