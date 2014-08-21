@@ -49,16 +49,16 @@ int main(int argc,char **argv)
 
 			while(filesize>0)
 			{
-				while(!HandlePS2RawCodes())	// Wait for a keypress
-					;
+//				while(!HandlePS2RawCodes())	// Wait for a keypress
+//					;
 //				if(TestKey(KEY_F1))
 //				{
 					if(FileRead(&file,sector_buffer))
 					{
 						int i;
 						int *p=(int *)&sector_buffer;
-						printf("%d\n",c<<9);
-						hexdump(&sector_buffer,512);
+//						printf("%d\n",c<<9);
+//						hexdump(&sector_buffer,512);
 						for(i=0;i<(filesize<512 ? filesize : 512) ;i+=4)
 						{
 							int t=*p++;
@@ -77,9 +77,9 @@ int main(int argc,char **argv)
 					FileNextSector(&file);
 					filesize-=512;
 					++c;
-//					putchar('.');
-//					if((c&63)==0)
-//						putchar('\n');
+					putchar('.');
+					if((c&63)==0)
+						putchar('\n');
 //				}
 			}
 		}

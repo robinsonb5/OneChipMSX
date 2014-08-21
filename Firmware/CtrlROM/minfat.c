@@ -75,7 +75,7 @@ unsigned char sector_buffer[512];       // sector buffer
 int partitioncount;
 
 #define fat_buffer (*(FATBUFFER*)&sector_buffer) // Don't need a separate buffer for this.
-unsigned long buffered_fat_index;       // index of buffered FAT sector
+// unsigned long buffered_fat_index;       // index of buffered FAT sector
 
 
 #define BootPrint(x) puts(x);
@@ -98,7 +98,7 @@ int compare(const char *s1, const char *s2,int b)
 unsigned char FindDrive(void)
 {
 	unsigned long boot_sector;              // partition boot sector
-    buffered_fat_index = -1;
+//    buffered_fat_index = -1;
 	fat32=0;
 
 	puts("Reading MBR\n");
@@ -224,16 +224,17 @@ int GetCluster(int cluster)
     }
 
     // read sector of FAT if not already in the buffer
-    if (sb != buffered_fat_index)
-    {
+	// (Minimal FAT implementation doesn't have a separate buffer for FAT blocks, so always read.)
+//    if (sb != buffered_fat_index)
+//    {
 		printf("GetCluster reading sector %d\n",fat_start+sb);
         if (!sd_read_sector(fat_start + sb, (unsigned char*)&fat_buffer))
             return(0);
 //		hexdump(sector_buffer,512);
 
         // remember current buffer index
-        buffered_fat_index = sb;
-    }
+//        buffered_fat_index = sb;
+ //   }
     i = fat32 ? SwapBBBB(fat_buffer.fat32[i]) & 0x0FFFFFFF : SwapBB(fat_buffer.fat16[i]); // get FAT link for 68000 
 	return(i);
 }
@@ -248,7 +249,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
     unsigned long  iEntry;               // entry index in directory cluster or FAT16 root directory
     unsigned long  nEntries;             // number of entries per cluster or FAT16 root directory size
 
-	buffered_fat_index=-1;
+//	buffered_fat_index=-1;
 
     iDirectoryCluster = root_directory_cluster;
     iDirectorySector = root_directory_start;
