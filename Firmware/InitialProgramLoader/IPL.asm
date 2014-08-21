@@ -119,7 +119,7 @@ ROMLOAD:
 	LD	(HL),D		; Byte offset (high)
 	LD	(HL),E		; Byte offset
 	LD	(HL),B		; Byte offset (low)
-	LD	A,(HL)		; Discard the first byte...
+;	LD	A,(HL)		; (don't bother to) Discard the first byte...
 	POP	DE			; Target address
 XF0D3:	LD	A,(HL)
 	LD	(DE),A

@@ -36,7 +36,7 @@ int main(int argc,char **argv)
 		puts("Hunting for partition\n");
 		FindDrive();
 
-		if(FileOpen(&file,"BIOSPACKROM"))
+		if(FileOpen(&file,"BIOS_M2PROM"))
 		{
 			puts("Opened file, loading...\n");
 			int filesize=file.size;
