@@ -16,7 +16,7 @@
 */
 #define HW_HOST_CTRL 0x04
 #define HW_HOST_CTRLF_RESET 1
-#define HW_HOST_CTRLF_INHIBIT 2
+#define HW_HOST_CTRLF_BOOTDONE 2
 #define HW_HOST_CTRLF_SDCARD 4
 
 /* Boot data.

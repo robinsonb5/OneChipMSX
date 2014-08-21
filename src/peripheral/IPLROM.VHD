@@ -62,6 +62,7 @@ ARCHITECTURE RTL OF IPLROM IS
 		X"06",X"33",X"07",X"17",X"01",X"27",X"03",X"51",
 		X"01",X"27",X"06",X"71",X"01",X"73",X"03",X"61",
 		X"06",X"64",X"06",X"11",X"04",X"65",X"02",X"55",
+-- 40
 		X"05",X"77",X"07",X"31",X"FF",X"FF",X"CD",X"A4",
 		X"FC",X"28",X"46",X"3E",X"40",X"32",X"00",X"60",
 		X"01",X"00",X"01",X"11",X"00",X"00",X"21",X"00",
@@ -70,6 +71,7 @@ ARCHITECTURE RTL OF IPLROM IS
 		X"D5",X"C5",X"06",X"01",X"21",X"00",X"C0",X"CD",
 		X"03",X"FC",X"C1",X"D1",X"38",X"07",X"CD",X"DE",
 		X"FD",X"06",X"18",X"30",X"11",X"21",X"D2",X"FC",
+-- 80
 		X"22",X"04",X"FC",X"3E",X"60",X"32",X"00",X"60",
 		X"01",X"04",X"20",X"11",X"00",X"00",X"CD",X"B5",
 		X"FC",X"AF",X"32",X"00",X"60",X"3C",X"32",X"00",
@@ -78,14 +80,16 @@ ARCHITECTURE RTL OF IPLROM IS
 		X"70",X"21",X"00",X"80",X"7E",X"FE",X"41",X"C0",
 		X"23",X"7E",X"FE",X"42",X"C9",X"3E",X"80",X"32",
 		X"00",X"70",X"3C",X"32",X"00",X"78",X"3C",X"F5",
+-- C0
 		X"C5",X"06",X"20",X"21",X"00",X"80",X"CD",X"03",
 		X"FC",X"79",X"C1",X"E1",X"D8",X"4F",X"7C",X"10",
 		X"E6",X"C9",X"CD",X"E5",X"FC",X"D8",X"D5",X"C5",
 		X"21",X"00",X"C0",X"11",X"00",X"80",X"CD",X"2F",
 		X"FE",X"C1",X"D1",X"AF",X"C9",X"D5",X"C5",X"21",
-		X"00",X"40",X"36",X"03",X"71",X"72",X"73",X"7E",
+		X"00",X"40",X"36",X"03",X"71",X"72",X"73",X"00",	-- Nopped dummy SPI read
 		X"11",X"00",X"C0",X"7E",X"B7",X"20",X"20",X"7E",
 		X"FE",X"40",X"20",X"1B",X"4E",X"46",X"C5",X"0B",
+-- 100
 		X"0B",X"0B",X"0B",X"7E",X"12",X"13",X"0B",X"79",
 		X"B0",X"20",X"F8",X"3A",X"00",X"50",X"E1",X"C1",
 		X"D1",X"19",X"EB",X"D0",X"0C",X"AF",X"C9",X"3A",
@@ -94,6 +98,7 @@ ARCHITECTURE RTL OF IPLROM IS
 		X"73",X"36",X"00",X"36",X"95",X"7E",X"06",X"10",
 		X"7E",X"FE",X"FF",X"3F",X"D0",X"10",X"F9",X"37",
 		X"C9",X"06",X"0A",X"3A",X"00",X"50",X"10",X"FB",
+-- 140
 		X"01",X"00",X"40",X"59",X"51",X"CD",X"1E",X"FD",
 		X"D8",X"E6",X"F7",X"FE",X"01",X"37",X"C0",X"06",
 		X"77",X"CD",X"1E",X"FD",X"E6",X"04",X"28",X"07",
@@ -102,6 +107,7 @@ ARCHITECTURE RTL OF IPLROM IS
 		X"E6",X"B7",X"C8",X"37",X"C9",X"CD",X"39",X"FD",
 		X"C1",X"D1",X"E1",X"D8",X"E5",X"D5",X"C5",X"06",
 		X"51",X"21",X"00",X"40",X"CD",X"1E",X"FD",X"38",
+-- 180
 		X"EC",X"C1",X"D1",X"E1",X"B7",X"37",X"C0",X"D5",
 		X"C5",X"EB",X"01",X"00",X"02",X"21",X"00",X"40",
 		X"7E",X"FE",X"FE",X"20",X"FB",X"ED",X"B0",X"EB",

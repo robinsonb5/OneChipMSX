@@ -1,4 +1,4 @@
-ASDIR = ../z80asm
+ASDIR = ../../z80asm
 AS = $(ASDIR)/z80asm
 
 PRJ = IPL

@@ -194,19 +194,19 @@ begin
           when others => null;
         end case;
 -- RD EPC
-      elsif (MmcSeq(0) = '0' and EpcEna = '1') then
-        case MmcSeq(4 downto 1) is
-          when "1001" => MmcTmp(7) := epc_do;
-          when "1000" => MmcTmp(6) := epc_do;
-          when "0111" => MmcTmp(5) := epc_do;
-          when "0110" => MmcTmp(4) := epc_do;
-          when "0101" => MmcTmp(3) := epc_do;
-          when "0100" => MmcTmp(2) := epc_do;
-          when "0011" => MmcTmp(1) := epc_do;
-          when "0010" => MmcTmp(0) := epc_do;
-          when "0001" => mmcdbi <= MmcTmp;		-- RD data EPC
-          when others => null;
-        end case;
+--      elsif (MmcSeq(0) = '0' and EpcEna = '1') then
+--        case MmcSeq(4 downto 1) is
+--          when "1001" => MmcTmp(7) := epc_do;
+--          when "1000" => MmcTmp(6) := epc_do;
+--          when "0111" => MmcTmp(5) := epc_do;
+--          when "0110" => MmcTmp(4) := epc_do;
+--          when "0101" => MmcTmp(3) := epc_do;
+--          when "0100" => MmcTmp(2) := epc_do;
+--          when "0011" => MmcTmp(1) := epc_do;
+--          when "0010" => MmcTmp(0) := epc_do;
+--          when "0001" => mmcdbi <= MmcTmp;		-- RD data EPC
+--          when others => null;
+--        end case;
       end if;
 
 -- CLK

@@ -37,29 +37,30 @@ VDPDATA:
 	DEFB 71,01,73,03,61,06,64,06,11,04,65,02,55,05,77,07
 
 XF043:	LD	SP,0FFFFH	; Set Stack pointer to 64K-1
-	LD	A,40H
-	LD	(6000H),A	; Write 0x40 -> ErmBank0
-	LD	BC,0100H	; B: number of blocks.  C: top byte of LBA address
-	LD	DE,0000H	; Lower two bytes of LBA address
-	LD	HL,0C000H	; Target address
-	CALL LOAD
-	JR	C,XF07B		; Carry set, load from SD failed - copy from EPCS instead
-	CALL CHKFAT
-	JR	C,XF071		; Carry set, found FAT, so load ROM file
-	CALL CHKMBR		; otherwise check for an MBR
-	JR	C,XF07B		; Carry set, no MBR found, so copy from EPCS.
-	PUSH DE
-	PUSH BC			; Save registers
-	LD	B,01H		; 0x0100 -> BC?
-	LD	HL,0C000H	; Target address
-	CALL LOAD
-	POP	BC
-	POP	DE
-	JR	C,XF07B	; Bug? Should be XF07B?  Yes, almost certainly
-XF071:	CALL	FINDROMFILE
 	JR	C,XF07B
-	CALL	COPYROMS
-	JR	XF08D
+;	LD	A,40H
+;	LD	(6000H),A	; Write 0x40 -> ErmBank0
+;	LD	BC,0100H	; B: number of blocks.  C: top byte of LBA address
+;	LD	DE,0000H	; Lower two bytes of LBA address
+;	LD	HL,0C000H	; Target address
+;	CALL LOAD
+;	JR	C,XF07B		; Carry set, load from SD failed - copy from EPCS instead
+;	CALL CHKFAT
+;	JR	C,XF071		; Carry set, found FAT, so load ROM file
+;	CALL CHKMBR		; otherwise check for an MBR
+;	JR	C,XF07B		; Carry set, no MBR found, so copy from EPCS.
+;	PUSH DE
+;	PUSH BC			; Save registers
+;	LD	B,01H		; 0x0100 -> BC?
+;	LD	HL,0C000H	; Target address
+;	CALL LOAD
+;	POP	BC
+;	POP	DE
+;	JR	C,XF07B	; Bug? Should be XF07B?  Yes, almost certainly
+;XF071:	CALL	FINDROMFILE
+;	JR	C,XF07B
+;	CALL	COPYROMS
+;	JR	XF08D
 
 	; Copy ROM from EPCS device
 XF07B:	LD	HL,ROMLOAD
@@ -83,7 +84,7 @@ XF08D:	XOR	A
 
 	; LBA address in E:D (C ignored)
 COPYROMS:
-	LD	B,10H 		; Number of 16KB ROMs
+	LD	B,18H 		; Number of 16KB ROMs
 	LD	A,80H		; ROM base address will be 0x100000
 XF0A4:	LD	(7000H),A	; ERM Bank 2 (mapping writes in range 8000H to 9FFFH)
 	INC	A
@@ -118,7 +119,7 @@ ROMLOAD:
 	LD	(HL),D		; Byte offset (high)
 	LD	(HL),E		; Byte offset
 	LD	(HL),B		; Byte offset (low)
-	LD	A,(HL)
+	LD	A,(HL)		; Discard the first byte...
 	POP	DE			; Target address
 XF0D3:	LD	A,(HL)
 	LD	(DE),A

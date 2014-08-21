@@ -26,7 +26,7 @@ COMMON_SRC =
 COMMON_OBJ = $(patsubst $(COMMON_DIR)/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
 
 MAIN_PRJ = CtrlROM
-MAIN_SRC = boot.c minfat.c spi.c uart.c swap.c small_printf.c textbuffer.c ps2.c keyboard.c interrupts.c
+MAIN_SRC = boot.c minfat.c spi.c uart.c swap.c small_printf.c textbuffer.c ps2.c keyboard.c interrupts.c hexdump.c
 MAIN_OBJ = $(COMMON_OBJ) $(patsubst %.c,$(BUILD_DIR)/%.o,$(MAIN_SRC))
 
 LINKMAP  = $(ZPUFLEXDIR)/Firmware/standalone_simple.ld
