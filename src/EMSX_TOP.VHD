@@ -88,8 +88,10 @@ entity emsx_top is
     pMemDat     : inout std_logic_vector(15 downto 0):=(others=>'1');  -- SD-RAM Data
 
     -- PS/2 keyboard ports
-    pPs2Clk     : inout std_logic:='1';
-    pPs2Dat     : inout std_logic:='1';
+    pPs2Clk_in     : in std_logic:='1';
+    pPs2Dat_in     : in std_logic:='1';
+    pPs2Clk_out     : out std_logic;
+    pPs2Dat_out     : out std_logic;
 
     -- Joystick ports (Port_A, Port_B)
     pJoyA       : inout std_logic_vector( 5 downto 0):=(others=>'1');
@@ -247,8 +249,10 @@ architecture rtl of emsx_top is
       Scro     : inout std_logic;
       Reso     : inout std_logic;
       FKeys    : out std_logic_vector(7 downto 0);
-      pPs2Clk  : inout std_logic;
-      pPs2Dat  : inout std_logic;
+		pPs2Clk_in  : in std_logic;
+		pPs2Dat_in  : in std_logic;
+		pPs2Clk_out  : out std_logic;
+		pPs2Dat_out  : out std_logic;
       PpiPortC : inout std_logic_vector(7 downto 0);
       pKeyX    : inout std_logic_vector(7 downto 0)
     );
@@ -2043,7 +2047,7 @@ pMemDat		<= SdrDat;
 
   U06 : eseps2
     port map (clk21m, reset, clkena, not Kmap, Caps, Kana, Paus, open, Reso, Fkeys,
-              pPs2Clk, pPs2Dat, PpiPortC, PpiPortB);
+              pPs2Clk_in, pPs2Dat_in, pPs2Clk_out, pPs2Dat_out, PpiPortC, PpiPortB);
 
   U07 : rtc
     port map(clk21m, reset, w_10Hz, RtcReq, Open, wrt, adr, RtcDbi, dbo);

@@ -47,9 +47,11 @@ entity psg is
         dbi         : out   std_logic_vector(  7 downto 0 );
         dbo         : in    std_logic_vector(  7 downto 0 );
 
-        joya        : inout std_logic_vector(  5 downto 0 );
+        joya        : in std_logic_vector(5 downto 0 );
+		  joya_out    : out std_logic_vector(1 downto 0);
         stra        : out   std_logic;
-        joyb        : inout std_logic_vector(  5 downto 0 );
+        joyb        : in std_logic_vector(5 downto 0 );
+        joyb_out    : out std_logic_vector(1 downto 0 );
         strb        : out   std_logic;
 
         kana        : out   std_logic;
@@ -164,14 +166,14 @@ begin
     process( reset, clk21m )
     begin
         if( reset = '1' )then
-            joya        <= (others => 'Z');
+            joya_out        <= (others => 'Z');
         elsif( clk21m'event and clk21m = '1' )then
             -- trigger a/b output joystick porta
             case regb(1 downto 0) is
-                when "00"   => joya(5 downto 4) <= "00";
-                when "01"   => joya(5 downto 4) <= "0Z";
-                when "10"   => joya(5 downto 4) <= "Z0";
-                when others => joya(5 downto 4) <= "ZZ";
+                when "00"   => joya_out(1 downto 0) <= "00";
+                when "01"   => joya_out(1 downto 0) <= "0Z";
+                when "10"   => joya_out(1 downto 0) <= "Z0";
+                when others => joya_out(1 downto 0) <= "ZZ";
             end case;
         end if;
     end process;
@@ -179,14 +181,14 @@ begin
     process( reset, clk21m )
     begin
         if( reset = '1' )then
-            joyb <= (others => 'Z');
+            joyb_out        <= (others => 'Z');
         elsif( clk21m'event and clk21m = '1' )then
             -- trigger a/b output joystick portb
             case regb( 3 downto 2 ) is
-                when "00"   => joyb(5 downto 4) <= "00";
-                when "01"   => joyb(5 downto 4) <= "0Z";
-                when "10"   => joyb(5 downto 4) <= "Z0";
-                when others => joyb(5 downto 4) <= "ZZ";
+                when "00"   => joyb_out(1 downto 0) <= "00";
+                when "01"   => joyb_out(1 downto 0) <= "0Z";
+                when "10"   => joyb_out(1 downto 0) <= "Z0";
+                when others => joyb_out(1 downto 0) <= "ZZ";
             end case;
         end if;
     end process;

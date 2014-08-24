@@ -127,10 +127,15 @@ begin
   -- SD/MMC card access
   ----------------------------------------------------------------
   process(clk21m, reset)
+	 -- Slowed down the SPI comms for the benefit of the Chameleon port,
+	 -- but hit trouble; the CPU doesn't seem to wait for writes to complete.
+	 -- Not yet sure how to address this issue.  -- AMR
+    constant MMCSEQ_HIGH : integer:=5;
+	 constant MMCSEQ_LOW : integer:=2;
     variable MmcEnx : std_logic;
     variable EpcEna : std_logic;
     variable MmcMod : std_logic_vector(1 downto 0);
-    variable MmcSeq : std_logic_vector(4 downto 0);
+    variable MmcSeq : std_logic_vector(MMCSEQ_HIGH downto 0);
     variable MmcTmp : std_logic_vector(7 downto 0);
     variable MmcDbo : std_logic_vector(7 downto 0);
   begin
@@ -164,8 +169,8 @@ begin
         EpcEna := '0';		-- MMC
       end if;
 -- WR MMC & EPC 
-      if (MmcSeq(0) = '0') then
-        case MmcSeq(4 downto 1) is
+      if MmcSeq(MMCSEQ_LOW-1) = '0' then
+        case MmcSeq(MMCSEQ_HIGH downto MMCSEQ_LOW) is
           when "1010" => mmc_di <= MmcDbo(7); epc_di <= MmcDbo(7);
           when "1001" => mmc_di <= MmcDbo(6); epc_di <= MmcDbo(6);
           when "1000" => mmc_di <= MmcDbo(5); epc_di <= MmcDbo(5);
@@ -180,8 +185,9 @@ begin
         end case;
       end if;
 -- RD MMC
-      if (MmcSeq(0) = '0' and EpcEna = '0') then
-        case MmcSeq(4 downto 1) is
+      if MmcSeq(MMCSEQ_LOW-1 downto 0) = (MMCSEQ_LOW-1 downto 0=>'1') -- Rising edge...
+				and EpcEna = '0' then
+        case MmcSeq(MMCSEQ_HIGH downto MMCSEQ_LOW) is
           when "1001" => MmcTmp(7) := mmc_do;
           when "1000" => MmcTmp(6) := mmc_do;
           when "0111" => MmcTmp(5) := mmc_do;
@@ -210,15 +216,15 @@ begin
       end if;
 
 -- CLK
-      if (MmcSeq(4 downto 1) < "1011" and MmcSeq(4 downto 1) > "0010") then
+      if (MmcSeq(MMCSEQ_HIGH downto MMCSEQ_LOW) < "1011" and MmcSeq(MMCSEQ_HIGH downto MMCSEQ_LOW) > "0010") then
         if (EpcEna = '0') then
 -- MMC
-          mmc_ck <= MmcSeq(0);
+          mmc_ck <= MmcSeq(MMCSEQ_LOW-1);
           epc_ck <= '1';
         else
 -- EPC
           mmc_ck <= '1';
-          epc_ck <= MmcSeq(0);
+--          epc_ck <= MmcSeq(MMCSEQ_LOW-1);
         end if;
       else
         mmc_ck <= '1';
@@ -227,7 +233,7 @@ begin
 
 -- Memory mapped I/O port access on 4000-57FFh ... SD/MMC data register
       if (req = '1' and adr(15 downto 13) = "010" and adr(12 downto 11) /= "11" and 
-					MmcEnx = '1' and MmcSeq = "00000" and MmcMod(0) = '0') then
+					MmcEnx = '1' and MmcSeq = (MmcSeq'range => '0') and MmcMod(0) = '0') then
         if (wrt = '1') then
           MmcDbo := dbo;
         else
@@ -236,7 +242,8 @@ begin
         if (EpcEna = '0') then
           mmc_cs <= adr(12);		-- /CS MMC (4000h..47ff)
           epc_cs <= '1';
-			 MmcSeq := "10101";
+			 MmcSeq:=(others=>'1');
+			 MmcSeq(MMCSEQ_HIGH downto MMCSEQ_LOW-1) := "10101";
         else
           mmc_cs <= '1';
           epc_cs <= '1';
@@ -246,10 +253,10 @@ begin
 --           epc_cs <= adr(12);		-- /CS EPC (4000h..47ff)
 --			 end if;
         end if;
-      elsif (MmcSeq /= "00000") then
+      elsif (MmcSeq /= (MmcSeq'range =>'0')) then
         MmcSeq := MmcSeq - 1;
       end if;
-
+		
 -- Memory mapped I/O port access on 5800-5FFFh ... SD/MMC data register
       if (req = '1' and adr(15 downto 13) = "010" and adr(12 downto 11)  = "11" and 
 					MmcEnx = '1' and wrt = '1') then
@@ -258,21 +265,33 @@ begin
 -- generate /WAIT for Z80
 		-- Read data from boot channel
 		if boot_req_r='1' then
-			mmcact<='1';
+--			mmcact<='1';
 			if boot_ack='1' then
 				mmcdbi <= boot_data;		-- RD data EPC
 				boot_req_r<='0';
-				MmcSeq := "10101";
+				MmcSeq:=(others=>'0');
+				-- FIXME - a better way to delay this?
+				MmcSeq(2 downto 0) := (others=>'1');
 			end if;
-		elsif (MmcSeq = "00000") then
-        mmcact <= '0';
-      else
-        mmcact <= '1';
+--		elsif (MmcSeq = (MmcSeq'range =>'0')) then
+--        mmcact <= '0';
+--      else
+--        mmcact <= '1';
       end if;
 --
     end if;
+
+	if boot_req_r='1' or MmcSeq /= (MmcSeq'range =>'0')
+--		or (mmcenx='1' and wrt='1') then
+			then
+		mmcact<='1';
+	else
+		mmcact<='0';
+	end if;
+	
 end process;
 --
+
   mmcena <= '1' when ErmBank0(7 downto 6) = "01" else '0';
   epc_oe <= '1' when reset = '1' else '0';  -- epc_oe = 0:enable, 1:disable
 

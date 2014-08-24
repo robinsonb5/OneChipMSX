@@ -51,9 +51,11 @@ entity virtual_toplevel is
     pMemAdr     : out std_logic_vector(11 downto 0);    -- SD-RAM Address
     pMemDat     : inout std_logic_vector(15 downto 0):=(others=>'1');  -- SD-RAM Data
 
-    -- PS/2 keyboard ports
-    pPs2Clk     : inout std_logic:='1';
-    pPs2Dat     : inout std_logic:='1';
+    -- PS/2 keyboard ports - in and out separated by AMR
+    pPs2Clk_in     : in std_logic:='1';
+    pPs2Dat_in     : in std_logic:='1';
+    pPs2Clk_out     : out std_logic;
+    pPs2Dat_out     : out std_logic;
 
     -- Joystick ports (Port_A, Port_B)
     pJoyA       : inout std_logic_vector( 5 downto 0):=(others=>'1');
@@ -172,8 +174,10 @@ mymsx : entity work.emsx_top
     pMemDat => pMemDat,
 
     -- PS/2 keyboard ports
-    pPs2Clk => pPs2Clk,
-    pPs2Dat => pPs2Dat,
+    pPs2Clk_in => pPs2Clk_in,
+    pPs2Dat_in => pPs2Dat_in,
+    pPs2Clk_out => pPs2Clk_out,
+    pPs2Dat_out => pPs2Dat_out,
 
     -- Joystick ports (Port_A, Port_B)
     pJoyA => pJoyA,
@@ -235,8 +239,8 @@ top : entity work.CtrlModule
 		rxd => RS232_RxD,
 	 
 		-- PS/2
-		ps2k_clk_in => pPs2Clk,
-		ps2k_dat_in => pPs2Dat,
+		ps2k_clk_in => pPs2Clk_in,
+		ps2k_dat_in => pPs2Dat_in,
 
 		host_reset_n => host_reset_n,
 		host_bootdone => host_bootdone,

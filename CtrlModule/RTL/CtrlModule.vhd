@@ -179,7 +179,7 @@ begin
 	if rising_edge(clk) then
 		spiclk_in<='0';
 		spi_tick<=spi_tick+1;
-		if (spi_fast='1' and spi_tick(4)='1') or spi_tick(8)='1' then
+		if (spi_fast='1' and spi_tick(5)='1') or spi_tick(8)='1' then
 			spiclk_in<='1'; -- Momentary pulse for SPI host.
 			spi_tick<='0'&X"00";
 		end if;

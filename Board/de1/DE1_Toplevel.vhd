@@ -160,7 +160,21 @@ I2C_SDAT	<= 'Z';
 GPIO_0 <= (others => 'Z');
 GPIO_1 <= (others => 'Z');
 
-reset<=(not SW(0) xor KEY(0)) and pll_locked;
+ps2m_clk_out <='1';
+ps2m_dat_out <='1';
+
+	-- PS2 keyboard & mouse
+ps2m_dat_in<=PS2_MDAT;
+PS2_MDAT <= '0' when ps2m_dat_out='0' else 'Z';
+ps2m_clk_in<=PS2_MCLK;
+PS2_MCLK <= '0' when ps2m_clk_out='0' else 'Z';
+
+ps2k_dat_in<=PS2_DAT;
+PS2_DAT <= '0' when ps2k_dat_out='0' else 'Z';
+ps2k_clk_in<=PS2_CLK;
+PS2_CLK <= '0' when ps2k_clk_out='0' else 'Z';
+
+reset<=KEY(0) and pll_locked;
 
 --hexdigit0 : component SEG7_LUT
 --	port map (oSEG => HEX0, iDIG => hex(3 downto 0));
@@ -232,9 +246,11 @@ emsx_top : entity work.Virtual_Toplevel
     pMemDat => DRAM_DQ,
 
     -- PS/2 keyboard ports
-    pPs2Clk => PS2_CLK,
-    pPs2Dat => PS2_DAT,
-	 
+	 pPs2Clk_out => ps2k_clk_out,
+	 pPs2Dat_out => ps2k_dat_out,
+	 pPs2Clk_in => ps2k_clk_in,
+	 pPs2Dat_in => ps2k_dat_in,
+ 
 --    -- Joystick ports (Port_A, Port_B)
 --    pJoyA       : inout std_logic_vector( 5 downto 0):=(others=>'1');
 --    pStrA       : out std_logic;
@@ -325,7 +341,7 @@ emsx_top : entity work.Virtual_Toplevel
   U36: I2C_AV_Config
 	port map (
 	  iCLK	  => clk21m,
-	  iRST_N  => NOT reset,
+	  iRST_N  => reset,
 	  oI2C_SCLK => I2C_SCLK,
 	  oI2C_SDAT => I2C_SDAT
 	);
