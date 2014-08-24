@@ -198,8 +198,9 @@ myReset : entity work.gen_reset
 	port map (
 		clk => memclk,
 		enable => '1',
-		button => not freeze_n,
-		nreset => n_reset
+		button => not (button_reset_n and pll_locked),
+		nreset => n_reset,
+		reset => reset
 	);
 	
 	myIO : entity work.chameleon_io
@@ -215,7 +216,7 @@ myReset : entity work.gen_reset
 			clk => fastclk,
 			clk_mux => fastclk,
 			ena_1mhz => ena_1mhz,
-			reset => not n_reset,
+			reset => reset,
 			
 			no_clock => no_clock,
 			docking_station => docking_station,
@@ -288,7 +289,7 @@ myReset : entity work.gen_reset
 
 
   U00 : entity work.pll4x2
-    port map(					-- for Altera DE1
+    port map(
 		areset => '0',
       inclk0 => clk8,       -- 50 MHz external
       c0     => clk21m,         -- 21.43MHz internal (50*3/7)
@@ -305,7 +306,7 @@ emsx_top : entity work.Virtual_Toplevel
     -- Clock, Reset ports
 		clk21m => clk21m,
 		memclk => memclk,
-		lock_n => pll_locked,
+		lock_n => n_reset,
 
 --    -- MSX cartridge slot ports
 --    pSltClk     : out std_logic;	-- pCpuClk returns here, for Z80, etc.

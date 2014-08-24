@@ -139,8 +139,12 @@ signal SOUND_L : std_logic_vector(15 downto 0);
 signal SOUND_R : std_logic_vector(15 downto 0);
 signal CmtIn : std_logic;
 
+signal joya : std_logic_vector(5 downto 0);
+signal joyb : std_logic_vector(5 downto 0);
+
 alias PS2_MDAT : std_logic is GPIO_1(19);
 alias PS2_MCLK : std_logic is GPIO_1(18);
+
 
 COMPONENT SEG7_LUT
 	PORT
@@ -173,6 +177,10 @@ ps2k_dat_in<=PS2_DAT;
 PS2_DAT <= '0' when ps2k_dat_out='0' else 'Z';
 ps2k_clk_in<=PS2_CLK;
 PS2_CLK <= '0' when ps2k_clk_out='0' else 'Z';
+
+-- Joystick
+joya<=GPIO_1(29)&GPIO_1(35)&GPIO_1(28)&GPIO_1(30)&GPIO_1(32)&GPIO_1(34);
+joyb<=GPIO_1(21)&GPIO_1(25)&GPIO_1(23)&GPIO_1(20)&GPIO_1(22)&GPIO_1(24);
 
 reset<=KEY(0) and pll_locked;
 
@@ -252,9 +260,9 @@ emsx_top : entity work.Virtual_Toplevel
 	 pPs2Dat_in => ps2k_dat_in,
  
 --    -- Joystick ports (Port_A, Port_B)
---    pJoyA       : inout std_logic_vector( 5 downto 0):=(others=>'1');
+    pJoyA => joya,
 --    pStrA       : out std_logic;
---    pJoyB       : inout std_logic_vector( 5 downto 0):=(others=>'1');
+    pJoyB => joyb,
 --    pStrB       : out std_logic;
 
     -- SD/MMC slot ports
