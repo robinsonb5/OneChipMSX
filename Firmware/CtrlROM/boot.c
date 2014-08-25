@@ -25,18 +25,18 @@ int main(int argc,char **argv)
 	HW_HOST(HW_HOST_SW)=0x39; // Default DIP switch settings
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
-	puts("Initialising PS/2 interface...\n");
-
 	PS2Init();
 	EnableInterrupts();
 
 	puts("Initializing SD card\n");
 	if(spi_init())
 	{
-		puts("Hunting for partition\n");
+		int opened;
 		FindDrive();
 
-		if(FileOpen(&file,"BIOS_M2PROM"))
+		if(!(opened=FileOpen(&file,"MSX3BIOSSYS")))	// Try and load MSX3 BIOS first
+			opened=FileOpen(&file,"BIOS_M2PROM"); // If failure, load MSX2 BIOS.
+		if(opened)
 		{
 			puts("Opened file, loading...\n");
 			int filesize=file.size;
@@ -97,8 +97,6 @@ int main(int argc,char **argv)
 		if(k)
 			putchar(k);
 	}
-
-	puts("Returning\n");
 
 	return(0);
 }
