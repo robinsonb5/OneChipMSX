@@ -238,9 +238,11 @@ int spi_init()
 	SDHCtype=is_sdhc();
 	if(SDHCtype)
 		DBG("SDHC card detected\n");
-
-	DBG("Sending cmd16\n");
-	cmd_CMD16(1);
+	else 	// Not SDHC? Set blocksize to 512.
+	{
+		DBG("Sending cmd16\n");
+		cmd_CMD16(1);
+	}
 	SPI(0xFF);
 	SPI_CS(0);
 	SPI(0xFF);
