@@ -142,7 +142,7 @@ architecture rtl of chameleon_toplevel is
 	signal c64_joy2 : unsigned(5 downto 0);
 	signal joystick3 : unsigned(5 downto 0);
 	signal joystick4 : unsigned(5 downto 0);
-	signal usart_rx : std_logic;
+	signal usart_rx : std_logic:='1';
 	signal ir : std_logic;
 
 	-- Sigma Delta audio
