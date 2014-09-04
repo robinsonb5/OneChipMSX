@@ -6,6 +6,8 @@ entity MIST_Toplevel is
 	port
 	(
 		CLOCK_27		:	 in std_logic_vector(1 downto 0);
+		
+		LED			: 	out std_logic;
 
 		UART_TX		:	 out STD_LOGIC;
 		UART_RX		:	 in STD_LOGIC;
@@ -68,6 +70,10 @@ signal osdclk:  std_logic;
 -- user_io
 signal buttons: std_logic_vector(1 downto 0);
 signal status:  std_logic_vector(7 downto 0);
+signal joy_0: std_logic_vector(5 downto 0);
+signal joy_1: std_logic_vector(5 downto 0);
+signal joy_ana_0: std_logic_vector(15 downto 0);
+signal joy_ana_1: std_logic_vector(15 downto 0);
 signal txd:     std_logic;
 signal par_out_data: std_logic_vector(7 downto 0);
 signal par_out_strobe: std_logic;
@@ -75,10 +81,19 @@ signal par_out_strobe: std_logic;
 -- signals to connect sd card emulation with io controller
 signal sd_lba:  std_logic_vector(31 downto 0);
 signal sd_rd:   std_logic;
+signal sd_wr:   std_logic;
 signal sd_ack:  std_logic;
+signal sd_conf: std_logic;
+signal sd_sdhc: std_logic;
+signal sd_allow_sdhc: std_logic;
+signal sd_allow_sdhcD: std_logic;
+signal sd_allow_sdhcD2: std_logic;
+signal sd_allow_sdhc_changed: std_logic;
 -- data from io controller to sd card emulation
 signal sd_data_in: std_logic_vector(7 downto 0);
 signal sd_data_in_strobe:  std_logic;
+signal sd_data_out: std_logic_vector(7 downto 0);
+signal sd_data_out_strobe:  std_logic;
 
 -- sd card emulation
 signal sd_cs:	std_logic;
@@ -129,7 +144,9 @@ port ( pclk, sck, ss, sdi, hs_in, vs_in : in std_logic;
      );
 end component osd;
 
-constant CONF_STR : string := "OCMSX";
+-- the config string is read by the io controller and allows simple core specific
+-- controls
+constant CONF_STR : string := "OCMSX;;O1,SDHC,enable,disable;T2,Reset";
 
 function to_slv(s: string) return std_logic_vector is
     constant ss: string(1 to s'length) := s;
@@ -150,22 +167,30 @@ end function;
 
 component user_io 
 	generic ( STRLEN : integer := 0 );
-   port ( SPI_CLK, SPI_SS_IO, SPI_MOSI :in std_logic;
+   port (
+			  SPI_CLK, SPI_SS_IO, SPI_MOSI :in std_logic;
            SPI_MISO : out std_logic;
            conf_str : in std_logic_vector(8*STRLEN-1 downto 0);
-           JOY0 : out std_logic_vector(5 downto 0);
-           JOY1 : out std_logic_vector(5 downto 0);
+           joystick_0 : out std_logic_vector(5 downto 0);
+           joystick_1 : out std_logic_vector(5 downto 0);
+           joystick_analog_0 : out std_logic_vector(15 downto 0);
+           joystick_analog_1 : out std_logic_vector(15 downto 0);
            status: out std_logic_vector(7 downto 0);
-           SWITCHES : out std_logic_vector(1 downto 0);
-           BUTTONS : out std_logic_vector(1 downto 0);
+           switches : out std_logic_vector(1 downto 0);
+           buttons : out std_logic_vector(1 downto 0);
 			  sd_lba : in std_logic_vector(31 downto 0);
 			  sd_rd : in std_logic;
+			  sd_wr : in std_logic;
 			  sd_ack : out std_logic;
+			  sd_conf : in std_logic;
+			  sd_sdhc : in std_logic;
 			  sd_dout : out std_logic_vector(7 downto 0);
 			  sd_dout_strobe : out std_logic;
-           clk : in std_logic;
-           ps2_clk : out std_logic;
-           ps2_data : out std_logic;
+			  sd_din : in std_logic_vector(7 downto 0);
+			  sd_din_strobe : out std_logic;
+           ps2_clk : in std_logic;
+           ps2_kbd_clk : out std_logic;
+           ps2_kbd_data : out std_logic;
 			  serial_data : in std_logic_vector(7 downto 0);
            serial_strobe : in std_logic
       );
@@ -181,19 +206,23 @@ component mist_console
   end component mist_console;
 
 component sd_card
-   port (  clk 	:	in std_logic;
-           n_reset:	in std_logic;
-			  
-			  io_lba : out std_logic_vector(31 downto 0);
-			  io_rd  : out std_logic;
-			  io_ack : in std_logic;
-			  io_din : in std_logic_vector(7 downto 0);
+   port (  io_lba 	: out std_logic_vector(31 downto 0);
+			  io_rd  	: out std_logic;
+			  io_wr  	: out std_logic;
+			  io_ack 	: in std_logic;
+			  io_sdhc 	: out std_logic;
+			  io_conf 	: out std_logic;
+			  io_din 	: in std_logic_vector(7 downto 0);
 			  io_din_strobe : in std_logic;
+			  io_dout 	: out std_logic_vector(7 downto 0);
+			  io_dout_strobe : in std_logic;
 
-           sd_cs :	in std_logic;
-           sd_sck :	in std_logic;
-           sd_sdi :	in std_logic;
-           sd_sdo :	out std_logic
+			  allow_sdhc : in std_logic;
+			  
+           sd_cs 		:	in std_logic;
+           sd_sck 	:	in std_logic;
+           sd_sdi 	:	in std_logic;
+           sd_sdo 	:	out std_logic
   );
   end component sd_card;
 
@@ -214,7 +243,10 @@ begin
 SDRAM_A(12)<='0';
 
 -- reset from IO controller
-reset <= '0' when status(0)='1' or buttons(1)='1' else '1';
+-- status bit 0 is always triggered by the i ocontroller on its own reset
+-- status bit 2 is driven by the "T2,Reset" entry in the config string
+-- button 1 is the core specfic button in the mists front
+reset <= '0' when status(0)='1' or status(2)='1' or buttons(1)='1' or sd_allow_sdhc_changed='1' else '1';
 
 
 emsx_top : entity work.Virtual_Toplevel
@@ -323,27 +355,62 @@ mist_console_d: component mist_console
 		par_out_data => par_out_data,
 		par_out_strobe => par_out_strobe
 	);
-	
+
+-- status 1 is driven by the "O1,SHDC,enabled,disable" antry in the config string
+sd_allow_sdhc <= '1' when status(1)='0' else '0';
+
+-- generate a signal whenever the sdhc flag toggles so we can reset
+-- the ZPU then
+process(fastclk)
+variable counter: unsigned(9 downto 0);  -- ~10us
+begin
+	if rising_edge(fastclk) then
+		sd_allow_sdhcD <= sd_allow_sdhc;
+		sd_allow_sdhcD2 <= sd_allow_sdhcD;
+
+		if(sd_allow_sdhcD /= sd_allow_sdhcD2) then
+			sd_allow_sdhc_changed <= '1';
+			counter := (others=>'1');
+		else
+			if(counter /= 0) then
+				sd_allow_sdhc_changed <= '1';
+				counter := counter - 1;
+			else
+				sd_allow_sdhc_changed <= '0';
+			end if;
+		end if;
+   end if;
+end process;
+
+
 sd_card_d: component sd_card
 	port map
 	(
-		clk => fastclk,
-		n_reset => reset,
-
-		-- connection to io controller
-		io_lba => sd_lba,
-		io_rd  => sd_rd,
-		io_ack => sd_ack,
-		io_din => sd_data_in,
-		io_din_strobe => sd_data_in_strobe,
-
-		-- connection to host
-		sd_cs  => sd_cs,
-		sd_sck => sd_sck,
+ 		-- connection to io controller
+ 		io_lba => sd_lba,
+ 		io_rd  => sd_rd,
+		io_wr  => sd_wr,
+ 		io_ack => sd_ack,
+		io_conf => sd_conf,
+		io_sdhc => sd_sdhc,
+ 		io_din => sd_data_in,
+ 		io_din_strobe => sd_data_in_strobe,
+		io_dout => sd_data_out,
+		io_dout_strobe => sd_data_out_strobe,
+ 
+		-- status 1 is driven by the "O1,SHDC,enabled,disable" antry in the config string
+		allow_sdhc  => sd_allow_sdhc,   
+		
+ 		-- connection to host
+ 		sd_cs  => sd_cs,
+ 		sd_sck => sd_sck,
 		sd_sdi => sd_sdi,
 		sd_sdo => sd_sdo		
 	);
 
+-- prevent joystick signals from being optimzed away
+LED <= '0' when ((joy_ana_0 /= joy_ana_1) AND (joy_0 /= joy_1)) else '1';
+	
 user_io_d : user_io
     generic map (STRLEN => CONF_STR'length)
     port map (
@@ -354,23 +421,30 @@ user_io_d : user_io
       conf_str => to_slv(CONF_STR),
       status => status,
 		
-		-- connection to io controller
-		sd_lba => sd_lba,
-		sd_rd  => sd_rd,
-		sd_ack => sd_ack,
-		sd_dout => sd_data_in,
-		sd_dout_strobe => sd_data_in_strobe,
+ 		-- connection to io controller
+		sd_lba  => sd_lba,
+		sd_rd   => sd_rd,
+		sd_wr   => sd_wr,
+		sd_ack  => sd_ack,
+		sd_sdhc => sd_sdhc,
+		sd_conf => sd_conf,
+ 		sd_dout => sd_data_in,
+ 		sd_dout_strobe => sd_data_in_strobe,
+		sd_din => sd_data_out,
+		sd_din_strobe => sd_data_out_strobe,
 
---      JOY0 => joy0,
---      JOY1 => joy1,
---      SWITCHES => switches,
-      BUTTONS => buttons,
-		clk => '1',
-      ps2_clk => ps2_keyboard_clk_in,
-      ps2_data => ps2_keyboard_dat_in,
-		serial_data => par_out_data,
-		serial_strobe => par_out_strobe
-);
+      joystick_0 => joy_0,
+      joystick_1 => joy_1,
+      joystick_analog_0 => joy_ana_0,
+      joystick_analog_1 => joy_ana_1,
+--      switches => switches,
+       BUTTONS => buttons,
+		ps2_clk => '1',
+--      ps2_kbd_clk => open,
+--      ps2_kbd_data => open
+ 		serial_data => par_out_data,
+ 		serial_strobe => par_out_strobe
+ );
 
 vga_window<='1';
 mydither : component video_vga_dither

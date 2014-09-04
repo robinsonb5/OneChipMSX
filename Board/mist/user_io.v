@@ -30,25 +30,32 @@ module user_io #(parameter STRLEN=0) (
 	output     		reg SPI_MISO,
 	input      		SPI_MOSI,
 	
-	output [5:0] 	JOY0,
-	output [5:0] 	JOY1,
-	output [1:0] 	BUTTONS,
-	output [1:0] 	SWITCHES,
+	output reg [5:0] 	joystick_0,
+	output reg [5:0] 	joystick_1,
+	output reg [15:0] joystick_analog_0,
+	output reg [15:0] joystick_analog_1,
+	output [1:0] 		buttons,
+	output [1:0] 		switches,
 
 	output reg [7:0]   status,
 
 	// connection to sd card emulation
 	input [31:0]  sd_lba,
 	input         sd_rd,
+	input         sd_wr,
 	output reg	  sd_ack,
+	input         sd_conf,
+	input         sd_sdhc,
 	output reg [7:0]  sd_dout,
 	output reg	  sd_dout_strobe,
+	input [7:0]   sd_din,
+	output reg 	  sd_din_strobe,
 	
 
 	// ps2 keyboard emulation
-	input 	  		clk,					// 12-16khz provided by core
-	output	 		ps2_clk,
-	output reg 		ps2_data,
+	input 	  		ps2_clk,				// 12-16khz provided by core
+	output	 		ps2_kbd_clk,
+	output reg 		ps2_kbd_data,
 
 	// serial com port 
 	input [7:0]		serial_data,
@@ -62,29 +69,35 @@ reg [7:0]         byte_cnt;   // counts bytes
 reg [5:0]         joystick0;
 reg [5:0]         joystick1;
 reg [3:0] 	      but_sw;
+reg [2:0]         stick_idx;
 
-assign JOY0 = joystick0;
-assign JOY1 = joystick1;
-assign BUTTONS = but_sw[1:0];
-assign SWITCHES = but_sw[3:2]; 
+assign buttons = but_sw[1:0];
+assign switches = but_sw[3:2];
 
 // this variant of user_io is for 8 bit cores (type == a4) only
 wire [7:0] core_type = 8'ha4;
 
-wire [7:0] sd_cmd = { 4'h5, 3'b000, sd_rd };
+// command byte read by the io controller
+wire [7:0] sd_cmd = { 4'h5, sd_conf, sd_sdhc, sd_wr, sd_rd };
+
+// filter spi clock. the 8 bit gate delay is ~2.5ns in total
+wire [7:0] spi_sck_D = { spi_sck_D[6:0], SPI_CLK } /* synthesis keep */;
+wire spi_sck = (spi_sck && spi_sck_D != 8'h00) || (!spi_sck && spi_sck_D == 8'hff);
 
 // drive MISO only when transmitting core id
-always@(negedge SPI_CLK or posedge SPI_SS_IO) begin
+always@(negedge spi_sck or posedge SPI_SS_IO) begin
 	if(SPI_SS_IO == 1) begin
 	   SPI_MISO <= 1'bZ;
 	end else begin
+
 		// first byte returned is always core type, further bytes are 
 		// command dependent
       if(byte_cnt == 0) begin
 		  SPI_MISO <= core_type[~bit_cnt];
+
 		end else begin
 			// reading serial fifo
-		   if(cmd == 8'h05) begin
+		   if(cmd == 8'h1b) begin
 				// send alternating flag byte and data
 				if(byte_cnt[0]) 	SPI_MISO <= serial_out_status[~bit_cnt];
 				else					SPI_MISO <= serial_out_byte[~bit_cnt];
@@ -104,11 +117,15 @@ always@(negedge SPI_CLK or posedge SPI_SS_IO) begin
 				if(byte_cnt == 1)
 					SPI_MISO <= sd_cmd[~bit_cnt];
 				else if((byte_cnt >= 2) && (byte_cnt < 6))
-					SPI_MISO <= sd_lba[{byte_cnt-2, ~bit_cnt}];
+					SPI_MISO <= sd_lba[{5-byte_cnt, ~bit_cnt}];
 				else
 					SPI_MISO <= 1'b0;
 			end
 			
+			// reading sd card write data
+		   else if(cmd == 8'h18)
+				SPI_MISO <= sd_din[~bit_cnt];
+				
 			else
 				SPI_MISO <= 1'b0;
 		end
@@ -126,12 +143,12 @@ reg [3:0] ps2_tx_state;
 reg [7:0] ps2_tx_byte;
 reg ps2_parity;
 
-assign ps2_clk = clk || (ps2_tx_state == 0);
+assign ps2_kbd_clk = ps2_clk || (ps2_tx_state == 0);
 
 // ps2 transmitter
 // Takes a byte from the FIFO and sends it in a ps2 compliant serial format.
 reg ps2_r_inc;
-always@(posedge clk) begin
+always@(posedge ps2_clk) begin
 	ps2_r_inc <= 1'b0;
 	
 	if(ps2_r_inc)
@@ -152,13 +169,13 @@ always@(posedge clk) begin
 			ps2_tx_state <= 4'd1;
 
 			// put start bit on data line
-			ps2_data <= 1'b0;			// start bit is 0
+			ps2_kbd_data <= 1'b0;			// start bit is 0
 		end
 	end else begin
 	
 		// transmission of 8 data bits
 		if((ps2_tx_state >= 1)&&(ps2_tx_state < 9)) begin
-			ps2_data <= ps2_tx_byte[0];			  // data bits
+			ps2_kbd_data <= ps2_tx_byte[0];			  // data bits
 			ps2_tx_byte[6:0] <= ps2_tx_byte[7:1]; // shift down
 			if(ps2_tx_byte[0]) 
 				ps2_parity <= !ps2_parity;
@@ -166,11 +183,11 @@ always@(posedge clk) begin
 
 		// transmission of parity
 		if(ps2_tx_state == 9)
-			ps2_data <= ps2_parity;
+			ps2_kbd_data <= ps2_parity;
 			
 		// transmission of stop bit
 		if(ps2_tx_state == 10)
-			ps2_data <= 1'b1;			// stop bit is 1
+			ps2_kbd_data <= 1'b1;			// stop bit is 1
 
 		// advance state machine
 		if(ps2_tx_state < 11)
@@ -204,11 +221,11 @@ always @(posedge serial_strobe or posedge status[0]) begin
 	end
 end 
 
-always@(negedge SPI_CLK or posedge status[0]) begin
+always@(negedge spi_sck or posedge status[0]) begin
 	if(status[0] == 1) begin
 		serial_out_rptr <= 0;
 	end else begin
-		if((byte_cnt != 0) && (cmd == 8'h05)) begin
+		if((byte_cnt != 0) && (cmd == 8'h1b)) begin
 			// read last bit -> advance read pointer
 			if((bit_cnt == 7) && !byte_cnt[0] && serial_out_data_available)
 				serial_out_rptr <= serial_out_rptr + 1;
@@ -217,15 +234,18 @@ always@(negedge SPI_CLK or posedge status[0]) begin
 end
 
 // SPI receiver
-always@(posedge SPI_CLK or posedge SPI_SS_IO) begin
+always@(posedge spi_sck or posedge SPI_SS_IO) begin
 
 	if(SPI_SS_IO == 1) begin
 	   bit_cnt <= 3'd0;
 	   byte_cnt <= 8'd0;
 		sd_ack <= 1'b0;
 		sd_dout_strobe <= 1'b0;
+		sd_din_strobe <= 1'b0;
 	end else begin
 		sd_dout_strobe <= 1'b0;
+		sd_din_strobe <= 1'b0;
+		
 		sbuf[6:0] <= { sbuf[5:0], SPI_MOSI };
 		bit_cnt <= bit_cnt + 3'd1;
 		if((bit_cnt == 7)&&(byte_cnt != 8'd255)) 
@@ -233,17 +253,27 @@ always@(posedge SPI_CLK or posedge SPI_SS_IO) begin
 
 		// finished reading command byte
       if(bit_cnt == 7) begin
-			if(byte_cnt == 0)
+			if(byte_cnt == 0) begin
 				cmd <= { sbuf, SPI_MOSI};
-			else begin
+			
+				// fetch first byte when sectore FPGA->IO command has been seen
+				if({ sbuf, SPI_MOSI} == 8'h18)
+					sd_din_strobe <= 1'b1;
+					
+				if(({ sbuf, SPI_MOSI} == 8'h17) || ({ sbuf, SPI_MOSI} == 8'h18))
+					sd_ack <= 1'b1;
+					
+			end else begin
+			
+				// buttons and switches
 				if(cmd == 8'h01)
 					but_sw <= { sbuf[2:0], SPI_MOSI }; 
 
 				if(cmd == 8'h02)
-					joystick0 <= { sbuf[4:0], SPI_MOSI };
+					joystick_0 <= { sbuf[4:0], SPI_MOSI };
 				 
 				if(cmd == 8'h03)
-					joystick1 <= { sbuf[4:0], SPI_MOSI };
+					joystick_1 <= { sbuf[4:0], SPI_MOSI };
 				 
 				if(cmd == 8'h05) begin
 					// store incoming keyboard bytes in 
@@ -252,15 +282,48 @@ always@(posedge SPI_CLK or posedge SPI_SS_IO) begin
 				end
 				
 				if(cmd == 8'h15)
-					status <= { sbuf[4:0], SPI_MOSI };
+					status <= { sbuf[6:0], SPI_MOSI };
 				
 				// send sector IO -> FPGA
 				if(cmd == 8'h17) begin
 					// flag that download begins
 					sd_dout <= { sbuf, SPI_MOSI};
-					sd_ack <= 1'b1;
 					sd_dout_strobe <= 1'b1;
 				end
+				
+				// send sector FPGA -> IO
+				if(cmd == 8'h18)
+					sd_din_strobe <= 1'b1;
+				
+				// send SD config IO -> FPGA
+				if(cmd == 8'h19) begin
+					// flag that download begins
+					sd_dout <= { sbuf, SPI_MOSI};
+					// sd card knows data is config if sd_dout_strobe is asserted
+					// with sd_ack still being inactive (low)
+					sd_dout_strobe <= 1'b1;
+				end
+				
+				// joystick analog
+				if(cmd == 8'h1a) begin
+					// first byte is joystick indes
+					if(byte_cnt == 1)
+						stick_idx <= { sbuf[1:0], SPI_MOSI };
+					else if(byte_cnt == 2) begin
+						// second byte is x axis
+						if(stick_idx == 0)
+							joystick_analog_0[15:8] <= { sbuf, SPI_MOSI };
+						else if(stick_idx == 1)
+							joystick_analog_1[15:8] <= { sbuf, SPI_MOSI };
+					end else if(byte_cnt == 3) begin
+						// third byte is y axis
+						if(stick_idx == 0)
+							joystick_analog_0[7:0] <= { sbuf, SPI_MOSI };
+						else if(stick_idx == 1)
+							joystick_analog_1[7:0] <= { sbuf, SPI_MOSI };
+					end
+				end
+
 			end
 		end
 	end
