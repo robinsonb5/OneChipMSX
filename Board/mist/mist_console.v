@@ -3,7 +3,7 @@
 // receive serial data and forware it to the io controller
 // 
 
-module mist_console (
+module mist_console #(parameter CLKFREQ=100) (
 		     // system interface
 		     input 	  clk,      // 125MHz
 		     input 	  n_reset,
@@ -15,7 +15,7 @@ module mist_console (
 		     output   par_out_strobe
 ); 
 
-localparam TICKSPERBIT = 100000000/115200;
+localparam TICKSPERBIT = (CLKFREQ*1000000)/115200;
 
 assign par_out_data = rx_byte;
 assign par_out_strobe = strobe;

@@ -197,6 +197,7 @@ component user_io
   end component user_io;
   
 component mist_console
+	generic ( CLKFREQ : integer := 100 );
    port (  clk 	:	in std_logic;
            n_reset:	in std_logic;
            ser_in :	in std_logic;
@@ -347,9 +348,11 @@ emsx_top : entity work.Virtual_Toplevel
 UART_TX <='1';
 
 mist_console_d: component mist_console
+	generic map
+	( CLKFREQ => 86)
 	port map
 	(
-		clk => fastclk,
+		clk => memclk,
 		n_reset => reset,
 		ser_in => txd,
 		par_out_data => par_out_data,
