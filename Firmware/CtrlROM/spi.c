@@ -1,5 +1,6 @@
 #include "spi.h"
 #include "small_printf.h"
+#include "osd.h"
 
 int SDHCtype;
 
@@ -22,6 +23,8 @@ int SDHCtype;
 #define cmd_CMD41(x) cmd_write(0x870069,0x40000000)
 #define cmd_CMD55(x) cmd_write(0xff0077,0)
 #define cmd_CMD58(x) cmd_write(0xff007A,0)
+
+#define puts OSD_Puts
 
 #ifdef SPI_DEBUG
 #define DBG(x) puts(x)
@@ -136,7 +139,7 @@ int wait_init()
 	int i=20;
 	int r;
 	SPI(0xff);
-	puts("Cmd_init\n");
+//	puts("Cmd_init\n");
 	while(--i)
 	{
 		if((r=cmd_init())==0)
@@ -160,7 +163,7 @@ int is_sdhc()
 	spi_spin();
 
 	r=cmd_CMD8();		// test for SDHC capability
-	printf("cmd_CMD8 response: %d\n",r);
+//	printf("cmd_CMD8 response: %d\n",r);
 	if(r!=1)
 	{
 		wait_init();
@@ -170,7 +173,7 @@ int is_sdhc()
 	r=SPI_PUMP();
 	if((r&0xffff)!=0x01aa)
 	{
-		printf("CMD8_4 response: %d\n",r);
+//		printf("CMD8_4 response: %d\n",r);
 		wait_init();
 		return(0);
 	}
@@ -204,7 +207,7 @@ int is_sdhc()
 		}
 		if(i==2)
 		{
-			printf("SDHC Initialization error!\n");
+			puts("SDHC Initialization error!\n");
 			return(0);
 		}
 	}
@@ -219,7 +222,7 @@ int spi_init()
 	SDHCtype=1;
 	SPI_CS(0);	// Disable CS
 	spi_spin();
-	puts("SPI Init()\n");
+//	puts("SPI Init()\n");
 	DBG("Activating CS\n");
 	SPI_CS(1);
 	i=8;
@@ -230,7 +233,7 @@ int spi_init()
 		DBG("Sent reset command\n");
 		if(i==2)
 		{
-			DBG("SD card initialization error!\n");
+			puts("SD card reset failed!\n");
 			return(0);
 		}
 	}
@@ -309,5 +312,10 @@ int sd_read_sector(unsigned long lba,unsigned char *buf)
 	SPI(0xff);
 	SPI_CS(0);
 	return(result);
+}
+
+int sd_ishc()
+{
+	return(SDHCtype);
 }
 

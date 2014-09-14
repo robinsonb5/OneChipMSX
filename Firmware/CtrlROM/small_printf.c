@@ -1,7 +1,10 @@
+#include "osd.h"
 
 #include <stdarg.h>
 
-int putchar(int c);
+//int putchar(int c);
+
+#define putchar OSD_Putchar
 
 #ifndef DISABLE_PRINTF
 

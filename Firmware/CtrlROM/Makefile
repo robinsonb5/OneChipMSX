@@ -25,19 +25,25 @@ MINSTARTUP_OBJ = $(patsubst $(STARTUP_DIR)/%.s,$(BUILD_DIR)/%.o,$(MINSTARTUP_SRC
 COMMON_SRC = 
 COMMON_OBJ = $(patsubst $(COMMON_DIR)/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
 
+HW_SRC = osd.c
+HW_OBJ = $(COMMON_OBJ) $(patsubst %.c,$(BUILD_DIR)/%.hwo,$(HW_SRC))
+
 MAIN_PRJ = CtrlROM
-MAIN_SRC = boot.c minfat.c spi.c uart.c swap.c small_printf.c textbuffer.c ps2.c keyboard.c interrupts.c hexdump.c
-MAIN_OBJ = $(COMMON_OBJ) $(patsubst %.c,$(BUILD_DIR)/%.o,$(MAIN_SRC))
+MAIN_SRC = boot.c minfat.c spi.c uart.c swap.c small_printf.c ps2.c keyboard.c interrupts.c hexdump.c menu.c
+MAIN_OBJ = $(COMMON_OBJ) $(HW_OBJ) $(patsubst %.c,$(BUILD_DIR)/%.o,$(MAIN_SRC))
 
 LINKMAP  = $(ZPUFLEXDIR)/Firmware/standalone_simple.ld
 
 
 # Commandline options for each tool.
 
-ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-shortop -mno-byteop -mno-neg -mno-div -mno-mod # No-neg requires bugfixed toolchain
-CFLAGS  = -I. -I$(COMMON_DIR)/ -c -Os $(ZPUOPTS) -DDISABLE_UART_RX -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART_TX
+HWZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-neg -mno-div -mno-mod # No-neg requires bugfixed toolchain
+HWCFLAGS  = -I. -I$(COMMON_DIR)/ -g -c -Os $(HWZPUOPTS) -ffunction-sections -fdata-sections -DDISABLE_UART_RX -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART_TX
 
-LFLAGS  = -nostartfiles -nostdlib -Wl,--relax -Os
+ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-shortop -mno-byteop -mno-neg -mno-div -mno-mod # No-neg requires bugfixed toolchain
+CFLAGS  = -I. -I$(COMMON_DIR)/ -g -c -Os $(ZPUOPTS) -ffunction-sections -fdata-sections -DDISABLE_UART_RX -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART_TX
+
+LFLAGS  = -nostartfiles -nostdlib -Wl,--relax -Wl,--gc-sections -Os -g
 
 LIBS = -lgcc
 
@@ -77,6 +83,9 @@ $(MAIN_PRJ).elf: $(MINSTARTUP_OBJ) $(MAIN_OBJ)
 
 $(BUILD_DIR)/%.o: %.c Makefile
 	$(CC) $(CFLAGS)  -o $@ -c $<
+
+$(BUILD_DIR)/%.hwo: %.c Makefile
+	$(CC) $(HWCFLAGS)  -o $@ -c $<
 
 $(BUILD_DIR)/%.o: $(COMMON_DIR)/%.c Makefile
 	$(CC) $(CFLAGS)  -o $@ -c $<

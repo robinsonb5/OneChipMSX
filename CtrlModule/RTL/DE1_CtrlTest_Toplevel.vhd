@@ -105,6 +105,9 @@ signal SOUND_L : std_logic_vector(15 downto 0);
 signal SOUND_R : std_logic_vector(15 downto 0);
 signal CmtIn : std_logic;
 
+signal boot_req : std_logic;
+signal boot_ack : std_logic;
+
 alias PS2_MDAT : std_logic is GPIO_1(19);
 alias PS2_MCLK : std_logic is GPIO_1(18);
 
@@ -155,6 +158,29 @@ reset<=(not SW(0) xor KEY(0)) and pll_locked;
     );
 
 
+myVgaMaster : entity work.video_vga_master
+		generic map (
+			clkDivBits => 4
+		)
+		port map (
+			clk => memclk,
+			clkDiv => X"2",	-- 87 Mhz / (2+1) = ~29 Mhz
+
+			hSync => vga_hsync,
+			vSync => vga_vsync,
+
+			-- Setup 640x480@60hz needs ~25 Mhz
+			xSize => TO_UNSIGNED(800,12),
+			ySize => TO_UNSIGNED(525,12),
+			xSyncFr => TO_UNSIGNED(656,12),
+			xSyncTo => TO_UNSIGNED(752,12),
+			ySyncFr => TO_UNSIGNED(500,12),
+			ySyncTo => TO_UNSIGNED(502,12)
+		);
+
+VGA_HS<=vga_hsync;
+VGA_VS<=vga_vsync;
+
 top : entity work.CtrlModule
 	generic map(
 		sysclk_frequency => 857
@@ -174,11 +200,18 @@ top : entity work.CtrlModule
 	 
 		-- PS/2
 		ps2k_clk_in => ps2k_clk_in,
-		ps2k_dat_in => ps2k_dat_in
+		ps2k_dat_in => ps2k_dat_in,
 --		ps2k_clk_out => ps2k_clk_out,
 --		ps2k_dat_out => ps2k_dat_out
-
+		vga_hsync => vga_hsync,
+		vga_vsync => vga_vsync,
+		osd_window => VGA_B(3),
+		osd_pixel => VGA_G(3),
+		host_bootdata_req => boot_req,
+		host_bootdata_ack => boot_ack
 );
+
+boot_req<=not boot_ack;
 
 ps2k_clk_out<='1';
 ps2k_dat_out<='1';

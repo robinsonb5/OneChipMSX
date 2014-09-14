@@ -48,6 +48,7 @@ JB:
 #include "swap.h"
 #include "uart.h"
 #include "small_printf.h"
+#include "osd.h"
 
 #define tolower(x) (x|32)
 
@@ -77,9 +78,9 @@ int partitioncount;
 #define fat_buffer (*(FATBUFFER*)&sector_buffer) // Don't need a separate buffer for this.
 // unsigned long buffered_fat_index;       // index of buffered FAT sector
 
+#define puts OSD_Puts
 
 #define BootPrint(x) puts(x);
-
 
 
 int compare(const char *s1, const char *s2,int b)
@@ -95,13 +96,13 @@ int compare(const char *s1, const char *s2,int b)
 
 
 // FindDrive() checks if a card is present and contains FAT formatted primary partition
-unsigned char FindDrive(void)
+int FindDrive(void)
 {
 	unsigned long boot_sector;              // partition boot sector
 //    buffered_fat_index = -1;
 	fat32=0;
 
-	puts("Reading MBR\n");
+//	puts("Reading MBR\n");
 
     if (!sd_read_sector(0, sector_buffer)) // read MBR
 	{
@@ -110,7 +111,7 @@ unsigned char FindDrive(void)
 	}
 //	hexdump(sector_buffer,512);
 
-	puts("MBR successfully read\n");
+//	puts("MBR successfully read\n");
 
 	boot_sector=0;
 	partitioncount=1;
@@ -121,7 +122,7 @@ unsigned char FindDrive(void)
     if (compare((const char*)&sector_buffer[0x52], "FAT32   ",8)==0) // check for FAT32
 		partitioncount=0;
 
-	printf("Partitioncount %d\n",partitioncount);
+	printf("%d partitions found\n",partitioncount);
 
 	if(partitioncount)
 	{
@@ -136,20 +137,20 @@ unsigned char FindDrive(void)
 			puts("No partition signature found\n");
 			return(0);
 		}
-		printf("Reading boot sector %d\n",boot_sector);
+//		printf("Reading boot sector %d\n",boot_sector);
 		if (!sd_read_sector(boot_sector, sector_buffer)) // read discriptor
 		    return(0);
 //		hexdump(sector_buffer,512);
-		puts("Read boot sector from first partition\n");
+//		puts("Read boot sector from first partition\n");
 	}
 
-	printf("Hunting for filesystem\n");
+//	printf("Hunting for filesystem\n");
 
     if (compare(sector_buffer+0x52, "FAT32   ",8)==0) // check for FAT16
 		fat32=1;
 	else if (compare(sector_buffer+0x36, "FAT16   ",8)!=0) // check for FAT32
 	{
-        printf("Unsupported partition type!\r");
+        puts("Unsupported partition type!\n");
 		return(0);
 	}
 
@@ -170,7 +171,7 @@ unsigned char FindDrive(void)
     // calculate cluster mask
     cluster_mask = cluster_size - 1;
 
-	printf("Cluster size: %d, Cluster mask, %d\n",cluster_size,cluster_mask);
+//	printf("Cluster size: %d, Cluster mask, %d\n",cluster_size,cluster_mask);
 
     fat_start = boot_sector + sector_buffer[0x0E] + (sector_buffer[0x0F] << 8); // reserved sector count before FAT table (usually 32 for FAT32)
 	fat_number = sector_buffer[0x10];
@@ -227,7 +228,7 @@ int GetCluster(int cluster)
 	// (Minimal FAT implementation doesn't have a separate buffer for FAT blocks, so always read.)
 //    if (sb != buffered_fat_index)
 //    {
-		printf("GetCluster reading sector %d\n",fat_start+sb);
+//		printf("GetCluster reading sector %d\n",fat_start+sb);
         if (!sd_read_sector(fat_start + sb, (unsigned char*)&fat_buffer))
             return(0);
 //		hexdump(sector_buffer,512);
@@ -261,7 +262,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
         {
             if ((iEntry & 0x0F) == 0) // first entry in sector, load the sector
             {
-				printf("Reading directory sector %d\n",iDirectorySector);
+//				printf("Reading directory sector %d\n",iDirectorySector);
                 sd_read_sector(iDirectorySector++, sector_buffer); // root directory is linear
 //				hexdump(sector_buffer,512);
                 pEntry = (DIRENTRY*)sector_buffer;
@@ -274,7 +275,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
             {
                 if (!(pEntry->Attributes & (ATTR_VOLUME | ATTR_DIRECTORY))) // not a volume nor directory
                 {
-					puts(pEntry->Name);
+//					puts(pEntry->Name);
                     if (compare((const char*)pEntry->Name, name,11) == 0)
                     {
                         file->size = SwapBBBB(pEntry->FileSize); 		// for 68000
@@ -291,7 +292,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
         if (fat32) // subdirectory is a linked cluster chain
         {
             iDirectoryCluster = GetCluster(iDirectoryCluster); // get next cluster in chain
-			printf("GetFATLink returned %d\n",iDirectoryCluster);
+//			printf("GetFATLink returned %d\n",iDirectoryCluster);
 
 //            if (fat32 ? (iDirectoryCluster & 0x0FFFFFF8) == 0x0FFFFFF8 : (iDirectoryCluster & 0xFFF8) == 0xFFF8) // check if end of cluster chain
             if ((iDirectoryCluster & 0x0FFFFFF8) == 0x0FFFFFF8) // check if end of cluster chain
@@ -384,4 +385,10 @@ int LoadFile(const char *fn, unsigned char *buf)
 	return(1);
 }
 #endif
+
+int IsFat32()
+{
+	return(fat32);
+}
+
 

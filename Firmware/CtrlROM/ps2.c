@@ -1,3 +1,5 @@
+/* Cut-down, read-only PS/2 handler for OSD code. */
+
 #include "small_printf.h"
 
 #include "ps2.h"
@@ -8,19 +10,6 @@ void ps2_ringbuffer_init(struct ps2_ringbuffer *r)
 {
 	r->in_hw=0;
 	r->in_cpu=0;
-	r->out_hw=0;
-	r->out_cpu=0;
-}
-
-void ps2_ringbuffer_write(struct ps2_ringbuffer *r,int in)
-{
-	while(r->out_hw==((r->out_cpu+1)&(PS2_RINGBUFFER_SIZE-1)))
-		;
-	DisableInterrupts();
-	r->outbuf[r->out_cpu]=in;
-	r->out_cpu=(r->out_cpu+1) & (PS2_RINGBUFFER_SIZE-1);
-	PS2Handler();
-	EnableInterrupts();
 }
 
 
@@ -42,8 +31,8 @@ int ps2_ringbuffer_count(struct ps2_ringbuffer *r)
 }
 
 struct ps2_ringbuffer kbbuffer;
-//struct ps2_ringbuffer mousebuffer;
 
+static volatile int intflag;
 
 void PS2Handler()
 {
@@ -51,7 +40,6 @@ void PS2Handler()
 	int mouse;
 
 	DisableInterrupts();
-	GetInterrupts();	// Clear interrupt bit
 	
 	kbd=HW_PS2(REG_PS2_KEYBOARD);
 
@@ -60,37 +48,25 @@ void PS2Handler()
 		kbbuffer.inbuf[kbbuffer.in_hw]=kbd&0xff;
 		kbbuffer.in_hw=(kbbuffer.in_hw+1) & (PS2_RINGBUFFER_SIZE-1);
 	}
-	if(kbd & (1<<BIT_PS2_CTS))
-	{
-		if(kbbuffer.out_hw!=kbbuffer.out_cpu)
-		{
-			HW_PS2(REG_PS2_KEYBOARD)=kbbuffer.outbuf[kbbuffer.out_hw];
-			kbbuffer.out_hw=(kbbuffer.out_hw+1) & (PS2_RINGBUFFER_SIZE-1);
-		}
-	}
-#if 0
-	mouse=HW_PS2(REG_PS2_MOUSE);
-	if(mouse & (1<<BIT_PS2_RECV))
-	{
-		mousebuffer.inbuf[mousebuffer.in_hw]=mouse&0xff;
-		mousebuffer.in_hw=(mousebuffer.in_hw+1) & (PS2_RINGBUFFER_SIZE-1);
-	}
-	if(mouse & (1<<BIT_PS2_CTS))
-	{
-		if(mousebuffer.out_hw!=mousebuffer.out_cpu)
-		{
-			HW_PS2(REG_PS2_MOUSE)=mousebuffer.outbuf[mousebuffer.out_hw];
-			mousebuffer.out_hw=(mousebuffer.out_hw+1) & (PS2_RINGBUFFER_SIZE-1);
-		}
-	}
-#endif
+	intflag=0;
+	GetInterrupts();	// Clear interrupt bit
 	EnableInterrupts();
 }
+
+
+void PS2Wait()
+{
+	DisableInterrupts();
+	intflag=1;
+	EnableInterrupts();
+	while(intflag)
+		;
+}
+
 
 void PS2Init()
 {
 	ps2_ringbuffer_init(&kbbuffer);
-//	ps2_ringbuffer_init(&mousebuffer);
 	SetIntHandler(&PS2Handler);
 	ClearKeyboard();
 }

@@ -40,7 +40,13 @@ entity CtrlModule is
 		-- Host boot data
 		host_bootdata : out std_logic_vector(7 downto 0);
 		host_bootdata_req : in std_logic:='0';
-		host_bootdata_ack : out std_logic
+		host_bootdata_ack : out std_logic;
+
+		-- Video signals for OSD
+		vga_hsync : in std_logic;
+		vga_vsync : in std_logic;
+		osd_window : out std_logic;
+		osd_pixel : out std_logic		
 );
 end entity;
 
@@ -96,7 +102,7 @@ signal host_bootdata_ack_r : std_logic;
 
 -- Interrupt signals
 
-constant int_max : integer := 0;
+constant int_max : integer := 1;
 signal int_triggers : std_logic_vector(int_max downto 0);
 signal int_status : std_logic_vector(int_max downto 0);
 signal int_ack : std_logic;
@@ -116,6 +122,13 @@ signal kbdrecvbyte : std_logic_vector(10 downto 0);
 --signal kbdsendtrigger : std_logic;
 --signal kbdsenddone : std_logic;
 --signal kbdsendbyte : std_logic_vector(7 downto 0);
+
+signal osd_wr : std_logic;
+signal osd_charwr : std_logic;
+signal osd_char_q : std_logic_vector(7 downto 0);
+signal osd_data : std_logic_vector(15 downto 0);
+signal vga_vsync_d : std_logic;
+signal vblank : std_logic;
 
 begin
 
@@ -187,6 +200,27 @@ begin
 end process;
 
 
+-- OSD
+
+myosd : entity work.OnScreenDisplay
+port map(
+	reset_n => reset,
+	clk => clk,
+	-- Video
+	hsync_n => vga_hsync,
+	vsync_n => vga_vsync,
+	pixel => osd_pixel,
+	window => osd_window,
+	-- Registers
+	addr => mem_addr(8 downto 0),
+	data_in => mem_write(15 downto 0),
+	data_out => osd_data(15 downto 0),
+	reg_wr => osd_wr,
+	char_wr => osd_charwr,
+	char_q => osd_char_q
+);
+
+
 -- SPI host
 spi : entity work.spi_interface
 	port map(
@@ -246,8 +280,19 @@ port map (
 );
 
 int_triggers<=(0=>kbdrecv,
+					1=>vblank,
 					others => '0');
-	
+
+-- Detect vblank
+vblank<='1' when vga_vsync='0' and vga_vsync_d='1' else '0';
+process(clk,vga_vsync)
+begin
+	if rising_edge(clk) then
+		vga_vsync_d<=vga_vsync;
+	end if;
+end process;
+			
+
 -- Main CPU
 
 	zpu: zpu_core_flex
@@ -255,8 +300,8 @@ int_triggers<=(0=>kbdrecv,
 		IMPL_MULTIPLY => true,
 		IMPL_COMPARISON_SUB => true,
 		IMPL_EQBRANCH => true,
-		IMPL_STOREBH => false,
-		IMPL_LOADBH => false,
+		IMPL_STOREBH => true,
+		IMPL_LOADBH => true,
 		IMPL_CALL => true,
 		IMPL_SHIFT => true,
 		IMPL_XOR => true,
@@ -297,10 +342,22 @@ begin
 		ser_txgo<='0';
 		spi_trigger<='0';
 		int_ack<='0';
+		osd_charwr<='0';
+		osd_wr<='0';
 		
 		-- Write from CPU?
 		if mem_writeEnable='1' then
 			case mem_addr(maxAddrBit)&mem_addr(10 downto 8) is
+				when X"B" =>	-- OSD controller at 0xFFFFFB00
+					osd_wr<='1';
+--					osd_req<='1';
+					mem_busy<='0';
+				when X"C" =>	-- OSD controller at 0xFFFFFC00 & 0xFFFFFD00
+					osd_charwr<='1';
+					mem_busy<='0';
+				when X"D" =>	-- OSD controller at 0xFFFFFC00 & 0xFFFFFD00
+					osd_charwr<='1';
+					mem_busy<='0';
 				when X"F" =>	-- Peripherals at 0xFFFFFF00
 					case mem_addr(7 downto 0) is
 						when X"B0" => -- Interrupts
@@ -348,6 +405,20 @@ begin
 
 		elsif mem_readEnable='1' then -- Read from CPU?
 			case mem_addr(maxAddrBit)&mem_addr(10 downto 8) is
+
+				when X"B" =>	-- OSD registers
+					mem_read(31 downto 16)<=(others => '0');
+					mem_read(15 downto 0)<=osd_data;
+					mem_busy<='0';
+--					osd_req<='1';
+				when X"C" =>	-- OSD controller at 0xFFFFFC00 & 0xFFFFFD00
+					mem_read(31 downto 8)<=(others => 'X');
+					mem_read(7 downto 0)<=osd_char_q;
+					mem_busy<='0';
+				when X"D" =>	-- OSD controller at 0xFFFFFC00 & 0xFFFFFD00
+					mem_read(31 downto 8)<=(others => 'X');
+					mem_read(7 downto 0)<=osd_char_q;
+					mem_busy<='0';
 
 				when X"F" =>	-- Peripherals
 					case mem_addr(7 downto 0) is

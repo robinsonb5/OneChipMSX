@@ -14,8 +14,89 @@
 #include "ps2.h"
 #include "keyboard.h"
 #include "hexdump.h"
+#include "osd.h"
+#include "menu.h"
 
 fileTYPE file; // Use the file defined in minfat.h to avoid another instance taking up ROM space
+
+void OSD_Puts(char *str)
+{
+	int c;
+	while((c=*str++))
+		OSD_Putchar(c);
+}
+
+
+static void reset()
+{
+
+}
+
+
+static struct menu_entry topmenu[];
+
+static char *video_labels[]=
+{
+	"VGA - 31KHz, 60Hz",
+	"VGA - 31KHz, 50Hz",
+	"SCART - 15KHz, 50Hz RGB",
+	"TV/Sound - 15Hz"
+};
+
+static char *slot1_labels[]=
+{
+	"Sl1: None",
+	"Sl1: ESE-SCC 1MB/SCC-I",
+	"Sl1: MegaRAM"
+};
+
+static char *slot2_labels[]=
+{
+	"Sl2: None",
+	"Sl2: ESE-SCC 1MB/SCC-I",
+	"Sl2: ESE-RAM 1MB/ASCII8",
+	"Sl2: ESE-RAM 1MB/ASCII16"
+};
+
+static char *ram_labels[]=
+{
+	"2048LB RAM",
+	"4096KB RAM"
+};
+
+static struct menu_entry dipswitches[]=
+{
+	{MENU_ENTRY_CYCLE,(char *)video_labels,4},
+	{MENU_ENTRY_TOGGLE,"SD Card",2},
+	{MENU_ENTRY_CYCLE,(char *)slot1_labels,3},
+	{MENU_ENTRY_CYCLE,(char *)slot2_labels,4},
+	{MENU_ENTRY_TOGGLE,"Japanese keyboard layout",6},
+	{MENU_ENTRY_TOGGLE,"Turbo (10.74MHz)",7},
+	{MENU_ENTRY_CYCLE,(char *)ram_labels,2},
+	{MENU_ENTRY_SUBMENU,"Back",MENU_ACTION(topmenu)},
+	
+	{MENU_ENTRY_NULL,0,0},
+};
+
+
+static struct menu_entry topmenu[]=
+{
+	{MENU_ENTRY_SUBMENU,"DIP Switches \x10",MENU_ACTION(dipswitches)},
+	{MENU_ENTRY_CALLBACK,"Reset",MENU_ACTION(&reset)},
+	{MENU_ENTRY_CALLBACK,"Exit",MENU_ACTION(&Menu_Hide)},
+	{MENU_ENTRY_NULL,0,0},
+};
+
+
+void WaitEnter()
+{
+	while(1)
+	{
+		HandlePS2RawCodes();
+		if(TestKey(KEY_ENTER)&2)
+			return;
+	}
+}
 
 
 int main(int argc,char **argv)
@@ -27,60 +108,88 @@ int main(int argc,char **argv)
 
 	PS2Init();
 	EnableInterrupts();
+	PS2Wait();
+	PS2Wait();
+	OSD_Clear();
+	OSD_Show(1);	// Figure out sync polarity
+	PS2Wait();
+	PS2Wait();
+	OSD_Show(1);	// OSD should now show correctly.
 
-	puts("Initializing SD card\n");
+	OSD_Puts("Initializing SD card\n");
 	if(spi_init())
 	{
 		int opened;
-		FindDrive();
+		if(!FindDrive())
+			return(0);
 
+		if(sd_ishc())
+		{
+			OSD_Puts("SDHC card detected but not\nsupported - disabling SD card\n\x10 OK\n");
+			WaitEnter();
+		}
+		else if(IsFat32())
+		{
+			OSD_Puts("Fat32 filesystem detected but not\nsupported - disabling SD card\n\x10 OK\n");
+			WaitEnter();
+		}
+
+		OSD_Puts("Trying MSX3BIOS.SYS...\n");
 		if(!(opened=FileOpen(&file,"MSX3BIOSSYS")))	// Try and load MSX3 BIOS first
+		{
+			OSD_Puts("Trying BIOS_M2P.ROM...\n");
 			opened=FileOpen(&file,"BIOS_M2PROM"); // If failure, load MSX2 BIOS.
+		}
 		if(opened)
 		{
-			puts("Opened file, loading...\n");
+			OSD_Puts("Opened BIOS, loading...\n");
 			int filesize=file.size;
-			int c=0;
-			int romcount;
-			int newrom=1;
+			unsigned int c=0;
+			int bits;
 
-//			HW_HOST(HW_HOST_BOOTDATA)=0; // Write one dummy byte since firmware discards the first byte
-//			Had to no-op this out
+			bits=0;
+			c=filesize;
+			while(c)
+			{
+				++bits;
+				c>>=1;
+			}
+			bits-=9;
 
 			while(filesize>0)
 			{
-//				while(!HandlePS2RawCodes())	// Wait for a keypress
-//					;
-//				if(TestKey(KEY_F1))
-//				{
-					if(FileRead(&file,sector_buffer))
+				OSD_ProgressBar(c,bits);
+				if(FileRead(&file,sector_buffer))
+				{
+					int i;
+					int *p=(int *)&sector_buffer;
+					for(i=0;i<(filesize<512 ? filesize : 512) ;i+=4)
 					{
-						int i;
-						int *p=(int *)&sector_buffer;
-//						printf("%d\n",c<<9);
-//						hexdump(&sector_buffer,512);
-						for(i=0;i<(filesize<512 ? filesize : 512) ;i+=4)
-						{
-							int t=*p++;
-							int t1=t&255;
-							int t2=(t>>8)&255;
-							int t3=(t>>16)&255;
-							int t4=(t>>24)&255;
-							HW_HOST(HW_HOST_BOOTDATA)=t4;
-							HW_HOST(HW_HOST_BOOTDATA)=t3;
-							HW_HOST(HW_HOST_BOOTDATA)=t2;
-							HW_HOST(HW_HOST_BOOTDATA)=t1;
-						}
+						int t=*p++;
+						int t1=t&255;
+						int t2=(t>>8)&255;
+						int t3=(t>>16)&255;
+						int t4=(t>>24)&255;
+						HW_HOST(HW_HOST_BOOTDATA)=t4;
+						HW_HOST(HW_HOST_BOOTDATA)=t3;
+						HW_HOST(HW_HOST_BOOTDATA)=t2;
+						HW_HOST(HW_HOST_BOOTDATA)=t1;
 					}
-					else
-						puts("Read block failed\n");
-					FileNextSector(&file);
-					filesize-=512;
-					++c;
-					putchar('.');
-					if((c&63)==0)
-						putchar('\n');
-//				}
+				}
+				else
+					puts("Read block failed\n");
+				FileNextSector(&file);
+				filesize-=512;
+				++c;
+			}
+			HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data
+
+			OSD_Show(0);
+			Menu_Set(topmenu);
+			while(1)
+			{
+				HandlePS2RawCodes();
+				Menu_Run();
 			}
 		}
 		else
@@ -89,14 +198,6 @@ int main(int argc,char **argv)
 		}
 	}
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data
-
-	while(1)
-	{
-		int k;
-		k=HandlePS2RawCodes();
-		if(k)
-			putchar(k);
-	}
 
 	return(0);
 }
