@@ -88,6 +88,35 @@ static struct menu_entry topmenu[]=
 };
 
 
+int SetDIPSwitch(int d)
+{
+	struct menu_entry *m;
+	MENU_TOGGLE_VALUES=d^4; // Invert sense of SD card switch
+	m=&dipswitches[0]; MENU_CYCLE_VALUE(m)=d&3; // Video
+	m=&dipswitches[6]; MENU_CYCLE_VALUE(m)=d&0x200 ? 1 : 0; // RAM
+	m=&dipswitches[2]; MENU_CYCLE_VALUE(m)=(d&0x100 ? 2 : 0) | (d&0x8 ? 1 : 0); // Slot 1
+	m=&dipswitches[3]; MENU_CYCLE_VALUE(m)=(d>>4)&3; // Slot 2
+}
+
+
+int GetDIPSwitch()
+{
+	struct menu_entry *m;
+	int result=MENU_TOGGLE_VALUES&0xc4;  // Bits 2, 6 and 7 are direct mapped
+	int t;
+	m=&dipswitches[6]; 	if(MENU_CYCLE_VALUE(m))
+		result|=0x200;	// RAM
+	m=&dipswitches[0];  t=MENU_CYCLE_VALUE(m);	// Video
+	result|=t;
+	m=&dipswitches[2];  t=MENU_CYCLE_VALUE(m); // Slot 1
+	result|=t&2 ? 0x100 : 0;
+	result|=t&1 ? 0x8 : 0;
+	m=&dipswitches[3];  t=MENU_CYCLE_VALUE(m); // Slot 1
+	result|=t<<4;
+	return(result^0x4); // Invert SD card switch
+}
+
+
 void WaitEnter()
 {
 	while(1)
@@ -99,11 +128,13 @@ void WaitEnter()
 }
 
 
+#define DEFAULT_DIPSWITCH_SETTINGS 0x239
+
 int main(int argc,char **argv)
 {
 	int i;
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
-	HW_HOST(HW_HOST_SW)=0x39; // Default DIP switch settings
+	HW_HOST(HW_HOST_SW)=DEFAULT_DIPSWITCH_SETTINGS;
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
 	PS2Init();
@@ -177,7 +208,7 @@ int main(int argc,char **argv)
 					}
 				}
 				else
-					puts("Read block failed\n");
+					OSD_Puts("Read block failed\n");
 				FileNextSector(&file);
 				filesize-=512;
 				++c;
@@ -186,15 +217,17 @@ int main(int argc,char **argv)
 
 			OSD_Show(0);
 			Menu_Set(topmenu);
+			SetDIPSwitch(DEFAULT_DIPSWITCH_SETTINGS);
 			while(1)
 			{
 				HandlePS2RawCodes();
 				Menu_Run();
+				HW_HOST(HW_HOST_SW)=GetDIPSwitch();
 			}
 		}
 		else
 		{
-			puts("Loading BIOS failed\n");
+			OSD_Puts("Loading BIOS failed\n");
 		}
 	}
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data

@@ -197,7 +197,10 @@ top : entity work.CtrlModule
 		 
 		txd => UART_TXD,
 		rxd => UART_RXD,
-	 
+
+		-- DIP Switches
+		dipswitches => LEDR,
+		
 		-- PS/2
 		ps2k_clk_in => ps2k_clk_in,
 		ps2k_dat_in => ps2k_dat_in,

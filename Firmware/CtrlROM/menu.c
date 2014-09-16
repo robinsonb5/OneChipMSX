@@ -5,7 +5,7 @@
 
 static struct menu_entry *menu;
 static int menu_visible=0;
-static int menu_toggles;
+int menu_toggle_bits;
 static int menurows;
 static int currentrow;
 
@@ -40,7 +40,7 @@ void Menu_Draw()
 				OSD_Puts(labels[i]);
 				break;
 			case MENU_ENTRY_TOGGLE:
-				if((menu_toggles>>MENU_ACTION_TOGGLE(m->action))&1)
+				if((menu_toggle_bits>>MENU_ACTION_TOGGLE(m->action))&1)
 					OSD_Puts("\x14 ");
 				else
 					OSD_Puts("\x15 ");
@@ -68,8 +68,15 @@ void Menu_Run()
 	int i;
 	if(TestKey(KEY_F12)&2)
 		OSD_Show(menu_visible^=1);
-	if(!menu_visible)
+
+	if(!menu_visible)	// Swallow any keystrokes that occur while the OSD is hidden...
+	{
+		TestKey(KEY_ENTER);
+		TestKey(KEY_UPARROW);
+		TestKey(KEY_DOWNARROW);
+
 		return;
+	}
 	if((TestKey(KEY_UPARROW)&2)&&currentrow)
 		--currentrow;
 	if((TestKey(KEY_DOWNARROW)&2)&&(currentrow<(menurows-1)))
@@ -94,7 +101,7 @@ void Menu_Run()
 				break;
 			case MENU_ENTRY_TOGGLE:
 				i=1<<MENU_ACTION_TOGGLE(m->action);
-				menu_toggles^=i;
+				menu_toggle_bits^=i;
 				Menu_Draw();
 				break;
 			case MENU_ENTRY_CYCLE:
