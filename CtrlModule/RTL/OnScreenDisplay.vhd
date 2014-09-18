@@ -24,6 +24,7 @@ port(
 	-- Video
 	hsync_n : in std_logic;
 	vsync_n : in std_logic;
+	enabled : out std_logic;
 	pixel : out std_logic;
 	window : out std_logic;
 	-- Registers
@@ -73,13 +74,16 @@ signal vactive : std_logic;
 signal xpos : unsigned(15 downto 0);
 signal ypos : unsigned(15 downto 0);
 signal charram_wr : std_logic;
-signal osd_enable : std_logic;
 
 signal char : std_logic_vector(7 downto 0);
 signal charram_rdaddr : std_logic_vector(8 downto 0);
 signal charpixel : std_logic;
 
+signal osd_enable : std_logic;
+
 begin
+
+enabled<=osd_enable;
 
 -- Monitor hsync and count the pulse widths
 

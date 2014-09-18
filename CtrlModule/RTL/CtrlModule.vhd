@@ -36,12 +36,13 @@ entity CtrlModule is
 		host_reset_n : out std_logic;
 		host_bootdone : out std_logic;
 		host_divert_sdcard : out std_logic;
+		host_divert_keyboard : out std_logic;
 		
 		-- Host boot data
 		host_bootdata : out std_logic_vector(7 downto 0);
 		host_bootdata_req : in std_logic:='0';
 		host_bootdata_ack : out std_logic;
-
+		
 		-- Video signals for OSD
 		vga_hsync : in std_logic;
 		vga_vsync : in std_logic;
@@ -130,6 +131,7 @@ signal osd_data : std_logic_vector(15 downto 0);
 signal vga_vsync_d : std_logic;
 signal vblank : std_logic;
 
+
 begin
 
 	host_bootdata_ack<=host_bootdata_ack_r;
@@ -209,6 +211,7 @@ port map(
 	-- Video
 	hsync_n => vga_hsync,
 	vsync_n => vga_vsync,
+--	enabled => host_divert_keyboard,
 	pixel => osd_pixel,
 	window => osd_window,
 	-- Registers
@@ -337,6 +340,8 @@ begin
 		kbdrecvreg <='0';
 		host_bootdata_ack_r<='0';
 		host_bootdata_pending<='0';
+		host_divert_sdcard<='0';
+		host_divert_keyboard<='0';
 	elsif rising_edge(clk) then
 		mem_busy<='1';
 		ser_txgo<='0';
@@ -388,6 +393,7 @@ begin
 							host_reset_n<=not mem_write(0);
 							host_bootdone<=mem_write(1);
 							host_divert_sdcard <= mem_write(2);
+							host_divert_keyboard <= mem_write(3);
 							mem_busy<='0';
 							
 						when X"48" => -- Host boot data

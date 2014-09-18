@@ -63,18 +63,21 @@ void Menu_Set(struct menu_entry *head)
 }
 
 
-void Menu_Run()
+int Menu_Run()
 {
 	int i;
 	if(TestKey(KEY_F12)&2)
+	{
+		while(TestKey(KEY_F12))
+			HandlePS2RawCodes(); // Wait for KeyUp message before opening OSD, since this disables the keyboard for the MSX core.
 		OSD_Show(menu_visible^=1);
+	}
 
 	if(!menu_visible)	// Swallow any keystrokes that occur while the OSD is hidden...
 	{
 		TestKey(KEY_ENTER);
 		TestKey(KEY_UPARROW);
 		TestKey(KEY_DOWNARROW);
-
 		return;
 	}
 	if((TestKey(KEY_UPARROW)&2)&&currentrow)
@@ -123,5 +126,7 @@ void Menu_Run()
 		OSD_SetY(i);
 		OSD_Putchar(i==currentrow ? (i==menurows-1 ? 17 : 16) : 32);
 	}
+
+	return(menu_visible);
 }
 

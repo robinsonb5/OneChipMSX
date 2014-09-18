@@ -77,9 +77,9 @@ entity virtual_toplevel is
     pLedR	    : out std_logic_vector( 9 downto 0);    -- 0=OFF, 1=ON(red) ...Power & SD/MMC access lamp
 
     -- Video, Audio/CMT ports
-    pDac_VR     : out std_logic_vector( 5 downto 0);  -- RGB_Red / Svideo_C
-    pDac_VG     : out std_logic_vector( 5 downto 0);  -- RGB_Grn / Svideo_Y
-    pDac_VB     : out std_logic_vector( 5 downto 0);  -- RGB_Blu / CompositeVideo
+    pDac_VR     : out std_logic_vector( 7 downto 0);  -- RGB_Red / Svideo_C
+    pDac_VG     : out std_logic_vector( 7 downto 0);  -- RGB_Grn / Svideo_Y
+    pDac_VB     : out std_logic_vector( 7 downto 0);  -- RGB_Blu / CompositeVideo
     pDac_S		: out   std_logic;						-- Sound
     pREM_out	: out   std_logic;						-- REM output; 1 - Tape On
     pCMT_out	: out   std_logic;						-- CMT output
@@ -110,6 +110,7 @@ signal boot_data : std_logic_vector(7 downto 0);
 signal host_reset_n : std_logic;
 signal host_bootdone : std_logic;
 signal host_divert_sdcard : std_logic;
+signal host_divert_keyboard : std_logic;
 
 signal host_sd_cmd : std_logic;
 signal host_sd_dat3 : std_logic;
@@ -120,8 +121,33 @@ signal ctrl_sd_cmd : std_logic;
 signal ctrl_sd_dat3 : std_logic;
 signal ctrl_sd_clk : std_logic;
 
+signal vga_hsync_i : std_logic;
+signal vga_vsync_i : std_logic;
+signal vga_red_i : std_logic_vector(7 downto 0);
+signal vga_green_i : std_logic_vector(7 downto 0);
+signal vga_blue_i : std_logic_vector(7 downto 0);
+signal osd_window : std_logic;
+signal osd_pixel : std_logic;
+
+signal dipswitches : std_logic_vector( 9 downto 0);
+
+signal lockreset_n : std_logic;
+signal msxreset_n : std_logic;
+
+signal msx_kbd_clk : std_logic;
+signal msx_kbd_dat : std_logic;
+signal msx_kbd_datout : std_logic;
+signal msx_kbd_clkout : std_logic;
+
 begin
 
+msx_kbd_clk <= pPs2Clk_in or host_divert_keyboard;	-- Lock keyboard when OSD is enabled.
+msx_kbd_dat <= pPs2Dat_in or host_divert_keyboard;	-- Lock keyboard when OSD is enabled.
+pPs2Dat_out <= msx_kbd_datout or host_divert_keyboard; 
+pPs2Clk_out <= msx_kbd_clkout or host_divert_keyboard; 
+
+msxreset_n <= pSW(0) and host_reset_n;
+lockreset_n <= pSW(0) and host_reset_n and lock_n;
 
 pSd_Ck <= ctrl_sd_clk when host_divert_sdcard='1' else host_sd_clk;
 pSd_Dt3 <= ctrl_sd_dat3 when host_divert_sdcard='1' else host_sd_dat3;
@@ -132,7 +158,7 @@ mymsx : entity work.emsx_top
   port map (
 	clk21m => clk21m,
 	memclk => memclk,
-	lock_n => host_reset_n,
+	lock_n => lockreset_n,
 
     -- MSX cartridge slot ports
     pSltClk => pSltClk,
@@ -174,10 +200,10 @@ mymsx : entity work.emsx_top
     pMemDat => pMemDat,
 
     -- PS/2 keyboard ports
-    pPs2Clk_in => pPs2Clk_in,
-    pPs2Dat_in => pPs2Dat_in,
-    pPs2Clk_out => pPs2Clk_out,
-    pPs2Dat_out => pPs2Dat_out,
+    pPs2Clk_in => msx_kbd_clk,
+    pPs2Dat_in => msx_kbd_dat,
+    pPs2Clk_out => msx_kbd_clkout,
+    pPs2Dat_out => msx_kbd_datout,
 
     -- Joystick ports (Port_A, Port_B)
     pJoyA => pJoyA,
@@ -192,22 +218,23 @@ mymsx : entity work.emsx_top
     pSd_Dt0 => host_sd_dat,
 	 
     -- DIP switch, Lamp ports
-    pSW => pSW,
-    pDip => pDip,
+    pSW(3 downto 1) => pSW(3 downto 1),
+    pSW(0) => msxreset_n,
+    pDip => dipswitches,
     pLedG => pLedG,
     pLedR => pLedR,
 
     -- Video, Audio/CMT ports
-    pDac_VR => pDac_VR,
-    pDac_VG => pDac_VG,
-    pDac_VB => pDac_VB,
+    pDac_VR => vga_red_i(7 downto 2),
+    pDac_VG => vga_green_i(7 downto 2),
+    pDac_VB => vga_blue_i(7 downto 2),
     pDac_S => pDac_S,
     pREM_out => pREM_out,
     pCMT_out => pCMT_out,
     pCMT_in	=> pCMT_in,
 
-    pVideoHS_n => pVideoHS_n,
-    pVideoVS_n => pVideoVS_n,
+    pVideoHS_n => vga_hsync_i,
+    pVideoVS_n => vga_vsync_i,
 
     -- Hex display
     hex => hex,
@@ -220,6 +247,29 @@ mymsx : entity work.emsx_top
 	boot_ack => boot_ack,
 	boot_data => boot_data
 );
+
+pVideoHS_n <= vga_hsync_i;
+pVideoVS_n <= vga_vsync_i;
+vga_red_i(1 downto 0)<="00";
+vga_green_i(1 downto 0)<="00";
+vga_blue_i(1 downto 0)<="00";
+
+overlay : entity work.OSD_Overlay
+	port map
+	(
+		clk => memclk,
+		red_in => vga_red_i,
+		green_in => vga_green_i,
+		blue_in => vga_blue_i,
+		window_in => '1',
+		osd_window_in => osd_window,
+		osd_pixel_in => osd_pixel,
+		red_out => pDac_VR,
+		green_out => pDac_VG,
+		blue_out => pDac_VB,
+		window_out => open
+	);
+
 
 top : entity work.CtrlModule
 	generic map(
@@ -245,13 +295,24 @@ top : entity work.CtrlModule
 		host_reset_n => host_reset_n,
 		host_bootdone => host_bootdone,
 		host_divert_sdcard => host_divert_sdcard,
+		host_divert_keyboard => host_divert_keyboard,
+
+		-- DIP switches
+		dipswitches => dipswitches,
 		
 		-- Host boot data
 		host_bootdata => boot_data,
 		host_bootdata_req => boot_req,
-		host_bootdata_ack => boot_ack_ctrl
-
+		host_bootdata_ack => boot_ack_ctrl,
+		
+		-- Video signals for OSD
+		vga_hsync => vga_hsync_i,
+		vga_vsync => vga_vsync_i,
+		osd_window => osd_window,
+		osd_pixel => osd_pixel
 );
+
+
 
 boot_ack<=boot_ack_ctrl or host_bootdone;  -- Once the ROM is fully transferred, ack any further reads immediately.
 

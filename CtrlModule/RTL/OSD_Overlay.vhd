@@ -5,15 +5,15 @@ use IEEE.numeric_std.ALL;
 entity OSD_Overlay is
 port (
 	clk : in std_logic;
-	red_in : in unsigned(7 downto 0);
-	green_in : in unsigned(7 downto 0);
-	blue_in : in unsigned(7 downto 0);
+	red_in : in std_logic_vector(7 downto 0);
+	green_in : in std_logic_vector(7 downto 0);
+	blue_in : in std_logic_vector(7 downto 0);
 	window_in : in std_logic;
 	osd_window_in : in std_logic;
 	osd_pixel_in : in std_logic;
-	red_out : out unsigned(7 downto 0);
-	green_out : out unsigned(7 downto 0);
-	blue_out : out unsigned(7 downto 0);
+	red_out : out std_logic_vector(7 downto 0);
+	green_out : out std_logic_vector(7 downto 0);
+	blue_out : out std_logic_vector(7 downto 0);
 	window_out : out std_logic
 );
 end entity;
@@ -28,9 +28,9 @@ begin
 			window_out<=window_in;
 			
 			if osd_window_in='1' then
-				red_out<=unsigned(osd_pixel_in&osd_pixel_in&red_in(5 downto 0));			
-				green_out<=unsigned(osd_pixel_in&osd_pixel_in&green_in(5 downto 0));
-				blue_out<=unsigned(osd_pixel_in&'1'&blue_in(5 downto 0));
+				red_out<=osd_pixel_in&osd_pixel_in&red_in(5 downto 0);
+				green_out<=osd_pixel_in&osd_pixel_in&green_in(5 downto 0);
+				blue_out<=osd_pixel_in&'1'&blue_in(5 downto 0);
 			else
 				red_out<=red_in;
 				green_out<=green_in;

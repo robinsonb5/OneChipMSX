@@ -24,7 +24,7 @@ void Menu_Show();
 void Menu_Hide();
 void Menu_Draw();
 void Menu_Set(struct menu_entry *head);
-void Menu_Run();
+int Menu_Run(); // Returns the menu's visibility
 
 extern int menu_toggle_bits;
 #define MENU_TOGGLE_VALUES menu_toggle_bits

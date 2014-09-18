@@ -18,6 +18,8 @@
 #include "menu.h"
 
 fileTYPE file; // Use the file defined in minfat.h to avoid another instance taking up ROM space
+static struct menu_entry topmenu[];
+
 
 void OSD_Puts(char *str)
 {
@@ -27,9 +29,81 @@ void OSD_Puts(char *str)
 }
 
 
+static int Boot()
+{
+	int result=0;
+	int opened;
+	OSD_Puts("Trying MSX3BIOS.SYS...\n");
+	if(!(opened=FileOpen(&file,"MSX3BIOSSYS")))	// Try and load MSX3 BIOS first
+	{
+		OSD_Puts("Trying BIOS_M2P.ROM...\n");
+		opened=FileOpen(&file,"BIOS_M2PROM"); // If failure, load MSX2 BIOS.
+	}
+	if(opened)
+	{
+		OSD_Puts("Opened BIOS, loading...\n");
+		int filesize=file.size;
+		unsigned int c=0;
+		int bits;
+
+		bits=0;
+		c=filesize;
+		while(c)
+		{
+			++bits;
+			c>>=1;
+		}
+		bits-=9;
+
+		while(filesize>0)
+		{
+			OSD_ProgressBar(c,bits);
+			if(FileRead(&file,sector_buffer))
+			{
+				int i;
+				int *p=(int *)&sector_buffer;
+				for(i=0;i<(filesize<512 ? filesize : 512) ;i+=4)
+				{
+					int t=*p++;
+					int t1=t&255;
+					int t2=(t>>8)&255;
+					int t3=(t>>16)&255;
+					int t4=(t>>24)&255;
+					HW_HOST(HW_HOST_BOOTDATA)=t4;
+					HW_HOST(HW_HOST_BOOTDATA)=t3;
+					HW_HOST(HW_HOST_BOOTDATA)=t2;
+					HW_HOST(HW_HOST_BOOTDATA)=t1;
+				}
+			}
+			else
+			{
+				OSD_Puts("Read block failed\n");
+				return(0);
+			}
+			FileNextSector(&file);
+			filesize-=512;
+			++c;
+		}
+		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data
+		return(1);
+	}
+	else
+		return(0);
+}
+
+
 static void reset()
 {
-
+	Menu_Hide();
+	OSD_Clear();
+	OSD_Show(1);
+	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
+	PS2Wait();
+	PS2Wait();
+	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
+	Boot();
+	Menu_Set(topmenu);
+	OSD_Show(0);
 }
 
 
@@ -128,6 +202,7 @@ void WaitEnter()
 }
 
 
+
 #define DEFAULT_DIPSWITCH_SETTINGS 0x239
 
 int main(int argc,char **argv)
@@ -150,79 +225,42 @@ int main(int argc,char **argv)
 	OSD_Puts("Initializing SD card\n");
 	if(spi_init())
 	{
-		int opened;
+		int dipsw=DEFAULT_DIPSWITCH_SETTINGS;
+
 		if(!FindDrive())
 			return(0);
 
 		if(sd_ishc())
 		{
-			OSD_Puts("SDHC card detected but not\nsupported - disabling SD card\n\x10 OK\n");
+			OSD_Puts("SDHC card detected but not\nsupported; disabling SD card\n\x10 OK\n");
 			WaitEnter();
+			dipsw|=4; // Disable SD card.
 		}
 		else if(IsFat32())
 		{
-			OSD_Puts("Fat32 filesystem detected but not\nsupported - disabling SD card\n\x10 OK\n");
+			OSD_Puts("Fat32 filesystem detected but\nnot supported; disabling SD card\n\x10 OK\n");
 			WaitEnter();
+			dipsw|=4; // Disable SD card.
 		}
+		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset again
+		SetDIPSwitch(dipsw);
+		HW_HOST(HW_HOST_SW)=dipsw;
+		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
-		OSD_Puts("Trying MSX3BIOS.SYS...\n");
-		if(!(opened=FileOpen(&file,"MSX3BIOSSYS")))	// Try and load MSX3 BIOS first
+		if(Boot())
 		{
-			OSD_Puts("Trying BIOS_M2P.ROM...\n");
-			opened=FileOpen(&file,"BIOS_M2PROM"); // If failure, load MSX2 BIOS.
-		}
-		if(opened)
-		{
-			OSD_Puts("Opened BIOS, loading...\n");
-			int filesize=file.size;
-			unsigned int c=0;
-			int bits;
-
-			bits=0;
-			c=filesize;
-			while(c)
-			{
-				++bits;
-				c>>=1;
-			}
-			bits-=9;
-
-			while(filesize>0)
-			{
-				OSD_ProgressBar(c,bits);
-				if(FileRead(&file,sector_buffer))
-				{
-					int i;
-					int *p=(int *)&sector_buffer;
-					for(i=0;i<(filesize<512 ? filesize : 512) ;i+=4)
-					{
-						int t=*p++;
-						int t1=t&255;
-						int t2=(t>>8)&255;
-						int t3=(t>>16)&255;
-						int t4=(t>>24)&255;
-						HW_HOST(HW_HOST_BOOTDATA)=t4;
-						HW_HOST(HW_HOST_BOOTDATA)=t3;
-						HW_HOST(HW_HOST_BOOTDATA)=t2;
-						HW_HOST(HW_HOST_BOOTDATA)=t1;
-					}
-				}
-				else
-					OSD_Puts("Read block failed\n");
-				FileNextSector(&file);
-				filesize-=512;
-				++c;
-			}
-			HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data
-
 			OSD_Show(0);
 			Menu_Set(topmenu);
-			SetDIPSwitch(DEFAULT_DIPSWITCH_SETTINGS);
 			while(1)
 			{
+				int visible;
 				HandlePS2RawCodes();
-				Menu_Run();
+				visible=Menu_Run();
 				HW_HOST(HW_HOST_SW)=GetDIPSwitch();
+				if(visible)
+					HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE|HW_HOST_CTRLF_KEYBOARD;	// capture keyboard
+				else					
+					HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// release keyboard
 			}
 		}
 		else

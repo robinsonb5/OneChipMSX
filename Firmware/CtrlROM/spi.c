@@ -189,10 +189,10 @@ int is_sdhc()
 		{
 			if((r=cmd_CMD58())==0)
 			{
-				printf("CMD58 %d\n  ",r);
+//				printf("CMD58 %d\n  ",r);
 				SPI(0xff);
 				r=SPI_READ();
-				printf("CMD58_2 %d\n  ",r);
+//				printf("CMD58_2 %d\n  ",r);
 				SPI(0xff);
 				SPI(0xff);
 				SPI(0xff);
@@ -222,6 +222,7 @@ int spi_init()
 	SDHCtype=1;
 	SPI_CS(0);	// Disable CS
 	spi_spin();
+	puts("Initialising SD card...\n");
 //	puts("SPI Init()\n");
 	DBG("Activating CS\n");
 	SPI_CS(1);
