@@ -323,9 +323,9 @@ emsx_top : entity work.Virtual_Toplevel
     pLedR => open,
 
     -- Video, Audio/CMT ports
-    unsigned(pDac_VR) => vga_tred(7 downto 2),
-    unsigned(pDac_VG) => vga_tgreen(7 downto 2),
-    unsigned(pDac_VB) => vga_tblue(7 downto 2),
+    unsigned(pDac_VR) => vga_tred,
+    unsigned(pDac_VG) => vga_tgreen,
+    unsigned(pDac_VB) => vga_tblue,
 --    pDac_S 		: out   std_logic;						-- Sound
 --    pREM_out	: out   std_logic;						-- REM output; 1 - Tape On
 --    pCMT_out	: out   std_logic;						-- CMT output
