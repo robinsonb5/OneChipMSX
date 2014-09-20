@@ -142,6 +142,10 @@ architecture rtl of chameleon_toplevel is
 	signal c64_joy2 : unsigned(5 downto 0);
 	signal joystick3 : unsigned(5 downto 0);
 	signal joystick4 : unsigned(5 downto 0);
+	signal cdtv_joy1 : unsigned(5 downto 0);
+	signal cdtv_joy2 : unsigned(5 downto 0);
+	signal joy1 : unsigned(5 downto 0);
+	signal joy2 : unsigned(5 downto 0);
 	signal usart_rx : std_logic:='1';
 	signal ir : std_logic;
 
@@ -286,7 +290,45 @@ myReset : entity work.gen_reset
 --			iec_srq_in : out std_logic
 	
 		);
+		
+cdtv_remote : entity work.chameleon_cdtv_remote
+	port map(
+		clk => fastclk,
+		ena_1mhz => ena_1mhz,
+		ir => ir,
+		
+--		trigger : out std_logic;
+--
+--		key_1 : out std_logic;
+--		key_2 : out std_logic;
+--		key_3 : out std_logic;
+--		key_4 : out std_logic;
+--		key_5 : out std_logic;
+--		key_6 : out std_logic;
+--		key_7 : out std_logic;
+--		key_8 : out std_logic;
+--		key_9 : out std_logic;
+--		key_0 : out std_logic;
+--		key_escape : out std_logic;
+--		key_enter : out std_logic;
+--		key_genlock : out std_logic;
+--		key_cdtv : out std_logic;
+--		key_power : out std_logic;
+--		key_rew : out std_logic;
+--		key_play : out std_logic;
+--		key_ff : out std_logic;
+--		key_stop : out std_logic;
+--		key_vol_up : out std_logic;
+--		key_vol_dn : out std_logic;
+		joystick_a => cdtv_joy1,
+		joystick_b => cdtv_joy2
+		
+--		debug_code : out unsigned(11 downto 0)
+	);
 
+joy1<=c64_joy1 and cdtv_joy1;
+joy2<=c64_joy2 and cdtv_joy2;
+	
 
   U00 : entity work.pll4x2
     port map(
@@ -355,9 +397,9 @@ emsx_top : entity work.Virtual_Toplevel
 	 pPs2Dat_in => ps2_keyboard_dat_in,
 	 
 --    -- Joystick ports (Port_A, Port_B)
-    pJoyA => std_logic_vector(c64_joy1), --       : inout std_logic_vector( 5 downto 0):=(others=>'1');
+    pJoyA => std_logic_vector(joy1), --       : inout std_logic_vector( 5 downto 0):=(others=>'1');
 --    pStrA       : out std_logic;
-    pJoyB => std_logic_vector(c64_joy2), --       : inout std_logic_vector( 5 downto 0):=(others=>'1');
+    pJoyB => std_logic_vector(joy2), --       : inout std_logic_vector( 5 downto 0):=(others=>'1');
 --    pStrB       : out std_logic;
 
     -- SD/MMC slot ports

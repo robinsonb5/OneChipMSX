@@ -108,7 +108,7 @@ void spi_spin()
 
 int wait_initV2()
 {
-	int i=20000;
+	int i=2000;
 	int r;
 	spi_spin();
 	while(--i)
@@ -226,7 +226,7 @@ int spi_init()
 //	puts("SPI Init()\n");
 	DBG("Activating CS\n");
 	SPI_CS(1);
-	i=8;
+	i=100;
 	while(--i)
 	{
 		if(cmd_reset()==1) // Enable SPI mode

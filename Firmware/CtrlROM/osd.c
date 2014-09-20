@@ -76,7 +76,7 @@ void OSD_ProgressBar(int v,int bits)
 }
 
 
-static int pixelclock;
+static int pixelclock=2;
 static int osd_syncpolarity;
 
 void OSD_Show(int visible)
@@ -114,12 +114,16 @@ void OSD_Show(int visible)
 	hh<<=2+pixelclock;
 	vh<<=3;
 
-	pixelclock=2;
+	if(hh>800)
+		pixelclock=3;
+	else
+		pixelclock=2;
+
 	HW_OSD(REG_OSD_PIXELCLOCK)=(1<<pixelclock)-1;
 
 //	printf("Frame width is %d, frame height is %d\n",hh,vh);
 
-	hl=((hh-100)-80)/2;
+	hl=((hh-100)-80)>>(pixelclock-1);
 	vl=((vh-60)-48)/2;
 
 //	printf("OSD Offsets: %d, %d\n",hl,vl);

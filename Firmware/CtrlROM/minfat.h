@@ -99,10 +99,10 @@ extern unsigned int fat32;
 
 // functions
 int FindDrive(void);
-unsigned int GetFATLink(unsigned int cluster);
-unsigned char FileNextSector(fileTYPE *file);
-unsigned char FileOpen(fileTYPE *file, const char *name);
-unsigned char FileRead(fileTYPE *file, unsigned char *pBuffer);
+int GetFATLink(unsigned int cluster);
+int FileNextSector(fileTYPE *file);
+int FileOpen(fileTYPE *file, const char *name);
+int FileRead(fileTYPE *file, unsigned char *pBuffer);
 //unsigned char FileReadEx(fileTYPE *file, unsigned char *pBuffer, unsigned long nSize);
 
 int LoadFile(const char *fn, unsigned char *buf);

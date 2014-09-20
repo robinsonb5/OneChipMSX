@@ -241,7 +241,7 @@ int GetCluster(int cluster)
 }
 
 
-unsigned char FileOpen(fileTYPE *file, const char *name)
+int FileOpen(fileTYPE *file, const char *name)
 {
     unsigned long  iDirectory = 0;       // only root directory is supported
     DIRENTRY      *pEntry = NULL;        // pointer to current entry in sector buffer
@@ -307,10 +307,10 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
     return(0);
 }
 
-unsigned char FileNextSector(fileTYPE *file)
+int FileNextSector(fileTYPE *file)
 {
     unsigned long sb;
-    unsigned short i;
+    unsigned int i;
 
     // increment sector index
     file->sector++;
@@ -322,7 +322,7 @@ unsigned char FileNextSector(fileTYPE *file)
     return(1);
 }
 
-unsigned char FileRead(fileTYPE *file, unsigned char *pBuffer)
+int FileRead(fileTYPE *file, unsigned char *pBuffer)
 {
     unsigned long sb;
 
@@ -330,10 +330,7 @@ unsigned char FileRead(fileTYPE *file, unsigned char *pBuffer)
     sb += cluster_size * (file->cluster-2);  // cluster offset
     sb += file->sector & cluster_mask;      // sector offset in cluster
 
-    if (!sd_read_sector(sb, pBuffer)) // read sector from drive
-        return(0);
-    else
-        return(1);
+	return(sd_read_sector(sb, pBuffer)); // read sector from drive
 }
 
 #if 0

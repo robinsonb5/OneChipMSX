@@ -234,7 +234,8 @@ mymsx : entity work.emsx_top
     pCMT_in	=> pCMT_in,
 
     pVideoHS_n => vga_hsync_i,
-    pVideoVS_n => vga_vsync_i,
+    pVideoVS_n => pVideoVS_n,
+	 pVideoVS_OSD_n => vga_vsync_i,
 
     -- Hex display
     hex => hex,
@@ -249,7 +250,8 @@ mymsx : entity work.emsx_top
 );
 
 pVideoHS_n <= vga_hsync_i;
-pVideoVS_n <= vga_vsync_i;
+-- pVideoVS_n <= vga_vsync_i; -- vsync_i is now exclusively used by the OSD, since it can't
+										-- cope with composite sync.
 vga_red_i(1 downto 0)<="00";
 vga_green_i(1 downto 0)<="00";
 vga_blue_i(1 downto 0)<="00";

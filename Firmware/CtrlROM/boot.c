@@ -21,6 +21,9 @@ fileTYPE file; // Use the file defined in minfat.h to avoid another instance tak
 static struct menu_entry topmenu[];
 
 
+#define DEFAULT_DIPSWITCH_SETTINGS 0x239
+
+
 void OSD_Puts(char *str)
 {
 	int c;
@@ -29,66 +32,106 @@ void OSD_Puts(char *str)
 }
 
 
+void WaitEnter()
+{
+	while(1)
+	{
+		HandlePS2RawCodes();
+		if(TestKey(KEY_ENTER)&2)
+			return;
+	}
+}
+
+
 static int Boot()
 {
 	int result=0;
 	int opened;
-	OSD_Puts("Trying MSX3BIOS.SYS...\n");
-	if(!(opened=FileOpen(&file,"MSX3BIOSSYS")))	// Try and load MSX3 BIOS first
-	{
-		OSD_Puts("Trying BIOS_M2P.ROM...\n");
-		opened=FileOpen(&file,"BIOS_M2PROM"); // If failure, load MSX2 BIOS.
-	}
-	if(opened)
-	{
-		OSD_Puts("Opened BIOS, loading...\n");
-		int filesize=file.size;
-		unsigned int c=0;
-		int bits;
 
-		bits=0;
-		c=filesize;
-		while(c)
+	OSD_Puts("Initializing SD card\n");
+	if(spi_init())
+	{
+		int dipsw=GetDIPSwitch();
+
+		if(!FindDrive())
+			return(0);
+
+		if(sd_ishc())
 		{
-			++bits;
-			c>>=1;
+			OSD_Puts("SDHC card detected but not\nsupported; disabling SD card\n\x10 OK\n");
+			WaitEnter();
+			dipsw|=4; // Disable SD card.
+			HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMSX into Reset again
+			HW_HOST(HW_HOST_SW)=dipsw;
+			SetDIPSwitch(dipsw);
 		}
-		bits-=9;
-
-		while(filesize>0)
+		else if(IsFat32())
 		{
-			OSD_ProgressBar(c,bits);
-			if(FileRead(&file,sector_buffer))
+			OSD_Puts("Fat32 filesystem detected but\nnot supported; disabling SD card\n\x10 OK\n");
+			WaitEnter();
+			dipsw|=4; // Disable SD card.
+			HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMSX into Reset again
+			HW_HOST(HW_HOST_SW)=dipsw;
+			SetDIPSwitch(dipsw);
+		}
+		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
+
+		OSD_Puts("Trying MSX3BIOS.SYS...\n");
+		if(!(opened=FileOpen(&file,"MSX3BIOSSYS")))	// Try and load MSX3 BIOS first
+		{
+			OSD_Puts("Trying BIOS_M2P.ROM...\n");
+			opened=FileOpen(&file,"BIOS_M2PROM"); // If failure, load MSX2 BIOS.
+		}
+		if(opened)
+		{
+			OSD_Puts("Opened BIOS, loading...\n");
+			int filesize=file.size;
+			unsigned int c=0;
+			int bits;
+
+			bits=0;
+			c=filesize;
+			while(c)
 			{
-				int i;
-				int *p=(int *)&sector_buffer;
-				for(i=0;i<(filesize<512 ? filesize : 512) ;i+=4)
+				++bits;
+				c>>=1;
+			}
+			bits-=9;
+
+			while(filesize>0)
+			{
+				OSD_ProgressBar(c,bits);
+				if(FileRead(&file,sector_buffer))
 				{
-					int t=*p++;
-					int t1=t&255;
-					int t2=(t>>8)&255;
-					int t3=(t>>16)&255;
-					int t4=(t>>24)&255;
-					HW_HOST(HW_HOST_BOOTDATA)=t4;
-					HW_HOST(HW_HOST_BOOTDATA)=t3;
-					HW_HOST(HW_HOST_BOOTDATA)=t2;
-					HW_HOST(HW_HOST_BOOTDATA)=t1;
+					int i;
+					int *p=(int *)&sector_buffer;
+					for(i=0;i<(filesize<512 ? filesize : 512) ;i+=4)
+					{
+						int t=*p++;
+						int t1=t&255;
+						int t2=(t>>8)&255;
+						int t3=(t>>16)&255;
+						int t4=(t>>24)&255;
+						HW_HOST(HW_HOST_BOOTDATA)=t4;
+						HW_HOST(HW_HOST_BOOTDATA)=t3;
+						HW_HOST(HW_HOST_BOOTDATA)=t2;
+						HW_HOST(HW_HOST_BOOTDATA)=t1;
+					}
 				}
+				else
+				{
+					OSD_Puts("Read block failed\n");
+					return(0);
+				}
+				FileNextSector(&file);
+				filesize-=512;
+				++c;
 			}
-			else
-			{
-				OSD_Puts("Read block failed\n");
-				return(0);
-			}
-			FileNextSector(&file);
-			filesize-=512;
-			++c;
+			HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data
+			return(1);
 		}
-		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data
-		return(1);
 	}
-	else
-		return(0);
+	return(0);
 }
 
 
@@ -113,8 +156,7 @@ static char *video_labels[]=
 {
 	"VGA - 31KHz, 60Hz",
 	"VGA - 31KHz, 50Hz",
-	"SCART - 15KHz, 50Hz RGB",
-	"TV/Sound - 15Hz"
+	"TV - 480i, 60Hz"
 };
 
 static char *slot1_labels[]=
@@ -140,7 +182,7 @@ static char *ram_labels[]=
 
 static struct menu_entry dipswitches[]=
 {
-	{MENU_ENTRY_CYCLE,(char *)video_labels,4},
+	{MENU_ENTRY_CYCLE,(char *)video_labels,3},
 	{MENU_ENTRY_TOGGLE,"SD Card",2},
 	{MENU_ENTRY_CYCLE,(char *)slot1_labels,3},
 	{MENU_ENTRY_CYCLE,(char *)slot2_labels,4},
@@ -191,23 +233,10 @@ int GetDIPSwitch()
 }
 
 
-void WaitEnter()
-{
-	while(1)
-	{
-		HandlePS2RawCodes();
-		if(TestKey(KEY_ENTER)&2)
-			return;
-	}
-}
-
-
-
-#define DEFAULT_DIPSWITCH_SETTINGS 0x239
-
 int main(int argc,char **argv)
 {
 	int i;
+	SetDIPSwitch(DEFAULT_DIPSWITCH_SETTINGS);
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
 	HW_HOST(HW_HOST_SW)=DEFAULT_DIPSWITCH_SETTINGS;
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
@@ -222,51 +251,37 @@ int main(int argc,char **argv)
 	PS2Wait();
 	OSD_Show(1);	// OSD should now show correctly.
 
-	OSD_Puts("Initializing SD card\n");
-	if(spi_init())
+	if(Boot())
 	{
-		int dipsw=DEFAULT_DIPSWITCH_SETTINGS;
-
-		if(!FindDrive())
-			return(0);
-
-		if(sd_ishc())
+		OSD_Show(0);
+		Menu_Set(topmenu);
+		while(1)
 		{
-			OSD_Puts("SDHC card detected but not\nsupported; disabling SD card\n\x10 OK\n");
-			WaitEnter();
-			dipsw|=4; // Disable SD card.
-		}
-		else if(IsFat32())
-		{
-			OSD_Puts("Fat32 filesystem detected but\nnot supported; disabling SD card\n\x10 OK\n");
-			WaitEnter();
-			dipsw|=4; // Disable SD card.
-		}
-		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset again
-		SetDIPSwitch(dipsw);
-		HW_HOST(HW_HOST_SW)=dipsw;
-		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
-
-		if(Boot())
-		{
-			OSD_Show(0);
-			Menu_Set(topmenu);
-			while(1)
+			int visible;
+			static int prevds;
+			HandlePS2RawCodes();
+			visible=Menu_Run();
+			HW_HOST(HW_HOST_SW)=GetDIPSwitch();
+			if(GetDIPSwitch()!=prevds)
 			{
-				int visible;
-				HandlePS2RawCodes();
-				visible=Menu_Run();
-				HW_HOST(HW_HOST_SW)=GetDIPSwitch();
-				if(visible)
-					HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE|HW_HOST_CTRLF_KEYBOARD;	// capture keyboard
-				else					
-					HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// release keyboard
+				int i;
+				prevds=GetDIPSwitch();
+				for(i=0;i<6;++i)
+				{
+					OSD_Show(visible);	// Refresh OSD position
+					PS2Wait();
+					PS2Wait();
+				}
 			}
+			if(visible)
+				HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE|HW_HOST_CTRLF_KEYBOARD;	// capture keyboard
+			else					
+				HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// release keyboard
 		}
-		else
-		{
-			OSD_Puts("Loading BIOS failed\n");
-		}
+	}
+	else
+	{
+		OSD_Puts("Loading BIOS failed\n");
 	}
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data
 

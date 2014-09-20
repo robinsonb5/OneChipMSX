@@ -123,6 +123,7 @@ entity emsx_top is
 
     pVideoHS_n  : out std_logic;                        -- Csync(RGB15K), HSync(VGA31K)
     pVideoVS_n  : out std_logic;                        -- Audio(RGB15K), VSync(VGA31K)
+    pVideoVS_OSD_n  : out std_logic;                        -- Audio(RGB15K), VSync(VGA31K)
 
     -- Hex display
     hex	    : out std_logic_vector(15 downto 0);
@@ -1441,20 +1442,36 @@ BusDir	<= '1' when( pSltAdr(7 downto 2) = "100110"  )else -- I/O:98-9Bh / VDP(V9
     variable iReso		: std_logic;
   begin
     if (clk21m'event and clk21m = '1') then
-      if ( DispSel = "11" ) then	-- TV 15KHz
-          pDac_VR <= videoC;
-          pDac_VG <= videoY;
-          pDac_VB <= videoV;
+--      if ( DispSel = "11" ) then	-- TV 15KHz
+--          pDac_VR <= videoC;
+--          pDac_VG <= videoY;
+--          pDac_VB <= videoV;
+--          pVideoHS_n <= VideoCS_n;
+--          pVideoVS_n <= DACout;
+--          Reso_v  <= '0';			-- Hsync:15kHz
+--          PAL_v   <= '0';			-- Vsync:60Hz
+--      elsif ( DispSel = "10" ) then	-- RGB 15KHz
+--          pDac_VR <= videoR;
+--          pDac_VG <= videoG;
+--          pDac_VB <= videoB;
+--          pVideoHS_n <= VideoCS_n;	-- Synhro
+--          pVideoVS_n <= DACout;		-- sound
+--          Reso_v  <= '0';			-- Hsync:15kHz
+--          PAL_v   <= '0';			-- Vsync:60Hz
+      if ( DispSel = "11" ) then	-- TV - 576i RGB
+          pDac_VR <= videoR;
+          pDac_VG <= videoG;
+          pDac_VB <= videoB;
           pVideoHS_n <= VideoCS_n;
-          pVideoVS_n <= DACout;
+          pVideoVS_n <= '1';
           Reso_v  <= '0';			-- Hsync:15kHz
-          PAL_v   <= '0';			-- Vsync:60Hz
-      elsif ( DispSel = "10" ) then	-- RGB 15KHz
+          PAL_v   <= '1';			-- Vsync:60Hz
+      elsif ( DispSel = "10" ) then	-- TG - 480i RGB
           pDac_VR <= videoR;
           pDac_VG <= videoG;
           pDac_VB <= videoB;
           pVideoHS_n <= VideoCS_n;	-- Synhro
-          pVideoVS_n <= DACout;		-- sound
+          pVideoVS_n <= '1';
           Reso_v  <= '0';			-- Hsync:15kHz
           PAL_v   <= '0';			-- Vsync:60Hz
       elsif ( DispSel = "01" ) then	-- VGA 31KHz/50Hz
@@ -1473,15 +1490,17 @@ BusDir	<= '1' when( pSltAdr(7 downto 2) = "100110"  )else -- I/O:98-9Bh / VDP(V9
           pVideoVS_n <= VideoVS_n;
           Reso_v  <= '1';			-- Hsync:31kHz
           PAL_v   <= '0';			-- Vsync:60Hz
-      end if;
+		end if;
+		pVideoVS_OSD_n <= VideoVS_n; -- Make sure VSync is available even for TV modes.
 
-      if ( lock_n = '0' ) then
-          DispSel <= DispMode;
-		  iReso := Reso;
-      elsif (iReso /= Reso) then	-- Print Screen
- 			 DispSel <= DispSel + 1;
-		  iReso := Reso;
-      end if;
+--      if ( lock_n = '0' ) then
+--          DispSel <= DispMode;
+--		  iReso := Reso;
+--      elsif (iReso /= Reso) then	-- Print Screen
+-- 			 DispSel <= DispSel + 1;
+--		  iReso := Reso;
+--      end if;
+      DispSel <= DispMode;
     end if;
 end process;
 
