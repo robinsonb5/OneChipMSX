@@ -21,7 +21,7 @@ fileTYPE file; // Use the file defined in minfat.h to avoid another instance tak
 static struct menu_entry topmenu[];
 
 
-#define DEFAULT_DIPSWITCH_SETTINGS 0x239
+#define DEFAULT_DIPSWITCH_SETTINGS 0x238
 
 
 void OSD_Puts(char *str)
@@ -266,7 +266,7 @@ int main(int argc,char **argv)
 			{
 				int i;
 				prevds=GetDIPSwitch();
-				for(i=0;i<6;++i)
+				for(i=0;i<5;++i)
 				{
 					OSD_Show(visible);	// Refresh OSD position
 					PS2Wait();
