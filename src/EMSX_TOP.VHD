@@ -122,8 +122,9 @@ entity emsx_top is
     pCMT_in		: in    std_logic :='1';						-- CMT input
 
     pVideoHS_n  : out std_logic;                        -- Csync(RGB15K), HSync(VGA31K)
-    pVideoVS_n  : out std_logic;                        -- Audio(RGB15K), VSync(VGA31K)
+    pVideoVS_n  : out std_logic;                        -- VSync(VGA31K), Blank(RGB15K)
     pVideoVS_OSD_n  : out std_logic;                        -- Audio(RGB15K), VSync(VGA31K)
+    pVideoHS_OSD_n  : out std_logic;                        -- Audio(RGB15K), VSync(VGA31K)
 
     -- Hex display
     hex	    : out std_logic_vector(15 downto 0);
@@ -877,21 +878,23 @@ end process;
 ----------------------------------------------------------------
 -- Clock selector
 ----------------------------------------------------------------
-process( reset, clk21m )
-begin
-	if( reset = '1' )then
-		ClkFkey	<= '0';
-		VdpFkey	<= '0';
-	elsif( clk21m'event and clk21m = '1' )then
-		if( Fkeys(0) /= vFKeys(0) )then
-			if( Fkeys(7) = '0' )then
-				ClkFkey <= not ClkFkey;		-- F12 = Togle Clock
-			else
-				VdpFkey <= not VdpFkey;		-- SHIFT+F12 = Togle VDP Turbo
-			end if;
-		end if;
-	end if;
-end process;
+
+-- Disable keyboard shortcut for turbo since we use the OSD
+--process( reset, clk21m )
+--begin
+--	if( reset = '1' )then
+--		ClkFkey	<= '0';
+--		VdpFkey	<= '0';
+--	elsif( clk21m'event and clk21m = '1' )then
+--		if( Fkeys(0) /= vFKeys(0) )then
+--			if( Fkeys(7) = '0' )then
+--				ClkFkey <= not ClkFkey;		-- F12 = Togle Clock
+--			else
+--				VdpFkey <= not VdpFkey;		-- SHIFT+F12 = Togle VDP Turbo
+--			end if;
+--		end if;
+--	end if;
+--end process;
 
 process (reset, clk21m)
 begin
@@ -1492,6 +1495,7 @@ BusDir	<= '1' when( pSltAdr(7 downto 2) = "100110"  )else -- I/O:98-9Bh / VDP(V9
           PAL_v   <= '0';			-- Vsync:60Hz
 		end if;
 		pVideoVS_OSD_n <= VideoVS_n; -- Make sure VSync is available even for TV modes.
+		pVideoHS_OSD_n <= VideoHS_n; -- OSD struggled with CSync - so make vanilla HSync available
 
 --      if ( lock_n = '0' ) then
 --          DispSel <= DispMode;

@@ -91,20 +91,24 @@ process(clk,hsync_n)
 begin
 	if rising_edge(clk) then
 		hsync_p<=hsync_n;
-		if pix='1' then
+--		if pix='1' then
 			hcounter<=hcounter+1;
-		end if;
+--		end if;
 
 		newline<='0';
 		if hsync_n='1' then
 			if hsync_p='0' then -- rising edge?
-				hframe(15 downto 8)<=std_logic_vector(hcounter(11 downto 4));
+				if vsync_p=vsync_pol and vsync_n/=vsync_pol then
+					hframe(15 downto 8)<=std_logic_vector(hcounter(13 downto 6));
+				end if;
 				hcounter<=(others => '0'); -- Reset counter
 				newline<=hsync_pol; -- New line starts here if polarity is reversed
 			end if;
 		else
 			if hsync_p='1' then -- falling edge?
-				hframe(7 downto 0)<=std_logic_vector(hcounter(11 downto 4));
+				if vsync_p=vsync_pol and vsync_n/=vsync_pol then
+					hframe(7 downto 0)<=std_logic_vector(hcounter(13 downto 6));
+				end if;
 				hcounter<=(others => '0'); -- Reset counter
 				newline<=not hsync_pol; -- New line starts here if polarity is not reversed 
 			end if;		

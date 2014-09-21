@@ -111,7 +111,7 @@ void OSD_Show(int visible)
 		osd_syncpolarity|=4; // Flip VSync polarity
 	}
 
-	hh<<=2+pixelclock;
+	hh<<=4;
 	vh<<=3;
 
 	if(hh>800)
