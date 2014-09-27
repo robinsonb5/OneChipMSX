@@ -120,15 +120,16 @@ begin
 		if rising_edge(clk) then
 			sendDone <= '0';
 			recvTrigger <= '0';
+
+			if sendTrigger = '1' then
+				sendTriggerLoc <= '1';
+			end if;
+
 			if ena='1' then
 				ps2_clk_out <= '1';
 				ps2_dat_out <= '1';
 				if waitCount /= 0 then
 					waitCount <= waitCount - 1;
-				end if;
-
-				if sendTrigger = '1' then
-					sendTriggerLoc <= '1';
 				end if;
 				
 				case comState is

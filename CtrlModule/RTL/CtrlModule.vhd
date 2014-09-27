@@ -24,13 +24,18 @@ entity CtrlModule is
 		txd	: out std_logic;
 		
 		-- DIP switches
-		dipswitches : out std_logic_vector(9 downto 0);
+		dipswitches : out std_logic_vector(10 downto 0);
 
 		-- PS2 keyboard
 		ps2k_clk_in : in std_logic := '1';
 		ps2k_dat_in : in std_logic := '1';
 --		ps2k_clk_out : out std_logic;
 --		ps2k_dat_out : out std_logic;
+
+		ps2m_clk_in : in std_logic := '1';
+		ps2m_dat_in : in std_logic := '1';
+		ps2m_clk_out : out std_logic;
+		ps2m_dat_out : out std_logic;
 		
 		-- Host control
 		host_reset_n : out std_logic;
@@ -42,6 +47,13 @@ entity CtrlModule is
 		host_bootdata : out std_logic_vector(7 downto 0);
 		host_bootdata_req : in std_logic:='0';
 		host_bootdata_ack : out std_logic;
+		
+		-- Mouse data
+		mouse_deltax : out std_logic_vector(7 downto 0);
+		mouse_deltay : out std_logic_vector(7 downto 0);
+		mouse_buttons : out std_logic_vector(1 downto 0);
+		mouse_rdy : out std_logic;
+		mouse_idle : in std_logic;
 		
 		-- Video signals for OSD
 		vga_hsync : in std_logic;
@@ -103,7 +115,7 @@ signal host_bootdata_ack_r : std_logic;
 
 -- Interrupt signals
 
-constant int_max : integer := 1;
+constant int_max : integer := 2;
 signal int_triggers : std_logic_vector(int_max downto 0);
 signal int_status : std_logic_vector(int_max downto 0);
 signal int_ack : std_logic;
@@ -123,6 +135,14 @@ signal kbdrecvbyte : std_logic_vector(10 downto 0);
 --signal kbdsendtrigger : std_logic;
 --signal kbdsenddone : std_logic;
 --signal kbdsendbyte : std_logic_vector(7 downto 0);
+
+signal mouserecv : std_logic;
+signal mouserecvreg : std_logic;
+signal mouserecvbyte : std_logic_vector(10 downto 0);
+signal mousesendbusy : std_logic;
+signal mousesendtrigger : std_logic;
+signal mousesenddone : std_logic;
+signal mousesendbyte : std_logic_vector(7 downto 0);
 
 signal osd_wr : std_logic;
 signal osd_charwr : std_logic;
@@ -267,6 +287,29 @@ spi : entity work.spi_interface
 			recvByte => kbdrecvbyte
 		);
 
+		-- PS2 mouse
+		mymouse : entity work.io_ps2_com
+		generic map (
+			clockFilter => 15,
+			ticksPerUsec => sysclk_frequency/10
+		)
+		port map (
+			clk => clk,
+			reset => not reset, -- active high!
+			ps2_clk_in => ps2m_clk_in,
+			ps2_dat_in => ps2m_dat_in,
+			ps2_clk_out => ps2m_clk_out, -- Receive only
+			ps2_dat_out => ps2m_dat_out,
+			
+			inIdle => open,
+			sendTrigger => mousesendtrigger,
+			sendByte => mousesendbyte,
+			sendBusy => mousesendbusy,
+			sendDone => mousesenddone,
+			recvTrigger => mouserecv,
+			recvByte => mouserecvbyte
+		);
+
 -- Interrupt controller
 
 intcontroller: entity work.interrupt_controller
@@ -283,7 +326,8 @@ port map (
 );
 
 int_triggers<=(0=>kbdrecv,
-					1=>vblank,
+					1=>mouserecv,
+					2=>vblank,
 					others => '0');
 
 -- Detect vblank
@@ -342,6 +386,7 @@ begin
 		host_bootdata_pending<='0';
 		host_divert_sdcard<='0';
 		host_divert_keyboard<='0';
+		mouserecvreg <='0';
 	elsif rising_edge(clk) then
 		mem_busy<='1';
 		ser_txgo<='0';
@@ -349,6 +394,11 @@ begin
 		int_ack<='0';
 		osd_charwr<='0';
 		osd_wr<='0';
+		mousesendtrigger<='0';
+
+		if mouse_idle='0' then
+			mouse_rdy<='0';
+		end if;
 		
 		-- Write from CPU?
 		if mem_writeEnable='1' then
@@ -384,10 +434,15 @@ begin
 							spi_trigger<='1';
 							host_to_spi<=mem_write(7 downto 0);
 							spi_active<='1';
+
+						when X"E4" => -- PS2 Mouse
+							mousesendbyte<=mem_write(7 downto 0);
+							mousesendtrigger<='1';
+							mem_busy<='0';
 							
 						when X"40" => -- Host SW
 							mem_busy<='0';
-							dipswitches<=mem_write(9 downto 0);
+							dipswitches<=mem_write(10 downto 0);
 							
 						when X"44" => -- Host control
 							host_reset_n<=not mem_write(0);
@@ -400,6 +455,16 @@ begin
 							host_bootdata<=mem_write(7 downto 0);
 							host_bootdata_pending<='1';
 --								mem_busy<='0';
+
+						when X"4C" => -- Host mouse buttons
+							mouse_buttons<=mem_write(1 downto 0);
+							mem_busy<='0';
+
+						when X"50" => -- Host mouse data
+							mouse_deltax<=mem_write(15 downto 8);
+							mouse_deltay<=mem_write(7 downto 0);
+							mouse_rdy<='1'; -- New data present.
+							mem_busy<='0';
 
 						when others =>
 							mem_busy<='0';
@@ -455,6 +520,17 @@ begin
 							kbdrecvreg<='0';
 							mem_busy<='0';
 
+						when X"E4" =>
+							mem_read<=(others =>'X');
+							mem_read(11 downto 0)<=mouserecvreg & not mousesendbusy & mouserecvbyte(10 downto 1);
+							mouserecvreg<='0';
+							mem_busy<='0';
+
+						when X"50" => -- Host mouse data
+							mem_read<=(others =>'X');
+							mem_read(0)<=mouse_idle;
+							mem_busy<='0';
+
 						when others =>
 							mem_busy<='0';
 							null;
@@ -481,6 +557,9 @@ begin
 		if kbdrecv='1' then
 			kbdrecvreg <= '1'; -- remains high until cleared by a read
 		end if;
+		if mouserecv='1' then
+			mouserecvreg <= '1'; -- remains high until cleared by a read
+		end if;	
 
 		if host_bootdata_req='1' and host_bootdata_pending='1' then
 			host_bootdata_ack_r<='1';

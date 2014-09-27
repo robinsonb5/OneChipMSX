@@ -17,11 +17,16 @@
 #include "osd.h"
 #include "menu.h"
 
-fileTYPE file; // Use the file defined in minfat.h to avoid another instance taking up ROM space
+fileTYPE file;
 static struct menu_entry topmenu[];
 
 
-#define DEFAULT_DIPSWITCH_SETTINGS 0x238
+#define BIT_SDCARD 2
+#define BIT_JAPANESEKEYBOARD 6
+#define BIT_TURBO 7
+#define BIT_MOUSEEMULATION 10
+
+#define DEFAULT_DIPSWITCH_SETTINGS 0x638
 
 
 void OSD_Puts(char *str)
@@ -180,14 +185,14 @@ static char *ram_labels[]=
 	"4096KB RAM"
 };
 
+
 static struct menu_entry dipswitches[]=
 {
 	{MENU_ENTRY_CYCLE,(char *)video_labels,3},
-	{MENU_ENTRY_TOGGLE,"SD Card",2},
+	{MENU_ENTRY_TOGGLE,"SD Card",BIT_SDCARD},
 	{MENU_ENTRY_CYCLE,(char *)slot1_labels,3},
 	{MENU_ENTRY_CYCLE,(char *)slot2_labels,4},
-	{MENU_ENTRY_TOGGLE,"Japanese keyboard layout",6},
-	{MENU_ENTRY_TOGGLE,"Turbo (10.74MHz)",7},
+	{MENU_ENTRY_TOGGLE,"Japanese keyboard layout",BIT_JAPANESEKEYBOARD},
 	{MENU_ENTRY_CYCLE,(char *)ram_labels,2},
 	{MENU_ENTRY_SUBMENU,"Back",MENU_ACTION(topmenu)},
 	
@@ -197,8 +202,10 @@ static struct menu_entry dipswitches[]=
 
 static struct menu_entry topmenu[]=
 {
-	{MENU_ENTRY_SUBMENU,"DIP Switches \x10",MENU_ACTION(dipswitches)},
 	{MENU_ENTRY_CALLBACK,"Reset",MENU_ACTION(&reset)},
+	{MENU_ENTRY_SUBMENU,"Options \x10",MENU_ACTION(dipswitches)},
+	{MENU_ENTRY_TOGGLE,"Turbo (10.74MHz)",BIT_TURBO},
+	{MENU_ENTRY_TOGGLE,"Mouse emulation",BIT_MOUSEEMULATION},
 	{MENU_ENTRY_CALLBACK,"Exit",MENU_ACTION(&Menu_Hide)},
 	{MENU_ENTRY_NULL,0,0},
 };
@@ -207,7 +214,7 @@ static struct menu_entry topmenu[]=
 int SetDIPSwitch(int d)
 {
 	struct menu_entry *m;
-	MENU_TOGGLE_VALUES=d^4; // Invert sense of SD card switch
+	MENU_TOGGLE_VALUES=d^0x84; // Invert sense of SD card and Turbo switches
 	m=&dipswitches[0]; MENU_CYCLE_VALUE(m)=d&3; // Video
 	m=&dipswitches[6]; MENU_CYCLE_VALUE(m)=d&0x200 ? 1 : 0; // RAM
 	m=&dipswitches[2]; MENU_CYCLE_VALUE(m)=(d&0x100 ? 2 : 0) | (d&0x8 ? 1 : 0); // Slot 1
@@ -229,9 +236,10 @@ int GetDIPSwitch()
 	result|=t&1 ? 0x8 : 0;
 	m=&dipswitches[3];  t=MENU_CYCLE_VALUE(m); // Slot 1
 	result|=t<<4;
-	return(result^0x4); // Invert SD card switch
+	return(result^0x84); // Invert SD card and Turbo switch
 }
 
+#define PS2_TIMEOUT 20
 
 int main(int argc,char **argv)
 {
@@ -251,14 +259,76 @@ int main(int argc,char **argv)
 	PS2Wait();
 	OSD_Show(1);	// OSD should now show correctly.
 
+	// Initialize the mouse
+	while(PS2MouseRead()>-1)
+		; // Drain the buffer;
+	PS2MouseWrite(0xf4);
+
 	if(Boot())
 	{
+		int mousex=0,mousey=0;
+		int midx,mctr;
+		midx=0;
+		mctr=PS2_TIMEOUT;
 		OSD_Show(0);
 		Menu_Set(topmenu);
 		while(1)
 		{
+			int mdata[4];
 			int visible;
 			static int prevds;
+
+			PS2Wait(); // Returns after 1 vblank or any PS/2 activity, whichever is sooner
+
+			if((mdata[midx]=PS2MouseRead())==-1)
+			{
+				if(!(--mctr))	// Timeout
+				{
+					midx=0;
+				}
+			}
+			else
+			{
+				++midx;
+				mctr=PS2_TIMEOUT;
+				if(midx==3)	// Complete packet received?
+				{
+					midx=0;
+					HW_HOST(HW_HOST_MOUSEBUTTONS)=mdata[0]&3;
+					if(mdata[0] & (1<<5))
+						mousey-=1+(mdata[2]^255);
+					else
+						mousey+=mdata[2];
+
+					if(mdata[0] & (1<<4))
+						mousex-=1+(mdata[1]^255);
+					else
+						mousex+=mdata[1];
+				}	
+			}
+
+			if((mousex)||(mousey))
+			{
+				if(HW_HOST(HW_HOST_MOUSE)&HW_HOST_MOUSEF_IDLE)
+				{
+					int dx,dy;
+					dx=mousex; dy=mousey;
+					// Clamp mouse values, since the MSX mouse can only shift an 8-bit signed value,
+					// while the PS2 mouse provides 9 bit data.
+					if(dx>127)
+						dx=127;
+					if(dy>127)
+						dy=127;
+					if(dx<-128)
+						dx=-128;
+					if(dy<-128)
+						dy=-128;
+					mousex-=dx;
+					mousey-=dy;
+					HW_HOST(HW_HOST_MOUSE)=((dx&255)<<8)|(dy&255);
+				}
+			}
+			
 			HandlePS2RawCodes();
 			visible=Menu_Run();
 			HW_HOST(HW_HOST_SW)=GetDIPSwitch();

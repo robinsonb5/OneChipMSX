@@ -25,5 +25,9 @@
    so it's safe to just deluge this register with data. */
 #define HW_HOST_BOOTDATA 0x08
 
+#define HW_HOST_MOUSEBUTTONS 0x0c	/* RW */
+#define HW_HOST_MOUSE 0x10
+#define HW_HOST_MOUSEF_IDLE 0x1  /* Has the previously written event been received? */
+
 #endif
 

@@ -130,6 +130,11 @@ GPIO_1 <= (others => 'Z');
 
 
 -- PS2 keyboard & mouse
+ps2m_dat_in<=PS2_MDAT;
+PS2_MDAT <= '0' when ps2m_dat_out='0' else 'Z';
+ps2m_clk_in<=PS2_MCLK;
+PS2_MCLK <= '0' when ps2m_clk_out='0' else 'Z';
+
 ps2k_dat_in<=PS2_DAT;
 PS2_DAT <= '0' when ps2k_dat_out='0' else 'Z';
 ps2k_clk_in<=PS2_CLK;
@@ -138,14 +143,14 @@ PS2_CLK <= '0' when ps2k_clk_out='0' else 'Z';
 
 reset<=(not SW(0) xor KEY(0)) and pll_locked;
 
---hexdigit0 : component SEG7_LUT
---	port map (oSEG => HEX0, iDIG => hex(3 downto 0));
---hexdigit1 : component SEG7_LUT
---	port map (oSEG => HEX1, iDIG => hex(7 downto 4));
---hexdigit2 : component SEG7_LUT
---	port map (oSEG => HEX2, iDIG => hex(11 downto 8));
---hexdigit3 : component SEG7_LUT
---	port map (oSEG => HEX3, iDIG => hex(15 downto 12));
+hexdigit0 : component SEG7_LUT
+	port map (oSEG => HEX0, iDIG => hex(3 downto 0));
+hexdigit1 : component SEG7_LUT
+	port map (oSEG => HEX1, iDIG => hex(7 downto 4));
+hexdigit2 : component SEG7_LUT
+	port map (oSEG => HEX2, iDIG => hex(11 downto 8));
+hexdigit3 : component SEG7_LUT
+	port map (oSEG => HEX3, iDIG => hex(15 downto 12));
 
   U00 : entity work.pll4x2
     port map(					-- for Altera DE1
@@ -199,19 +204,27 @@ top : entity work.CtrlModule
 		rxd => UART_RXD,
 
 		-- DIP Switches
-		dipswitches => LEDR,
+		dipswitches(10) => LEDG(0),
+		dipswitches(9 downto 0) => LEDR,
 		
 		-- PS/2
 		ps2k_clk_in => ps2k_clk_in,
 		ps2k_dat_in => ps2k_dat_in,
 --		ps2k_clk_out => ps2k_clk_out,
 --		ps2k_dat_out => ps2k_dat_out
+		ps2m_clk_in => ps2m_clk_in,
+		ps2m_dat_in => ps2m_dat_in,
+		ps2m_clk_out => ps2m_clk_out,
+		ps2m_dat_out => ps2m_dat_out,
 		vga_hsync => vga_hsync,
 		vga_vsync => vga_vsync,
 		osd_window => VGA_B(3),
 		osd_pixel => VGA_G(3),
 		host_bootdata_req => boot_req,
-		host_bootdata_ack => boot_ack
+		host_bootdata_ack => boot_ack,
+		mouse_deltax => hex(15 downto 8),
+		mouse_deltay=> hex(7 downto 0),
+		mouse_idle => '1'
 );
 
 boot_req<=not boot_ack;

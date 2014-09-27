@@ -222,7 +222,7 @@ int spi_init()
 	SDHCtype=1;
 	SPI_CS(0);	// Disable CS
 	spi_spin();
-	puts("Initialising SD card...\n");
+	puts("Initializing SD card...\n");
 //	puts("SPI Init()\n");
 	DBG("Activating CS\n");
 	SPI_CS(1);
