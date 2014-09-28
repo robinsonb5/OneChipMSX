@@ -164,8 +164,8 @@ I2C_SDAT	<= 'Z';
 GPIO_0 <= (others => 'Z');
 GPIO_1 <= (others => 'Z');
 
-ps2m_clk_out <='1';
-ps2m_dat_out <='1';
+--ps2m_clk_out <='1';
+--ps2m_dat_out <='1';
 
 	-- PS2 keyboard & mouse
 ps2m_dat_in<=PS2_MDAT;
@@ -258,6 +258,12 @@ emsx_top : entity work.Virtual_Toplevel
 	 pPs2Dat_out => ps2k_dat_out,
 	 pPs2Clk_in => ps2k_clk_in,
 	 pPs2Dat_in => ps2k_dat_in,
+
+	 -- PS/2 mouse ports
+		ps2m_clk_in => ps2m_clk_in,
+		ps2m_dat_in => ps2m_dat_in,
+		ps2m_clk_out => ps2m_clk_out,
+		ps2m_dat_out => ps2m_dat_out,
  
 --    -- Joystick ports (Port_A, Port_B)
     pJoyA => joya,

@@ -225,7 +225,7 @@ int SetDIPSwitch(int d)
 int GetDIPSwitch()
 {
 	struct menu_entry *m;
-	int result=MENU_TOGGLE_VALUES&0xc4;  // Bits 2, 6 and 7 are direct mapped
+	int result=MENU_TOGGLE_VALUES&0x4c4;  // Bits 2, 6, 7 and 10 are direct mapped
 	int t;
 	m=&dipswitches[6]; 	if(MENU_CYCLE_VALUE(m))
 		result|=0x200;	// RAM
@@ -239,7 +239,7 @@ int GetDIPSwitch()
 	return(result^0x84); // Invert SD card and Turbo switch
 }
 
-#define PS2_TIMEOUT 20
+#define PS2_TIMEOUT 100
 
 int main(int argc,char **argv)
 {
@@ -248,6 +248,7 @@ int main(int argc,char **argv)
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
 	HW_HOST(HW_HOST_SW)=DEFAULT_DIPSWITCH_SETTINGS;
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
+	HW_HOST(HW_HOST_MOUSEBUTTONS)=3;
 
 	PS2Init();
 	EnableInterrupts();
@@ -278,7 +279,7 @@ int main(int argc,char **argv)
 			int visible;
 			static int prevds;
 
-			PS2Wait(); // Returns after 1 vblank or any PS/2 activity, whichever is sooner
+//			PS2Wait(); // Returns after 1 vblank or any PS/2 activity, whichever is sooner
 
 			if((mdata[midx]=PS2MouseRead())==-1)
 			{
@@ -294,16 +295,17 @@ int main(int argc,char **argv)
 				if(midx==3)	// Complete packet received?
 				{
 					midx=0;
-					HW_HOST(HW_HOST_MOUSEBUTTONS)=mdata[0]&3;
+					HW_HOST(HW_HOST_MOUSEBUTTONS)=(~mdata[0])&3;
 					if(mdata[0] & (1<<5))
 						mousey-=1+(mdata[2]^255);
 					else
 						mousey+=mdata[2];
 
+					// Reverse X axis
 					if(mdata[0] & (1<<4))
-						mousex-=1+(mdata[1]^255);
+						mousex+=1+(mdata[1]^255);
 					else
-						mousex+=mdata[1];
+						mousex-=mdata[1];
 				}	
 			}
 

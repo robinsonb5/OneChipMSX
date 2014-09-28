@@ -395,6 +395,12 @@ emsx_top : entity work.Virtual_Toplevel
 	 pPs2Dat_out => ps2_keyboard_dat_out,
 	 pPs2Clk_in => ps2_keyboard_clk_in,
 	 pPs2Dat_in => ps2_keyboard_dat_in,
+
+	 -- PS/2 mouse ports
+		ps2m_clk_in => ps2_mouse_clk_in,
+		ps2m_dat_in => ps2_mouse_dat_in,
+		ps2m_clk_out => ps2_mouse_clk_out,
+		ps2m_dat_out => ps2_mouse_dat_out,
 	 
 --    -- Joystick ports (Port_A, Port_B)
     pJoyA => std_logic_vector(joy1), --       : inout std_logic_vector( 5 downto 0):=(others=>'1');

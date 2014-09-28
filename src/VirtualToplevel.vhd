@@ -57,6 +57,12 @@ entity virtual_toplevel is
     pPs2Clk_out     : out std_logic;
     pPs2Dat_out     : out std_logic;
 
+    -- PS/2 mouse port
+	 ps2m_clk_in : in std_logic := '1';
+	 ps2m_dat_in : in std_logic := '1';
+	 ps2m_clk_out : out std_logic;
+	 ps2m_dat_out : out std_logic;
+
     -- Joystick ports (Port_A, Port_B)
     pJoyA       : inout std_logic_vector( 5 downto 0):=(others=>'1');
     pStrA       : out std_logic;
@@ -129,7 +135,7 @@ signal vga_blue_i : std_logic_vector(7 downto 0);
 signal osd_window : std_logic;
 signal osd_pixel : std_logic;
 
-signal dipswitches : std_logic_vector( 9 downto 0);
+signal dipswitches : std_logic_vector( 10 downto 0);
 
 signal lockreset_n : std_logic;
 signal msxreset_n : std_logic;
@@ -139,7 +145,77 @@ signal msx_kbd_dat : std_logic;
 signal msx_kbd_datout : std_logic;
 signal msx_kbd_clkout : std_logic;
 
+signal mouse_deltax : std_logic_vector(7 downto 0);
+signal mouse_deltay : std_logic_vector(7 downto 0);
+signal mouse_buttons : std_logic_vector(1 downto 0);
+signal mouse_rdy : std_logic;
+signal mouse_idle : std_logic;
+
+signal mouse_dat : std_logic_vector(3 downto 0);
+signal mouse_str : std_logic;
+signal joymouse : std_logic_vector(5 downto 0);
+
+type mouse_states is (MOUSE_WAIT,MOUSE_START,MOUSE_HIGHX,MOUSE_LOWX,MOUSE_HIGHY,MOUSE_LOWY);
+signal mouse_state : mouse_states:=MOUSE_WAIT;
+
 begin
+
+-- Mouse emulation, enable/disable with dipswitches(10)
+pStrA <= mouse_str;
+joymouse(3 downto 0) <= pJoyA(3 downto 0) when dipswitches(10)='0'
+	else mouse_dat;
+joymouse(5 downto 4) <= pJoyA(5 downto 4) and mouse_buttons;
+
+process(memclk)
+begin
+
+	if rising_edge(memclk) then
+		case mouse_state is
+			when MOUSE_WAIT =>
+				mouse_dat<="0000";
+				mouse_idle<='1';
+				if mouse_rdy='1' then
+					mouse_state<=MOUSE_START;
+				end if;
+
+			-- FIXME - need some kind of timeout here.
+			when MOUSE_START =>
+				mouse_idle<='0';
+				if mouse_str='1' then
+					mouse_state<=MOUSE_HIGHX;
+				end if;
+			
+			when MOUSE_HIGHX =>
+				mouse_dat<=mouse_deltax(7 downto 4);
+				if mouse_str='0' then
+					mouse_state<=MOUSE_LOWX;
+				end if;
+				
+			when MOUSE_LOWX =>
+				mouse_dat<=mouse_deltax(3 downto 0);
+				if mouse_str='1' then
+					mouse_state<=MOUSE_HIGHY;
+				end if;
+			
+			when MOUSE_HIGHY =>
+				mouse_dat<=mouse_deltay(7 downto 4);
+				if mouse_str='0' then
+					mouse_state<=MOUSE_LOWY;
+				end if;
+			
+			when MOUSE_LOWY =>
+				mouse_dat<=mouse_deltay(3 downto 0);
+				if mouse_str='1' then
+					mouse_state<=MOUSE_WAIT;
+				end if;
+			
+			when others =>
+				null;
+		end case;
+	end if;
+
+end process;
+
 
 msx_kbd_clk <= pPs2Clk_in or host_divert_keyboard;	-- Lock keyboard when OSD is enabled.
 msx_kbd_dat <= pPs2Dat_in or host_divert_keyboard;	-- Lock keyboard when OSD is enabled.
@@ -206,8 +282,8 @@ mymsx : entity work.emsx_top
     pPs2Dat_out => msx_kbd_datout,
 
     -- Joystick ports (Port_A, Port_B)
-    pJoyA => pJoyA,
-    pStrA => pStrA,
+    pJoyA => joymouse, -- pJoyA
+    pStrA => mouse_str, -- pStrA,
     pJoyB => pJoyB,
     pStrB => pStrB,
 
@@ -220,7 +296,7 @@ mymsx : entity work.emsx_top
     -- DIP switch, Lamp ports
     pSW(3 downto 1) => pSW(3 downto 1),
     pSW(0) => msxreset_n,
-    pDip => dipswitches,
+    pDip => dipswitches(9 downto 0),
     pLedG => pLedG,
     pLedR => pLedR,
 
@@ -295,6 +371,11 @@ top : entity work.CtrlModule
 		ps2k_clk_in => pPs2Clk_in,
 		ps2k_dat_in => pPs2Dat_in,
 
+		ps2m_clk_in => ps2m_clk_in,
+		ps2m_dat_in => ps2m_dat_in,
+		ps2m_clk_out => ps2m_clk_out,
+		ps2m_dat_out => ps2m_dat_out,
+
 		host_reset_n => host_reset_n,
 		host_bootdone => host_bootdone,
 		host_divert_sdcard => host_divert_sdcard,
@@ -307,6 +388,13 @@ top : entity work.CtrlModule
 		host_bootdata => boot_data,
 		host_bootdata_req => boot_req,
 		host_bootdata_ack => boot_ack_ctrl,
+		
+		-- mouse emulation
+		mouse_deltax => mouse_deltax,
+		mouse_deltay => mouse_deltay,
+		mouse_buttons => mouse_buttons,
+		mouse_rdy => mouse_rdy,
+		mouse_idle => mouse_idle,	
 		
 		-- Video signals for OSD
 		vga_hsync => vga_hsync_i,
