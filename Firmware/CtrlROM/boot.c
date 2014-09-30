@@ -25,6 +25,7 @@ static struct menu_entry topmenu[];
 #define BIT_JAPANESEKEYBOARD 6
 #define BIT_TURBO 7
 #define BIT_MOUSEEMULATION 10
+#define BIT_SCANLINES 11
 
 #define DEFAULT_DIPSWITCH_SETTINGS 0x638
 
@@ -189,6 +190,7 @@ static char *ram_labels[]=
 static struct menu_entry dipswitches[]=
 {
 	{MENU_ENTRY_CYCLE,(char *)video_labels,3},
+	{MENU_ENTRY_TOGGLE,"Scanlines",BIT_SCANLINES},
 	{MENU_ENTRY_TOGGLE,"SD Card",BIT_SDCARD},
 	{MENU_ENTRY_CYCLE,(char *)slot1_labels,3},
 	{MENU_ENTRY_CYCLE,(char *)slot2_labels,4},
@@ -225,7 +227,7 @@ int SetDIPSwitch(int d)
 int GetDIPSwitch()
 {
 	struct menu_entry *m;
-	int result=MENU_TOGGLE_VALUES&0x4c4;  // Bits 2, 6, 7 and 10 are direct mapped
+	int result=MENU_TOGGLE_VALUES&0xcc4;  // Bits 2, 6, 7, 10 and 11 are direct mapped
 	int t;
 	m=&dipswitches[6]; 	if(MENU_CYCLE_VALUE(m))
 		result|=0x200;	// RAM
@@ -239,7 +241,6 @@ int GetDIPSwitch()
 	return(result^0x84); // Invert SD card and Turbo switch
 }
 
-#define PS2_TIMEOUT 100
 
 int main(int argc,char **argv)
 {
@@ -260,61 +261,25 @@ int main(int argc,char **argv)
 	PS2Wait();
 	OSD_Show(1);	// OSD should now show correctly.
 
-	// Initialize the mouse
-	while(PS2MouseRead()>-1)
-		; // Drain the buffer;
-	PS2MouseWrite(0xf4);
 
 	if(Boot())
 	{
-		int mousex=0,mousey=0;
-		int midx,mctr;
-		midx=0;
-		mctr=PS2_TIMEOUT;
 		OSD_Show(0);
 		Menu_Set(topmenu);
 		while(1)
 		{
-			int mdata[4];
 			int visible;
 			static int prevds;
 
-//			PS2Wait(); // Returns after 1 vblank or any PS/2 activity, whichever is sooner
+			HW_HOST(HW_HOST_MOUSEBUTTONS)=(~ps2_mousebuttons)&3;
 
-			if((mdata[midx]=PS2MouseRead())==-1)
-			{
-				if(!(--mctr))	// Timeout
-				{
-					midx=0;
-				}
-			}
-			else
-			{
-				++midx;
-				mctr=PS2_TIMEOUT;
-				if(midx==3)	// Complete packet received?
-				{
-					midx=0;
-					HW_HOST(HW_HOST_MOUSEBUTTONS)=(~mdata[0])&3;
-					if(mdata[0] & (1<<5))
-						mousey-=1+(mdata[2]^255);
-					else
-						mousey+=mdata[2];
-
-					// Reverse X axis
-					if(mdata[0] & (1<<4))
-						mousex+=1+(mdata[1]^255);
-					else
-						mousex-=mdata[1];
-				}	
-			}
-
-			if((mousex)||(mousey))
+			if((ps2_mousex)||(ps2_mousey))
 			{
 				if(HW_HOST(HW_HOST_MOUSE)&HW_HOST_MOUSEF_IDLE)
 				{
 					int dx,dy;
-					dx=mousex; dy=mousey;
+					DisableInterrupts();
+					dx=ps2_mousex; dy=ps2_mousey;
 					// Clamp mouse values, since the MSX mouse can only shift an 8-bit signed value,
 					// while the PS2 mouse provides 9 bit data.
 					if(dx>127)
@@ -325,8 +290,9 @@ int main(int argc,char **argv)
 						dx=-128;
 					if(dy<-128)
 						dy=-128;
-					mousex-=dx;
-					mousey-=dy;
+					ps2_mousex-=dx;
+					ps2_mousey-=dy;
+					EnableInterrupts();
 					HW_HOST(HW_HOST_MOUSE)=((dx&255)<<8)|(dy&255);
 				}
 			}

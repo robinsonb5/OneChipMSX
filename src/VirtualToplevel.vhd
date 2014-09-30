@@ -135,7 +135,7 @@ signal vga_blue_i : std_logic_vector(7 downto 0);
 signal osd_window : std_logic;
 signal osd_pixel : std_logic;
 
-signal dipswitches : std_logic_vector( 10 downto 0);
+signal dipswitches : std_logic_vector( 11 downto 0);
 
 signal lockreset_n : std_logic;
 signal msxreset_n : std_logic;
@@ -343,10 +343,12 @@ overlay : entity work.OSD_Overlay
 		window_in => '1',
 		osd_window_in => osd_window,
 		osd_pixel_in => osd_pixel,
+		hsync_in => vga_hsync_i,
 		red_out => pDac_VR,
 		green_out => pDac_VG,
 		blue_out => pDac_VB,
-		window_out => open
+		window_out => open,
+		scanline_ena => dipswitches(11)
 	);
 
 

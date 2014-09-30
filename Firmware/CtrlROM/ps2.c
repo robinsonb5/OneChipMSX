@@ -45,12 +45,18 @@ void ps2_ringbuffer_write(struct ps2_ringbuffer_out *r,int in)
 }
 
 struct ps2_ringbuffer kbbuffer;
-struct ps2_ringbuffer mousebuffer;
 struct ps2_ringbuffer_out mouseoutbuffer;
 
 static volatile int intflag;
 
-int ps2_overflow;
+#define PS2_TIMEOUT 5
+
+int ps2_mousex;
+int ps2_mousey;
+int ps2_mousebuttons;
+static int mdata[4];
+static int midx=0,mctr=0;
+static int mpacketsize=3; // 4 bytes for a wheel mouse.  (Chameleon firmware initializes the mouse in wheel mode.)
 
 void PS2Handler()
 {
@@ -71,11 +77,33 @@ void PS2Handler()
 
 	if(mouse & (1<<BIT_PS2_RECV))
 	{
-		mousebuffer.inbuf[mousebuffer.in_hw]=mouse&0xff;
-		mousebuffer.in_hw=(mousebuffer.in_hw+1) & (PS2_RINGBUFFER_SIZE-1);
-		if(mousebuffer.in_hw==mousebuffer.in_cpu)
-			ps2_overflow=1;
+		mdata[midx++]=mouse&255;
+		mctr=PS2_TIMEOUT;
+		if(midx==mpacketsize)	// Complete packet received?
+		{
+			midx=0;
+			ps2_mousebuttons=(mdata[0])&3;
+			if(mdata[0] & (1<<5))
+				ps2_mousey-=1+(mdata[2]^255);
+			else
+				ps2_mousey+=mdata[2];
+				// Reverse X axis
+			if(mdata[0] & (1<<4))
+				ps2_mousex+=1+(mdata[1]^255);
+			else
+				ps2_mousex-=mdata[1];
+		}	
 	}
+	else
+	{
+		if(!(mctr--))	// Timeout
+		{
+			if(midx)
+				mpacketsize=7-mpacketsize; // Alternate between 3 and 4 byte packets
+			midx=0;
+		}
+	}
+
 	if(mouse & (1<<BIT_PS2_CTS))
 	{
 		if(mouseoutbuffer.out_hw!=mouseoutbuffer.out_cpu)
@@ -103,9 +131,9 @@ void PS2Wait()
 
 void PS2Init()
 {
-	ps2_overflow=0;
 	ps2_ringbuffer_init(&kbbuffer);
 	SetIntHandler(&PS2Handler);
 	ClearKeyboard();
+	PS2MouseWrite(0xf4);
 }
 

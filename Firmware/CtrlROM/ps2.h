@@ -30,9 +30,12 @@ void ps2_ringbuffer_init(struct ps2_ringbuffer *r);
 int ps2_ringbuffer_read(struct ps2_ringbuffer *r);
 int ps2_ringbuffer_count(struct ps2_ringbuffer *r);
 extern struct ps2_ringbuffer kbbuffer;
-extern struct ps2_ringbuffer mousebuffer;
 extern struct ps2_ringbuffer_out mouseoutbuffer;
-extern int ps2_overflow;
+
+extern int ps2_mousex;
+extern int ps2_mousey;
+extern int ps2_mousebuttons;
+
 void PS2Handler();
 
 // Public interface
