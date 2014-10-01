@@ -236,7 +236,7 @@ begin
   U00 : entity work.pll4x2
     port map(
 		areset => '0',
-      inclk0 => CLOCK_27(0),       -- 50 MHz external
+      inclk0 => CLOCK_27(0),       -- 27 MHz external
       c0     => clk21m,         -- 21.43MHz internal (50*3/7)
       c1     => memclk,         -- 85.72MHz = 21.43MHz x 4
       c2     => SDRAM_CLK,        -- 85.72MHz external
@@ -254,10 +254,11 @@ reset <= '0' when status(0)='1' or status(2)='1' or buttons(1)='1' or sd_allow_s
 
 process(clk21m)
 begin
-	ps2_keyboard_clk_mix <= ps2_keyboard_clk_in and (ps2_clk or ps2_keyboard_dat_out);
+--	ps2_keyboard_clk_mix <= ps2_keyboard_clk_in and (ps2_clk or ps2_keyboard_dat_out);
+	ps2_keyboard_clk_mix <= ps2_keyboard_clk_in; -- and (ps2_clk or ps2_keyboard_dat_out);
 	if rising_edge(clk21m) then
 		ps2counter<=ps2counter+1;
-		if ps2counter=1500 then
+		if ps2counter=1200 then
 			ps2_clk<=not ps2_clk;
 			ps2counter<=(others => '0');
 		end if;

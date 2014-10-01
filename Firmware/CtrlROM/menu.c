@@ -83,9 +83,11 @@ int Menu_Run()
 	int i;
 	struct menu_entry *m=menu;
 
-	if(TestKey(KEY_F12)&2)
+	if((TestKey(KEY_F11)&2)||(TestKey(KEY_F12)&2))
 	{
 		while(TestKey(KEY_F12))
+			HandlePS2RawCodes(); // Wait for KeyUp message before opening OSD, since this disables the keyboard for the MSX core.
+		while(TestKey(KEY_F11))
 			HandlePS2RawCodes(); // Wait for KeyUp message before opening OSD, since this disables the keyboard for the MSX core.
 		OSD_Show(menu_visible^=1);
 	}
