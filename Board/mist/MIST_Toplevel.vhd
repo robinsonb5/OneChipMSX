@@ -102,10 +102,13 @@ signal sd_sdi:	std_logic;
 signal sd_sdo:	std_logic;
 
 -- PS/2 Keyboard
-	signal ps2_keyboard_clk_in : std_logic;
-	signal ps2_keyboard_dat_in : std_logic;
-	signal ps2_keyboard_clk_out : std_logic;
-	signal ps2_keyboard_dat_out : std_logic;
+signal ps2_keyboard_clk_in : std_logic;
+signal ps2_keyboard_dat_in : std_logic;
+signal ps2_keyboard_clk_mix : std_logic;
+signal ps2_keyboard_clk_out : std_logic;
+signal ps2_keyboard_dat_out : std_logic;
+signal ps2_clk : std_logic;
+signal ps2counter : unsigned(10 downto 0);
 
 -- Sigma Delta audio
 COMPONENT hybrid_pwm_sd
@@ -249,6 +252,18 @@ SDRAM_A(12)<='0';
 -- button 1 is the core specfic button in the mists front
 reset <= '0' when status(0)='1' or status(2)='1' or buttons(1)='1' or sd_allow_sdhc_changed='1' else '1';
 
+process(clk21m)
+begin
+	ps2_keyboard_clk_mix <= ps2_keyboard_clk_in and (ps2_clk or ps2_keyboard_dat_out);
+	if rising_edge(clk21m) then
+		ps2counter<=ps2counter+1;
+		if ps2counter=1500 then
+			ps2_clk<=not ps2_clk;
+			ps2counter<=(others => '0');
+		end if;
+	end if;
+end process;
+
 
 emsx_top : entity work.Virtual_Toplevel
   port map(
@@ -300,9 +315,11 @@ emsx_top : entity work.Virtual_Toplevel
     -- PS/2 keyboard ports
 	 pPs2Clk_out => ps2_keyboard_clk_out,
 	 pPs2Dat_out => ps2_keyboard_dat_out,
-	 pPs2Clk_in => ps2_keyboard_clk_in,
+	 pPs2Clk_in => ps2_keyboard_clk_mix,
 	 pPs2Dat_in => ps2_keyboard_dat_in,
-	 
+
+		pJoyA => joy_0,
+		pJoyB => joy_1,
 --    -- Joystick ports (Port_A, Port_B)
 --    pJoyA => std_logic_vector(c64_joy1), --       : inout std_logic_vector( 5 downto 0):=(others=>'1');
 --    pStrA       : out std_logic;
@@ -442,9 +459,9 @@ user_io_d : user_io
       joystick_analog_1 => joy_ana_1,
 --      switches => switches,
        BUTTONS => buttons,
-		ps2_clk => '1',
---      ps2_kbd_clk => open,
---      ps2_kbd_data => open
+		ps2_clk => ps2_clk,
+      ps2_kbd_clk => ps2_keyboard_clk_in,
+      ps2_kbd_data => ps2_keyboard_dat_in,
  		serial_data => par_out_data,
  		serial_strobe => par_out_strobe
  );

@@ -202,12 +202,12 @@ int is_sdhc()
 				else
 					return(0);
 			}
-			else
-				printf("CMD58 %d\n  ",r);
+//			else
+//				printf("CMD58 %d\n  ",r);
 		}
 		if(i==2)
 		{
-			puts("SDHC Initialization error!\n");
+			puts("SDHC error!\n");
 			return(0);
 		}
 	}
@@ -222,7 +222,7 @@ int spi_init()
 	SDHCtype=1;
 	SPI_CS(0);	// Disable CS
 	spi_spin();
-	puts("Initializing SD card...\n");
+	puts("SD init...\n");
 //	puts("SPI Init()\n");
 	DBG("Activating CS\n");
 	SPI_CS(1);
@@ -278,7 +278,8 @@ int sd_read_sector(unsigned long lba,unsigned char *buf)
 	r=cmd_read(lba);
 	if(r!=0)
 	{
-		printf("Read command failed at %d (%d)\n",lba,r);
+		puts("Read failed\n");
+//		printf("Read command failed at %d (%d)\n",lba,r);
 		return(result);
 	}
 

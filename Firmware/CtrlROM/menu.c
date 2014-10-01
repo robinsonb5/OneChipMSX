@@ -20,6 +20,17 @@ void Menu_Hide()
 	OSD_Show(menu_visible=0);
 }
 
+
+static void DrawSlider(struct menu_entry *m)
+{
+	int i;
+	for(i=0;i<=MENU_SLIDER_MAX(m);++i) // One extra character to leave a space before the label
+	{
+		OSD_Putchar(i<MENU_SLIDER_VALUE(m) ? 0x07 : 0x20);
+	}
+}
+
+
 void Menu_Draw()
 {
 	struct menu_entry *m=menu;
@@ -38,6 +49,10 @@ void Menu_Draw()
 				labels=(char**)m->label;
 				OSD_Puts("\x16 ");
 				OSD_Puts(labels[i]);
+				break;
+			case MENU_ENTRY_SLIDER:
+				DrawSlider(m);
+				OSD_Puts(m->label);
 				break;
 			case MENU_ENTRY_TOGGLE:
 				if((menu_toggle_bits>>MENU_ACTION_TOGGLE(m->action))&1)
@@ -66,6 +81,8 @@ void Menu_Set(struct menu_entry *head)
 int Menu_Run()
 {
 	int i;
+	struct menu_entry *m=menu;
+
 	if(TestKey(KEY_F12)&2)
 	{
 		while(TestKey(KEY_F12))
@@ -78,12 +95,54 @@ int Menu_Run()
 		TestKey(KEY_ENTER);
 		TestKey(KEY_UPARROW);
 		TestKey(KEY_DOWNARROW);
+		TestKey(KEY_LEFTARROW);
+		TestKey(KEY_RIGHTARROW);
 		return;
 	}
 	if((TestKey(KEY_UPARROW)&2)&&currentrow)
 		--currentrow;
 	if((TestKey(KEY_DOWNARROW)&2)&&(currentrow<(menurows-1)))
 		++currentrow;
+
+	// Find the currently highlighted menu item
+	i=currentrow;
+	while(i)
+	{
+		++m;
+		--i;
+	}
+
+	OSD_SetX(2);
+	OSD_SetY(currentrow);
+
+	if(TestKey(KEY_LEFTARROW)&2) // Decrease slider value
+	{
+		switch(m->type)
+		{
+			case MENU_ENTRY_SLIDER:
+				if((--MENU_SLIDER_VALUE(m))&0x80) // <0?
+					MENU_SLIDER_VALUE(m)=0;
+				DrawSlider(m);
+				break;
+			default:
+				break;
+		}
+	}
+
+	if(TestKey(KEY_RIGHTARROW)&2) // Increase slider value
+	{
+		switch(m->type)
+		{
+			case MENU_ENTRY_SLIDER:
+				if((++MENU_SLIDER_VALUE(m))>MENU_SLIDER_MAX(m))
+					MENU_SLIDER_VALUE(m)=MENU_SLIDER_MAX(m);
+				DrawSlider(m);
+				break;
+			default:
+				break;
+		}
+	}
+
 
 	if(TestKey(KEY_ENTER)&2)
 	{

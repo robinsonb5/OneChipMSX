@@ -83,6 +83,9 @@ int partitioncount;
 #define BootPrint(x) puts(x);
 
 
+#define debug printf
+
+
 int compare(const char *s1, const char *s2,int b)
 {
 	int i;
@@ -122,7 +125,7 @@ int FindDrive(void)
     if (compare((const char*)&sector_buffer[0x52], "FAT32   ",8)==0) // check for FAT32
 		partitioncount=0;
 
-	printf("%d partitions found\n",partitioncount);
+//	printf("%d partitions found\n",partitioncount);
 
 	if(partitioncount)
 	{
@@ -134,7 +137,7 @@ int FindDrive(void)
 				boot_sector=SwapBBBB(mbr->Partition[0].startlba);
 		else if(mbr->Signature!=0xaa55)
 		{
-			puts("No partition signature found\n");
+			puts("No partition sig\n");
 			return(0);
 		}
 //		printf("Reading boot sector %d\n",boot_sector);
@@ -150,7 +153,7 @@ int FindDrive(void)
 		fat32=1;
 	else if (compare(sector_buffer+0x36, "FAT16   ",8)!=0) // check for FAT32
 	{
-        puts("Unsupported partition type!\n");
+        puts("Bad part\n");
 		return(0);
 	}
 

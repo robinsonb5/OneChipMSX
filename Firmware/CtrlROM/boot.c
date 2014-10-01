@@ -197,8 +197,19 @@ static struct menu_entry dipswitches[]=
 	{MENU_ENTRY_TOGGLE,"Japanese keyboard layout",BIT_JAPANESEKEYBOARD},
 	{MENU_ENTRY_CYCLE,(char *)ram_labels,2},
 	{MENU_ENTRY_SUBMENU,"Back",MENU_ACTION(topmenu)},
-	
-	{MENU_ENTRY_NULL,0,0},
+
+	{MENU_ENTRY_NULL,0,0}
+};
+
+
+static struct menu_entry volumes[]=
+{
+	{MENU_ENTRY_SLIDER,"Master",7},
+	{MENU_ENTRY_SLIDER,"OPLL",7},
+	{MENU_ENTRY_SLIDER,"SCC",7},
+	{MENU_ENTRY_SLIDER,"PSG",7},
+	{MENU_ENTRY_SUBMENU,"Back",MENU_ACTION(topmenu)},
+	{MENU_ENTRY_NULL,0,0}
 };
 
 
@@ -206,10 +217,11 @@ static struct menu_entry topmenu[]=
 {
 	{MENU_ENTRY_CALLBACK,"Reset",MENU_ACTION(&reset)},
 	{MENU_ENTRY_SUBMENU,"Options \x10",MENU_ACTION(dipswitches)},
+	{MENU_ENTRY_SUBMENU,"Sound \x10",MENU_ACTION(volumes)},
 	{MENU_ENTRY_TOGGLE,"Turbo (10.74MHz)",BIT_TURBO},
 	{MENU_ENTRY_TOGGLE,"Mouse emulation",BIT_MOUSEEMULATION},
 	{MENU_ENTRY_CALLBACK,"Exit",MENU_ACTION(&Menu_Hide)},
-	{MENU_ENTRY_NULL,0,0},
+	{MENU_ENTRY_NULL,0,0}
 };
 
 
