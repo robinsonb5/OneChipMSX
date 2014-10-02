@@ -254,6 +254,31 @@ int GetDIPSwitch()
 }
 
 
+int GetVolumes()
+{
+	struct menu_entry *m=volumes;
+	int result=0;
+	result|=MENU_SLIDER_VALUE(m++);
+	result|=MENU_SLIDER_VALUE(m++)<<4;
+	result|=MENU_SLIDER_VALUE(m++)<<8;
+	result|=MENU_SLIDER_VALUE(m)<<12;
+	return(result);
+}
+
+
+void SetVolumes(int v)
+{
+	struct menu_entry *m=volumes;
+	MENU_SLIDER_VALUE(m++)=v&7;
+	v>>=3;
+	MENU_SLIDER_VALUE(m++)=v&7;
+	v>>=3;
+	MENU_SLIDER_VALUE(m++)=v&7;
+	v>>=3;
+	MENU_SLIDER_VALUE(m)=v&7;
+}
+
+
 int main(int argc,char **argv)
 {
 	int i;
@@ -312,6 +337,7 @@ int main(int argc,char **argv)
 			HandlePS2RawCodes();
 			visible=Menu_Run();
 			HW_HOST(HW_HOST_SW)=GetDIPSwitch();
+			HW_HOST(HW_HOST_VOLUMES)=GetVolumes();
 			if(GetDIPSwitch()!=prevds)
 			{
 				int i;

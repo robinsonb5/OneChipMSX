@@ -32,20 +32,7 @@ int ps2_ringbuffer_count(struct ps2_ringbuffer *r)
 	return(r->in_hw+PS2_RINGBUFFER_SIZE-r->in_cpu);
 }
 
-void ps2_ringbuffer_write(struct ps2_ringbuffer_out *r,int in)
-{
-	while(r->out_hw==((r->out_cpu+1)&(PS2_RINGBUFFER_SIZE-1)))
-		;
-//	printf("w: %d, %d\n, %d\n",r->out_hw,r->out_cpu,in);
-	DisableInterrupts();
-	r->outbuf[r->out_cpu]=in;
-	r->out_cpu=(r->out_cpu+1) & (PS2_RINGBUFFER_SIZE-1);
-//	PS2Handler();
-	EnableInterrupts();
-}
-
 struct ps2_ringbuffer kbbuffer;
-struct ps2_ringbuffer_out mouseoutbuffer;
 
 static volatile int intflag;
 
@@ -54,6 +41,7 @@ static volatile int intflag;
 int ps2_mousex;
 int ps2_mousey;
 int ps2_mousebuttons;
+int mdataout=-1;
 static int mdata[4];
 static int midx=0,mctr=0;
 static int mpacketsize=3; // 4 bytes for a wheel mouse.  (Chameleon firmware initializes the mouse in wheel mode.)
@@ -106,10 +94,10 @@ void PS2Handler()
 
 	if(mouse & (1<<BIT_PS2_CTS))
 	{
-		if(mouseoutbuffer.out_hw!=mouseoutbuffer.out_cpu)
+		if(mdataout>-1)
 		{
-			HW_PS2(REG_PS2_MOUSE)=mouseoutbuffer.outbuf[mouseoutbuffer.out_hw];
-			mouseoutbuffer.out_hw=(mouseoutbuffer.out_hw+1) & (PS2_RINGBUFFER_SIZE-1);
+			HW_PS2(REG_PS2_MOUSE)=mdataout;
+			mdataout=-1;
 		}
 	}
 
@@ -118,6 +106,13 @@ void PS2Handler()
 	EnableInterrupts();
 }
 
+
+void PS2MouseWrite(int b)
+{
+	while(mdataout>0)
+		;
+	mdataout=b;
+}
 
 void PS2Wait()
 {
