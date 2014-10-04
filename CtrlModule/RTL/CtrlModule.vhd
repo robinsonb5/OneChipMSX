@@ -161,7 +161,7 @@ begin
 	myrom : entity work.CtrlROM_ROM
 	generic map
 	(
-		maxAddrBitBRAM => 12
+		maxAddrBitBRAM => 13
 	)
 	port map (
 		clk => clk,
@@ -355,7 +355,7 @@ end process;
 		REMAP_STACK => false, -- We need to remap the Boot ROM / Stack RAM so we can access SDRAM
 		EXECUTE_RAM => false, -- We might need to execute code from SDRAM, too.
 		maxAddrBit => maxAddrBit,
-		maxAddrBitBRAM => 12
+		maxAddrBitBRAM => 13
 	)
 	port map (
 		clk                 => clk,

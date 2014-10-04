@@ -17,7 +17,7 @@ int SDHCtype;
 #define cmd_reset(x) cmd_write(0x950040,0) // Use SPI mode
 #define cmd_init(x) cmd_write(0xff0041,0)
 #define cmd_read(x) cmd_write(0xff0051,x)
-
+#define cmd_writesector(x) cmd_write(0xff0058,x)
 #define cmd_CMD8(x) cmd_write(0x870048,0x1AA)
 #define cmd_CMD16(x) cmd_write(0xFF0050,x)
 #define cmd_CMD41(x) cmd_write(0x870069,0x40000000)
@@ -217,25 +217,33 @@ int is_sdhc()
 
 int spi_init()
 {
+	int j;
 	int i;
 	int r;
 	SDHCtype=1;
-	SPI_CS(0);	// Disable CS
-	spi_spin();
-	puts("SD init...\n");
-//	puts("SPI Init()\n");
-	DBG("Activating CS\n");
-	SPI_CS(1);
-	i=100;
-	while(--i)
+	j=5;
+	while(--j)
 	{
-		if(cmd_reset()==1) // Enable SPI mode
-			i=1;
-		DBG("Sent reset command\n");
-		if(i==2)
+		SPI_CS(0);	// Disable CS
+		spi_spin();
+		puts("SD init...\n");
+	//	puts("SPI Init()\n");
+		DBG("Activating CS\n");
+		SPI_CS(1);
+		i=50;
+		while(--i)
 		{
-			puts("SD card reset failed!\n");
-			return(0);
+			if(cmd_reset()==1) // Enable SPI mode
+			{
+				i=1;
+				j=1;
+			}
+			DBG("Sent reset command\n");
+			if(i==2)
+			{
+				puts("SD card reset failed!\n");
+				return(0);
+			}
 		}
 	}
 	DBG("Card responded to reset\n");
@@ -258,6 +266,47 @@ int spi_init()
 
 int sd_write_sector(unsigned long lba,unsigned char *buf) // FIXME - Stub
 {
+    int i,t,timeout;
+
+	SPI(0xff);
+	SPI_CS(1|(1<<HW_SPI_FAST));
+	SPI(0xff);
+
+	t=cmd_writesector(lba);
+	if(t!=0)
+	{
+		puts("Write failed\n");
+//		printf("Read command failed at %d (%d)\n",lba,r);
+		return(1);
+	}
+
+    SPI(0xFF); // one byte gap
+    SPI(0xFE); // send Data Token
+
+    // send sector bytes
+    for (i = 0; i < 128; i++)
+	{
+		int t=*(int *)buf;
+		SPI((t>>24)&255);
+		SPI((t>>16)&255);
+		SPI((t>>8)&255);
+		SPI(t&255);
+		buf+=4;
+	}
+
+    SPI(0xFF); // send CRC lo byte
+    SPI(0xFF); // send CRC hi byte
+    SPI(0xFF); // Pump the response byte
+
+    timeout = 100000;
+	do
+	{
+	    SPI(0xFF);
+		i=SPI_READ();
+	}
+	while((i==0) && --timeout);
+	SPI(0xff);
+	SPI_CS(0);
 	return(0);
 }
 

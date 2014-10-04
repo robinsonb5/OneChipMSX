@@ -29,6 +29,8 @@ static struct menu_entry topmenu[];
 
 #define DEFAULT_DIPSWITCH_SETTINGS 0x638
 
+void SetVolumes(int v);
+
 
 void OSD_Puts(char *str)
 {
@@ -49,7 +51,7 @@ void WaitEnter()
 }
 
 
-static int Boot()
+static int Boot(int save)
 {
 	int result=0;
 	int opened;
@@ -64,7 +66,8 @@ static int Boot()
 
 		if(sd_ishc())
 		{
-			OSD_Puts("SDHC card detected but not\nsupported; disabling SD card\n\x10 OK\n");
+			OSD_Puts("SDHC not supported;");
+			OSD_Puts("\ndisabling SD card\n\x10 OK\n");
 			WaitEnter();
 			dipsw|=4; // Disable SD card.
 			HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMSX into Reset again
@@ -73,7 +76,8 @@ static int Boot()
 		}
 		else if(IsFat32())
 		{
-			OSD_Puts("Fat32 filesystem detected but\nnot supported; disabling SD card\n\x10 OK\n");
+			OSD_Puts("Fat32 not supported;");
+			OSD_Puts("\ndisabling SD card\n\x10 OK\n");
 			WaitEnter();
 			dipsw|=4; // Disable SD card.
 			HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMSX into Reset again
@@ -82,15 +86,37 @@ static int Boot()
 		}
 		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
-		OSD_Puts("Trying MSX3BIOS.SYS...\n");
+		if(save)
+		{
+			if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
+			{
+				*(int *)(&sector_buffer[0])=dipsw;
+				*(int *)(&sector_buffer[4])=GetVolumes();
+				FileWrite(&file,sector_buffer);
+			}
+		}
+		else
+		{
+			if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
+			{
+				FileRead(&file,sector_buffer);
+				dipsw=*(int *)(&sector_buffer[0]);
+				SetVolumes(*(int *)(&sector_buffer[4]));
+//				HW_HOST(HW_HOST_SW)=dipsw;
+				SetDIPSwitch(dipsw);
+//				printf("DIP %d, Vol %d\n",dipsw,GetVolumes());
+			}
+		}
+
+		OSD_Puts("Trying MSX3BIOS.SYS\n");
 		if(!(opened=FileOpen(&file,"MSX3BIOSSYS")))	// Try and load MSX3 BIOS first
 		{
-			OSD_Puts("Trying BIOS_M2P.ROM...\n");
+			OSD_Puts("Trying BIOS_M2P.ROM\n");
 			opened=FileOpen(&file,"BIOS_M2PROM"); // If failure, load MSX2 BIOS.
 		}
 		if(opened)
 		{
-			OSD_Puts("Opened BIOS, loading...\n");
+			OSD_Puts("Loading BIOS\n");
 			int filesize=file.size;
 			unsigned int c=0;
 			int bits;
@@ -126,7 +152,7 @@ static int Boot()
 				}
 				else
 				{
-					OSD_Puts("Read block failed\n");
+					OSD_Puts("Read failed\n");
 					return(0);
 				}
 				FileNextSector(&file);
@@ -141,7 +167,7 @@ static int Boot()
 }
 
 
-static void reset()
+static void doreset(int s)
 {
 	Menu_Hide();
 	OSD_Clear();
@@ -150,9 +176,19 @@ static void reset()
 	PS2Wait();
 	PS2Wait();
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
-	Boot();
+	Boot(s);
 	Menu_Set(topmenu);
 	OSD_Show(0);
+}
+
+static void savereset()
+{
+	doreset(1);
+}
+
+static void reset()
+{
+	doreset(0);
 }
 
 
@@ -194,7 +230,7 @@ static struct menu_entry dipswitches[]=
 	{MENU_ENTRY_TOGGLE,"SD Card",BIT_SDCARD},
 	{MENU_ENTRY_CYCLE,(char *)slot1_labels,3},
 	{MENU_ENTRY_CYCLE,(char *)slot2_labels,4},
-	{MENU_ENTRY_TOGGLE,"Japanese keyboard layout",BIT_JAPANESEKEYBOARD},
+	{MENU_ENTRY_TOGGLE,"Japanese key layout",BIT_JAPANESEKEYBOARD},
 	{MENU_ENTRY_CYCLE,(char *)ram_labels,2},
 	{MENU_ENTRY_SUBMENU,"Back",MENU_ACTION(topmenu)},
 
@@ -216,9 +252,10 @@ static struct menu_entry volumes[]=
 static struct menu_entry topmenu[]=
 {
 	{MENU_ENTRY_CALLBACK,"Reset",MENU_ACTION(&reset)},
+	{MENU_ENTRY_CALLBACK,"Save and Reset",MENU_ACTION(&savereset)},
 	{MENU_ENTRY_SUBMENU,"Options \x10",MENU_ACTION(dipswitches)},
 	{MENU_ENTRY_SUBMENU,"Sound \x10",MENU_ACTION(volumes)},
-	{MENU_ENTRY_TOGGLE,"Turbo (10.74MHz)",BIT_TURBO},
+	{MENU_ENTRY_TOGGLE,"Turbo",BIT_TURBO},
 	{MENU_ENTRY_TOGGLE,"Mouse emulation",BIT_MOUSEEMULATION},
 	{MENU_ENTRY_CALLBACK,"Exit",MENU_ACTION(&Menu_Hide)},
 	{MENU_ENTRY_NULL,0,0}
@@ -231,8 +268,8 @@ int SetDIPSwitch(int d)
 	MENU_TOGGLE_VALUES=d^0x84; // Invert sense of SD card and Turbo switches
 	m=&dipswitches[0]; MENU_CYCLE_VALUE(m)=d&3; // Video
 	m=&dipswitches[6]; MENU_CYCLE_VALUE(m)=d&0x200 ? 1 : 0; // RAM
-	m=&dipswitches[2]; MENU_CYCLE_VALUE(m)=(d&0x100 ? 2 : 0) | (d&0x8 ? 1 : 0); // Slot 1
-	m=&dipswitches[3]; MENU_CYCLE_VALUE(m)=(d>>4)&3; // Slot 2
+	m=&dipswitches[3]; MENU_CYCLE_VALUE(m)=(d&0x100 ? 2 : 0) | (d&0x8 ? 1 : 0); // Slot 1
+	m=&dipswitches[4]; MENU_CYCLE_VALUE(m)=(d>>4)&3; // Slot 2
 }
 
 
@@ -245,10 +282,10 @@ int GetDIPSwitch()
 		result|=0x200;	// RAM
 	m=&dipswitches[0];  t=MENU_CYCLE_VALUE(m);	// Video
 	result|=t;
-	m=&dipswitches[2];  t=MENU_CYCLE_VALUE(m); // Slot 1
+	m=&dipswitches[3];  t=MENU_CYCLE_VALUE(m); // Slot 1
 	result|=t&2 ? 0x100 : 0;
 	result|=t&1 ? 0x8 : 0;
-	m=&dipswitches[3];  t=MENU_CYCLE_VALUE(m); // Slot 1
+	m=&dipswitches[4];  t=MENU_CYCLE_VALUE(m); // Slot 2
 	result|=t<<4;
 	return(result^0x84); // Invert SD card and Turbo switch
 }
@@ -270,11 +307,11 @@ void SetVolumes(int v)
 {
 	struct menu_entry *m=volumes;
 	MENU_SLIDER_VALUE(m++)=v&7;
-	v>>=3;
+	v>>=4;
 	MENU_SLIDER_VALUE(m++)=v&7;
-	v>>=3;
+	v>>=4;
 	MENU_SLIDER_VALUE(m++)=v&7;
-	v>>=3;
+	v>>=4;
 	MENU_SLIDER_VALUE(m)=v&7;
 }
 
@@ -299,7 +336,7 @@ int main(int argc,char **argv)
 	OSD_Show(1);	// OSD should now show correctly.
 
 
-	if(Boot())
+	if(Boot(0))
 	{
 		OSD_Show(0);
 		Menu_Set(topmenu);

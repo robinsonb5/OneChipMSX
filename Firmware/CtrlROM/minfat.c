@@ -109,7 +109,7 @@ int FindDrive(void)
 
     if (!sd_read_sector(0, sector_buffer)) // read MBR
 	{
-		puts("Read of MBR failed\n");
+		puts("MBR fail\n");
         return(0);
 	}
 //	hexdump(sector_buffer,512);
@@ -325,6 +325,7 @@ int FileNextSector(fileTYPE *file)
     return(1);
 }
 
+
 int FileRead(fileTYPE *file, unsigned char *pBuffer)
 {
     unsigned long sb;
@@ -335,6 +336,19 @@ int FileRead(fileTYPE *file, unsigned char *pBuffer)
 
 	return(sd_read_sector(sb, pBuffer)); // read sector from drive
 }
+
+
+int FileWrite(fileTYPE *file, unsigned char *pBuffer)
+{
+    unsigned long sb;
+
+    sb = data_start;                         // start of data in partition
+    sb += cluster_size * (file->cluster-2);  // cluster offset
+    sb += file->sector & cluster_mask;      // sector offset in cluster
+
+	return(sd_write_sector(sb, pBuffer)); // read sector from drive
+}
+
 
 #if 0
 fileTYPE file;
