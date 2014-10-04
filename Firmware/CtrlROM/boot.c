@@ -27,7 +27,7 @@ static struct menu_entry topmenu[];
 #define BIT_MOUSEEMULATION 10
 #define BIT_SCANLINES 11
 
-#define DEFAULT_DIPSWITCH_SETTINGS 0x638
+#define DEFAULT_DIPSWITCH_SETTINGS 0x238
 
 void SetVolumes(int v);
 
@@ -86,25 +86,29 @@ static int Boot(int save)
 		}
 		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
-		if(save)
+		if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
 		{
-			if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
+			if(save)	// If so, are we saving to it, or loading from it?
 			{
-				*(int *)(&sector_buffer[0])=dipsw;
-				*(int *)(&sector_buffer[4])=GetVolumes();
+				int i;
+				int *p=(int *)sector_buffer;
+				*p++=dipsw;
+				*p++=GetVolumes();
+				for(i=0;i<126;++i)	// Clear remainder of buffer
+					*p++=0;
 				FileWrite(&file,sector_buffer);
 			}
-		}
-		else
-		{
-			if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
+			else
 			{
-				FileRead(&file,sector_buffer);
-				dipsw=*(int *)(&sector_buffer[0]);
-				SetVolumes(*(int *)(&sector_buffer[4]));
-//				HW_HOST(HW_HOST_SW)=dipsw;
-				SetDIPSwitch(dipsw);
-//				printf("DIP %d, Vol %d\n",dipsw,GetVolumes());
+				if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
+				{
+					FileRead(&file,sector_buffer);
+					dipsw=*(int *)(&sector_buffer[0]);
+					SetVolumes(*(int *)(&sector_buffer[4]));
+					HW_HOST(HW_HOST_SW)=dipsw;
+					SetDIPSwitch(dipsw);
+	//				printf("DIP %d, Vol %d\n",dipsw,GetVolumes());
+				}
 			}
 		}
 
