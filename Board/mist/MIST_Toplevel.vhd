@@ -72,6 +72,8 @@ signal buttons: std_logic_vector(1 downto 0);
 signal status:  std_logic_vector(7 downto 0);
 signal joy_0: std_logic_vector(5 downto 0);
 signal joy_1: std_logic_vector(5 downto 0);
+signal joyn_0: std_logic_vector(5 downto 0);
+signal joyn_1: std_logic_vector(5 downto 0);
 signal joy_ana_0: std_logic_vector(15 downto 0);
 signal joy_ana_1: std_logic_vector(15 downto 0);
 signal txd:     std_logic;
@@ -101,14 +103,23 @@ signal sd_sck:	std_logic;
 signal sd_sdi:	std_logic;
 signal sd_sdo:	std_logic;
 
+-- PS/2
+signal ps2_clk : std_logic;
+signal ps2counter : unsigned(10 downto 0);
+
 -- PS/2 Keyboard
 signal ps2_keyboard_clk_in : std_logic;
 signal ps2_keyboard_dat_in : std_logic;
 signal ps2_keyboard_clk_mix : std_logic;
 signal ps2_keyboard_clk_out : std_logic;
 signal ps2_keyboard_dat_out : std_logic;
-signal ps2_clk : std_logic;
-signal ps2counter : unsigned(10 downto 0);
+
+-- PS/2 Mouse
+signal ps2_mouse_clk_in : std_logic;
+signal ps2_mouse_dat_in : std_logic;
+signal ps2_mouse_clk_mix : std_logic;
+signal ps2_mouse_clk_out : std_logic;
+signal ps2_mouse_dat_out : std_logic;
 
 -- Sigma Delta audio
 COMPONENT hybrid_pwm_sd
@@ -194,6 +205,8 @@ component user_io
            ps2_clk : in std_logic;
            ps2_kbd_clk : out std_logic;
            ps2_kbd_data : out std_logic;
+           ps2_mouse_clk : out std_logic;
+           ps2_mouse_data : out std_logic;
 			  serial_data : in std_logic_vector(7 downto 0);
            serial_strobe : in std_logic
       );
@@ -256,6 +269,7 @@ process(clk21m)
 begin
 --	ps2_keyboard_clk_mix <= ps2_keyboard_clk_in and (ps2_clk or ps2_keyboard_dat_out);
 	ps2_keyboard_clk_mix <= ps2_keyboard_clk_in; -- and (ps2_clk or ps2_keyboard_dat_out);
+	ps2_mouse_clk_mix <= ps2_mouse_clk_in; -- and (ps2_clk or ps2_mouse_dat_out);
 	if rising_edge(clk21m) then
 		ps2counter<=ps2counter+1;
 		if ps2counter=1200 then
@@ -319,8 +333,14 @@ emsx_top : entity work.Virtual_Toplevel
 	 pPs2Clk_in => ps2_keyboard_clk_mix,
 	 pPs2Dat_in => ps2_keyboard_dat_in,
 
-		pJoyA => joy_0,
-		pJoyB => joy_1,
+    -- PS/2 mouse ports
+	 ps2m_clk_out => ps2_mouse_clk_out,
+	 ps2m_dat_out => ps2_mouse_dat_out,
+	 ps2m_clk_in => ps2_mouse_clk_mix,
+	 ps2m_dat_in => ps2_mouse_dat_in,
+
+	 pJoyA => joyn_0,
+		pJoyB => joyn_1,
 --    -- Joystick ports (Port_A, Port_B)
 --    pJoyA => std_logic_vector(c64_joy1), --       : inout std_logic_vector( 5 downto 0):=(others=>'1');
 --    pStrA       : out std_logic;
@@ -463,10 +483,16 @@ user_io_d : user_io
 		ps2_clk => ps2_clk,
       ps2_kbd_clk => ps2_keyboard_clk_in,
       ps2_kbd_data => ps2_keyboard_dat_in,
+      ps2_mouse_clk => ps2_mouse_clk_in,
+      ps2_mouse_data => ps2_mouse_dat_in,
  		serial_data => par_out_data,
  		serial_strobe => par_out_strobe
  );
+ 
+ joyn_0 <= not joy_0;
+ joyn_1 <= not joy_1;
 
+ 
 vga_window<='1';
 mydither : component video_vga_dither
 	generic map (

@@ -69,6 +69,24 @@ always @(posedge req_io_wr or posedge io_reset) begin
 	else 		    io_wr <= 1'b1;
 end
 
+// set io_read_ack on falling edge of io_ack
+// reset it when not waiting for io controller (anymore)
+reg io_read_ack;
+wire io_read_wait_io = (read_state == 1);
+always @(negedge io_ack or negedge io_read_wait_io) begin
+	if(!io_read_wait_io) io_read_ack <= 1'b0;
+	else						io_read_ack <= 1'b1;
+end
+
+// set io_write_ack on falling edge of io_ack
+// reset it when not waiting for io controller (anymore)
+reg io_write_ack;
+wire io_write_wait_io = (write_state == 6);
+always @(negedge io_ack or negedge io_write_wait_io) begin
+	if(!io_write_wait_io) io_write_ack <= 1'b0;
+	else			 			 io_write_ack <= 1'b1;
+end
+
 wire [31:0] OCR = { 1'b0, io_sdhc, 30'h0 };  // bit30 = 1 -> high capaciry card (sdhc)
 wire [7:0] READ_DATA_TOKEN = 8'hfe;
 
@@ -84,8 +102,8 @@ reg [6:0] sbuf;
 reg cmd55;
 reg [7:0] cmd;
 reg [2:0] bit_cnt;    // counts bits 0-7 0-7 ...
-reg [7:0] byte_cnt;   // counts bytes
-reg [7:0] cmd_cnt;    // counts command bytes
+reg [7:0] byte_cnt;   // counts bytes, saturates at 255
+reg [7:0] cmd_cnt;    // counts command bytes, returns to 0 after last command byte
 
 reg [7:0] lba0, lba1, lba2, lba3;
 assign io_lba = io_sdhc?{ lba3, lba2, lba1, lba0 }:{9'd0, lba3, lba2, lba1[7:1]};
@@ -96,9 +114,6 @@ reg [7:0] crc;
 reg [7:0] reply;
 reg [7:0] reply0, reply1, reply2, reply3;
 reg [3:0] reply_len;
-
-
-reg io_ackD, io_ackD2;
 
 // signals to address buffer on SD card write (data coming from SD spi)
 reg write_strobe;
@@ -195,10 +210,6 @@ always@(negedge sd_sck or posedge sd_cs) begin
 	end else begin
 		core_buffer_read_strobe <= 1'b0;
 
-		// bring io ack in local clock domain
-		io_ackD <= io_ack;
-		io_ackD2 <= io_ackD;
-
 		// -------- catch read commmand and reset read state machine ------
 		if(bit_cnt == 7) begin
 			if(cmd_cnt == 5) begin
@@ -209,7 +220,7 @@ always@(negedge sd_sck or posedge sd_cs) begin
 		end
 
       if(byte_cnt < 6+NCR) begin
-		  sd_sdo <= 1'b1;				// reply $ff -> wait
+			sd_sdo <= 1'b1;				// reply $ff -> wait
 		end else begin
 
 			if(byte_cnt == 6+NCR) begin
@@ -221,8 +232,7 @@ always@(negedge sd_sck or posedge sd_cs) begin
 					if((cmd == 8'h49)||(cmd == 8'h4a))
 						read_state <= 3'd3;      // jump directly to data transmission
 				end
-			end
-			else if((reply_len > 0) && (byte_cnt == 6+NCR+1))
+			end else if((reply_len > 0) && (byte_cnt == 6+NCR+1))
 				sd_sdo <= reply0[~bit_cnt];
 			else if((reply_len > 1) && (byte_cnt == 6+NCR+2))
 				sd_sdo <= reply1[~bit_cnt];
@@ -230,12 +240,11 @@ always@(negedge sd_sck or posedge sd_cs) begin
 				sd_sdo <= reply2[~bit_cnt];
 			else if((reply_len > 3) && (byte_cnt == 6+NCR+4))
 				sd_sdo <= reply3[~bit_cnt];
-					
 			else
 				sd_sdo <= 1'b1;
 				
 			// falling edge of io_ack signals end of incoming data stream
-			if((read_state == 3'd1) && !io_ackD && io_ackD2) 
+			if((read_state == 3'd1) && io_read_ack) 
 				read_state <= 3'd2;
 
 			// wait for begin of new byte
@@ -451,7 +460,7 @@ always @(posedge sd_sck or posedge sd_cs) begin
 		// wait for io controller to accept data
 		// this happens outside the bit_cnt == 7 test as the 
 		// transition may happen at any time
-		if(write_state == 3'd6 && !io_ackD && io_ackD2)
+		if(write_state == 3'd6 && io_write_ack)
 			write_state <= 3'd0;
 	end
 end
