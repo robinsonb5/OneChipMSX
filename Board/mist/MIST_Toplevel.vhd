@@ -59,14 +59,6 @@ signal vga_tgreen : unsigned(7 downto 0);
 signal vga_tblue : unsigned(7 downto 0);
 signal vga_window : std_logic;
 
--- core video to be fed into osd
-signal core_r : std_logic_vector(5 downto 0);
-signal core_g : std_logic_vector(5 downto 0);
-signal core_b : std_logic_vector(5 downto 0);
-signal core_vs: std_logic;
-signal core_hs: std_logic;
-signal osdclk:  std_logic;
-
 -- user_io
 signal buttons: std_logic_vector(1 downto 0);
 signal status:  std_logic_vector(7 downto 0);
@@ -148,19 +140,6 @@ COMPONENT video_vga_dither
 		oBlue		:	 OUT UNSIGNED(outbits-1 DOWNTO 0)
 	);
 END COMPONENT;
-
-component osd
-generic ( OSD_COLOR : integer );
-port ( pclk, sck, ss, sdi, hs_in, vs_in : in std_logic;
-       red_in, blue_in, green_in : in std_logic_vector(5 downto 0);
-       red_out, blue_out, green_out : out std_logic_vector(5 downto 0);
-       hs_out, vs_out : out std_logic
-     );
-end component osd;
-
--- the config string is read by the io controller and allows simple core specific
--- controls
-constant CONF_STR : string := "OCMSX;;O1,SDHC,enable,disable;T2,Reset";
 
 function to_slv(s: string) return std_logic_vector is
     constant ss: string(1 to s'length) := s;
@@ -261,9 +240,8 @@ SDRAM_A(12)<='0';
 
 -- reset from IO controller
 -- status bit 0 is always triggered by the i ocontroller on its own reset
--- status bit 2 is driven by the "T2,Reset" entry in the config string
 -- button 1 is the core specfic button in the mists front
-reset <= '0' when status(0)='1' or status(2)='1' or buttons(1)='1' or sd_allow_sdhc_changed='1' else '1';
+reset <= '0' when status(0)='1' or buttons(1)='1' else '1';
 
 process(clk21m)
 begin
@@ -281,6 +259,10 @@ end process;
 
 
 emsx_top : entity work.Virtual_Toplevel
+	generic map(
+		mouse_fourbyte => '0',
+		mouse_init => '0'
+	)
   port map(
     -- Clock, Reset ports
 		clk21m => clk21m,
@@ -369,8 +351,8 @@ emsx_top : entity work.Virtual_Toplevel
 --    pCMT_out	: out   std_logic;						-- CMT output
 --    pCMT_in		: in    std_logic :='1';						-- CMT input
 
-    pVideoHS_n => core_hs,
-    pVideoVS_n => core_vs,
+    pVideoHS_n => VGA_HS,
+    pVideoVS_n => VGA_VS,
 
     -- DE1 7-SEG Display
     hex => open,
@@ -397,33 +379,6 @@ mist_console_d: component mist_console
 		par_out_strobe => par_out_strobe
 	);
 
--- status 1 is driven by the "O1,SHDC,enabled,disable" antry in the config string
-sd_allow_sdhc <= '1' when status(1)='0' else '0';
-
--- generate a signal whenever the sdhc flag toggles so we can reset
--- the ZPU then
-process(fastclk)
-variable counter: unsigned(9 downto 0);  -- ~10us
-begin
-	if rising_edge(fastclk) then
-		sd_allow_sdhcD <= sd_allow_sdhc;
-		sd_allow_sdhcD2 <= sd_allow_sdhcD;
-
-		if(sd_allow_sdhcD /= sd_allow_sdhcD2) then
-			sd_allow_sdhc_changed <= '1';
-			counter := (others=>'1');
-		else
-			if(counter /= 0) then
-				sd_allow_sdhc_changed <= '1';
-				counter := counter - 1;
-			else
-				sd_allow_sdhc_changed <= '0';
-			end if;
-		end if;
-   end if;
-end process;
-
-
 sd_card_d: component sd_card
 	port map
 	(
@@ -439,8 +394,7 @@ sd_card_d: component sd_card
 		io_dout => sd_data_out,
 		io_dout_strobe => sd_data_out_strobe,
  
-		-- status 1 is driven by the "O1,SHDC,enabled,disable" antry in the config string
-		allow_sdhc  => sd_allow_sdhc,   
+		allow_sdhc  => '0',   -- MSX does not support SDHC
 		
  		-- connection to host
  		sd_cs  => sd_cs,
@@ -453,13 +407,13 @@ sd_card_d: component sd_card
 LED <= '0' when ((joy_ana_0 /= joy_ana_1) AND (joy_0 /= joy_1)) else '1';
 	
 user_io_d : user_io
-    generic map (STRLEN => CONF_STR'length)
+    generic map (STRLEN => 1)
     port map (
       SPI_CLK => SPI_SCK,
       SPI_SS_IO => CONF_DATA0,
       SPI_MISO => SPI_DO,
       SPI_MOSI => SPI_DI,
-      conf_str => to_slv(CONF_STR),
+      conf_str => "00000000",   -- no config string -> no osd
       status => status,
 		
  		-- connection to io controller
@@ -489,9 +443,9 @@ user_io_d : user_io
  		serial_strobe => par_out_strobe
  );
  
- joyn_0 <= not joy_0;
- joyn_1 <= not joy_1;
-
+-- swap, invert and remap joystick bits
+ joyn_0 <= not joy_1(5) & not joy_1(4) & not joy_1(0) & not joy_1(1) & not joy_1(2) & not joy_1(3);
+ joyn_1 <= not joy_0(5) & not joy_0(4) & not joy_0(0) & not joy_0(1) & not joy_0(2) & not joy_0(3);
  
 vga_window<='1';
 mydither : component video_vga_dither
@@ -500,47 +454,16 @@ mydither : component video_vga_dither
 	)
 	port map (
 		clk => fastclk,
-		hsync => core_hs,
-		vsync => core_vs,
+		hsync => VGA_HS,
+		vsync => VGA_VS,
 		vid_ena => vga_window,
 		iRed => vga_tred,
 		iGreen => vga_tgreen,
 		iBlue => vga_tblue,
-		std_logic_vector(oRed) => core_r,
-		std_logic_vector(oGreen) => core_g,
-		std_logic_vector(oBlue) => core_b
+		std_logic_vector(oRed) => VGA_R,
+		std_logic_vector(oGreen) => VGA_G,
+		std_logic_vector(oBlue) => VGA_B
 	);
-
-	
--- OSD pixel clock from system clock
-process(fastclk)
-variable clk_div : unsigned(7 downto 0);
-begin
-	if rising_edge(fastclk) then
-		clk_div := clk_div + 1;
-   end if;
-
-   osdclk <= clk_div(1);
-end process;
-
-osd_inst : component osd
-  generic map (OSD_COLOR => 6)
-  port map (
-      pclk => osdclk,
-      sdi => SPI_DI,
-      sck => SPI_SCK,
-      ss => SPI_SS3,
-      red_in => core_r,
-      green_in => core_g,
-      blue_in => core_b,
-      hs_in => core_hs,
-      vs_in => core_vs,
-      unsigned(red_out) => VGA_R,
-      unsigned(green_out) => VGA_G,
-      unsigned(blue_out) => VGA_B,
-      hs_out => VGA_HS,
-      vs_out => VGA_VS
-    );
  
 
 -- Do we have audio?  If so, instantiate a two DAC channels.

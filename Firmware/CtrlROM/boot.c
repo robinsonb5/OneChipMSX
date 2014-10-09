@@ -298,8 +298,8 @@ int GetDIPSwitch()
 int GetVolumes()
 {
 	struct menu_entry *m=volumes;
-	int result=0;
-	result|=MENU_SLIDER_VALUE(m++);
+	int result;
+	result=MENU_SLIDER_VALUE(m++);
 	result|=MENU_SLIDER_VALUE(m++)<<4;
 	result|=MENU_SLIDER_VALUE(m++)<<8;
 	result|=MENU_SLIDER_VALUE(m)<<12;
@@ -348,8 +348,6 @@ int main(int argc,char **argv)
 		{
 			int visible;
 			static int prevds;
-
-			HW_HOST(HW_HOST_MOUSEBUTTONS)=(~ps2_mousebuttons)&3;
 
 			if((ps2_mousex)||(ps2_mousey))
 			{

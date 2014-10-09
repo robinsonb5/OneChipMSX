@@ -5,6 +5,7 @@
 #include "ps2.h"
 #include "interrupts.h"
 #include "keyboard.h"
+#include "host.h"
 
 void ps2_ringbuffer_init(struct ps2_ringbuffer *r)
 {
@@ -37,14 +38,16 @@ struct ps2_ringbuffer kbbuffer;
 static volatile int intflag;
 
 #define PS2_TIMEOUT 5
+#define MOUSESETTLE 1
 
 int ps2_mousex;
 int ps2_mousey;
-int ps2_mousebuttons;
+//int ps2_mousebuttons;
 int mdataout=-1;
 static int mdata[4];
 static int midx=0,mctr=0;
 static int mpacketsize=3; // 4 bytes for a wheel mouse.  (Chameleon firmware initializes the mouse in wheel mode.)
+static int mousesettle;
 
 void PS2Handler()
 {
@@ -70,16 +73,19 @@ void PS2Handler()
 		if(midx==mpacketsize)	// Complete packet received?
 		{
 			midx=0;
-			ps2_mousebuttons=(mdata[0])&3;
-			if(mdata[0] & (1<<5))
-				ps2_mousey-=1+(mdata[2]^255);
-			else
-				ps2_mousey+=mdata[2];
-				// Reverse X axis
-			if(mdata[0] & (1<<4))
-				ps2_mousex+=1+(mdata[1]^255);
-			else
-				ps2_mousex-=mdata[1];
+ 			if(!mousesettle)  // Have we figured out the packet size yet?
+			{
+				HW_HOST(HW_HOST_MOUSEBUTTONS)=(~mdata[0])&3;
+				if(mdata[0] & (1<<5))
+					ps2_mousey-=1+(mdata[2]^255);
+				else
+					ps2_mousey+=mdata[2];
+					// Reverse X axis
+				if(mdata[0] & (1<<4))
+					ps2_mousex+=1+(mdata[1]^255);
+				else
+					ps2_mousex-=mdata[1];
+			}
 		}	
 	}
 	else
@@ -87,17 +93,13 @@ void PS2Handler()
 		if(!(mctr--))	// Timeout
 		{
 			if(midx)
+			{
+				mousesettle=MOUSESETTLE;
 				mpacketsize=7-mpacketsize; // Alternate between 3 and 4 byte packets
+			}
+			else if(mousesettle)
+				--mousesettle;
 			midx=0;
-		}
-	}
-
-	if(mouse & (1<<BIT_PS2_CTS))
-	{
-		if(mdataout>-1)
-		{
-			HW_PS2(REG_PS2_MOUSE)=mdataout;
-			mdataout=-1;
 		}
 	}
 
@@ -106,13 +108,6 @@ void PS2Handler()
 	EnableInterrupts();
 }
 
-
-void PS2MouseWrite(int b)
-{
-	while(mdataout>0)
-		;
-	mdataout=b;
-}
 
 void PS2Wait()
 {
@@ -127,8 +122,19 @@ void PS2Wait()
 void PS2Init()
 {
 	ps2_ringbuffer_init(&kbbuffer);
+	mousesettle=0;
+	mpacketsize=3;
+	if(HW_PS2(REG_PS2_MOUSE)&(1<<BIT_PS2_MOUSE_FOURBYTE))
+		mpacketsize=4;
+	if(HW_PS2(REG_PS2_MOUSE)&(1<<BIT_PS2_MOUSE_INIT))
+	{
+		// If we're sending an init byte we can expect a reply, which will cause a timeout and flip the packet size.
+		mpacketsize=7-mpacketsize;
+		while(!(HW_PS2(REG_PS2_MOUSE)&(1<<BIT_PS2_CTS)))
+			;
+		HW_PS2(REG_PS2_MOUSE)=0xf4;
+	}
 	SetIntHandler(&PS2Handler);
 	ClearKeyboard();
-	PS2MouseWrite(0xf4);
 }
 

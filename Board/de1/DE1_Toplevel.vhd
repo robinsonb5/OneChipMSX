@@ -205,7 +205,11 @@ reset<=KEY(0) and pll_locked;
 
 
 emsx_top : entity work.Virtual_Toplevel
-  port map(
+	generic map(
+		mouse_fourbyte => '0',
+		mouse_init => '1'
+	)
+	port map(
     -- Clock, Reset ports
 --    CLOCK_50 => CLOCK_50,
 --    CLOCK_27 => CLOCK_27(0),

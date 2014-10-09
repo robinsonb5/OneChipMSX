@@ -6,6 +6,10 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 
 entity virtual_toplevel is
+	generic(
+		mouse_fourbyte : in std_logic :='0';  -- Does the board initialise the mouse in 4-byte mode?
+		mouse_init : in std_logic :='1'  -- Does the mouse need initialising?
+	);
   port(
 	clk21m : in std_logic;
 	memclk : in std_logic;
@@ -354,7 +358,9 @@ overlay : entity work.OSD_Overlay
 
 top : entity work.CtrlModule
 	generic map(
-		sysclk_frequency => 857
+		sysclk_frequency => 857,
+		mouse_fourbyte => mouse_fourbyte,
+		mouse_init => mouse_init
 	)
 	port map(
 		clk => memclk,

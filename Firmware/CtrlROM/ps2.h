@@ -7,6 +7,8 @@
 #define REG_PS2_KEYBOARD 0
 #define REG_PS2_MOUSE 0x4
 
+#define BIT_PS2_MOUSE_INIT 13
+#define BIT_PS2_MOUSE_FOURBYTE 12
 #define BIT_PS2_RECV 11
 #define BIT_PS2_CTS 10
 
@@ -26,7 +28,7 @@ extern struct ps2_ringbuffer kbbuffer;
 
 extern int ps2_mousex;
 extern int ps2_mousey;
-extern int ps2_mousebuttons;
+//extern int ps2_mousebuttons;
 
 void PS2Handler();
 

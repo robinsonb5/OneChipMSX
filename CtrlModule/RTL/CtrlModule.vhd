@@ -7,7 +7,9 @@ use work.zpupkg.ALL;
 
 entity CtrlModule is
 	generic (
-		sysclk_frequency : integer := 1000 -- Sysclk frequency * 10
+		sysclk_frequency : integer := 1000; -- Sysclk frequency * 10
+		mouse_fourbyte : in std_logic :='0';  -- Does the board initialise the mouse in 4-byte mode?
+		mouse_init : in std_logic :='1'  -- Does the mouse need initialising?
 	);
 	port (
 		clk 			: in std_logic;
@@ -522,7 +524,7 @@ begin
 
 						when X"E4" =>
 							mem_read<=(others =>'X');
-							mem_read(11 downto 0)<=mouserecvreg & not mousesendbusy & mouserecvbyte(10 downto 1);
+							mem_read(13 downto 0)<=mouse_init & mouse_fourbyte & mouserecvreg & not mousesendbusy & mouserecvbyte(10 downto 1);
 							mouserecvreg<='0';
 							mem_busy<='0';
 
