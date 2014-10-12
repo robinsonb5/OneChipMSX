@@ -80,6 +80,7 @@ architecture rtl of megasd is
   signal ErmBank2    : std_logic_vector(7 downto 0);
   signal ErmBank3    : std_logic_vector(7 downto 0);
 
+  signal mmcact_i : std_logic;
   signal boot_req_r : std_logic;
   
 begin
@@ -154,6 +155,7 @@ begin
       epc_ck <= '1';
       epc_cs <= '1';
       epc_di <= 'Z';
+		mmcact_i<='0';
 		
 		boot_req_r<='0';
     elsif (clk21m'event and clk21m = '1') then
@@ -244,11 +246,13 @@ begin
           epc_cs <= '1';
 			 MmcSeq:=(others=>'1');
 			 MmcSeq(MMCSEQ_HIGH downto MMCSEQ_LOW-1) := "10101";
+			 mmcact_i<='1';
         else
           mmc_cs <= '1';
           epc_cs <= '1';
 --			 if wrt='0' then
 				boot_req_r<=not(adr(12) or wrt); -- Needs to be 1 when adr(12) and wrt are both zero
+				mmcact_i<=not(adr(12) or wrt);
 --			 else
 --           epc_cs <= adr(12);		-- /CS EPC (4000h..47ff)
 --			 end if;
@@ -271,7 +275,7 @@ begin
 				boot_req_r<='0';
 				MmcSeq:=(others=>'0');
 				-- FIXME - a better way to delay this?
-				MmcSeq(2 downto 0) := (others=>'1');
+				MmcSeq(4 downto 0) := (others=>'1');
 			end if;
 --		elsif (MmcSeq = (MmcSeq'range =>'0')) then
 --        mmcact <= '0';
@@ -281,16 +285,22 @@ begin
 --
     end if;
 
-	if boot_req_r='1' or MmcSeq /= (MmcSeq'range =>'0')
---		or (mmcenx='1' and wrt='1') then
-			then
-		mmcact<='1';
-	else
-		mmcact<='0';
+--	if boot_req_r='1' or MmcSeq /= (MmcSeq'range =>'0')
+----		or (mmcenx='1' and wrt='1') then
+--			then
+--		mmcact<='1';
+--	else
+--		mmcact<='0';
+--	end if;
+
+	if MmcSeq(MMCSEQ_HIGH downto 5)=(MMCSEQ_HIGH downto 5=>'0') and MmcSeq(4 downto 0) = "10000" then
+		mmcact_i<='0';
 	end if;
-	
+
 end process;
 --
+
+mmcact<=mmcact_i or boot_req_r;
 
   mmcena <= '1' when ErmBank0(7 downto 6) = "01" else '0';
   epc_oe <= '1' when reset = '1' else '0';  -- epc_oe = 0:enable, 1:disable

@@ -135,7 +135,8 @@ entity emsx_top is
 	
 	boot_req : out std_logic;
 	boot_ack : in std_logic;
-	boot_data : in std_logic_vector(7 downto 0)
+	boot_data : in std_logic_vector(7 downto 0);
+	temp_boot : in std_logic
 );
 end emsx_top;
 
@@ -1081,7 +1082,16 @@ begin
 			pSltWait_n <= '0';
 		elsif (ff_turbo = '1' and OpllReq = '1' and OpllAck = '0') then
 			pSltWait_n <= '0';
-		elsif (ErmReq = '1' or (adr(15 downto 13) = "010" and MmcAct = '1')) then  -- ErmReq is not a constant signal
+
+-- AMR: Some weirdness here - this line appears to be designed to delay the CPU until the
+-- SPI transaction is finished, however, because ErmReq is simply a filtered version of the
+-- req pulse, it does essentially nothing.  Fixing it by changing "and" to "or" works, and
+-- allows the SPI clock to be reduced to accommodate the MUX in the Turbo Chameleon 64, but
+-- breaks writing; either I'm misunderstanding something here or the previous buggy behaviour
+-- is worked around in the MegaSD ROM.
+--		elsif (ErmReq = '1' and (adr(15 downto 13) = "010" and MmcAct = '1')) then
+		elsif (ErmReq = '1' or (adr(15 downto 13) = "010" and MmcAct = '1')) then
+--		elsif ((ErmReq = '1' or temp_boot='1') and (adr(15 downto 13) = "010" and MmcAct = '1')) then  -- ErmReq is not a constant signal
 			pSltWait_n <= '0';
 		elsif (SdPaus = '1') then
 			pSltWait_n <= '0';

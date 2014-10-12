@@ -357,11 +357,6 @@ set_global_assignment -name VHDL_FILE ../../Firmware/InitialProgramLoader/IPLROM
 set_global_assignment -name VERILOG_FILE ../../src/sound/DAC/hybrid_pwm_sd.v
 set_global_assignment -name SLD_NODE_CREATOR_ID 110 -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_ENTITY_NAME sld_signaltap -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_clk -to "virtual_toplevel:emsx_top|memclk" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[0] -to ps2_clk -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[1] -to ps2_keyboard_clk_mix -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[0] -to ps2_clk -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[1] -to ps2_keyboard_clk_mix -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_INFO=805334528" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_POWER_UP_TRIGGER=0" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER_INVERSION_MASK_LENGTH=0" -section_id auto_signaltap_0
@@ -375,87 +370,134 @@ set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_IN_ENABLE
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ADVANCED_TRIGGER_ENTITY=basic,1," -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL_PIPELINE=1" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ENABLE_ADVANCED_TRIGGER=0" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[2] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[3] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[4] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[5] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[6] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[7] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[8] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[9] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[10] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[11] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[12] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[13] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvTrigger" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[14] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[15] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[16] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[17] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[18] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[19] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[20] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[21] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[22] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[23] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[24] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[25] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[26] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[27] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[28] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[29] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[30] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[31] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[32] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[33] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[34] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[35] -to "virtual_toplevel:emsx_top|pPs2Clk_in" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[36] -to "virtual_toplevel:emsx_top|pPs2Clk_out" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[37] -to "virtual_toplevel:emsx_top|pPs2Dat_in" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[38] -to "virtual_toplevel:emsx_top|pPs2Dat_out" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[2] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[3] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[4] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[5] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[6] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[7] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[8] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[9] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[10] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[11] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[12] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvByte[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[13] -to "virtual_toplevel:emsx_top|CtrlModule:top|io_ps2_com:mykeyboard|recvTrigger" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[14] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[15] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[16] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[17] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[18] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[19] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[20] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[21] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[22] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[23] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[24] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[25] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[26] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[27] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[28] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[29] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[30] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[31] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[32] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[33] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[34] -to "virtual_toplevel:emsx_top|CtrlModule:top|zpu_core_flex:zpu|pc[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[35] -to "virtual_toplevel:emsx_top|pPs2Clk_in" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[36] -to "virtual_toplevel:emsx_top|pPs2Clk_out" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[37] -to "virtual_toplevel:emsx_top|pPs2Dat_in" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[38] -to "virtual_toplevel:emsx_top|pPs2Dat_out" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_DATA_BITS=39" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_BITS=39" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=141" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SEGMENT_SIZE=1024" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_LOWORD=8807" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_HIWORD=53179" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SAMPLE_DEPTH=1024" -section_id auto_signaltap_0
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_clk -to "virtual_toplevel:emsx_top|clk21m" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SAMPLE_DEPTH=4096" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[0] -to "sd_card:sd_card_d|sd_cs" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[1] -to "sd_card:sd_card_d|sd_sck" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[2] -to "sd_card:sd_card_d|sd_sdi" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[3] -to "sd_card:sd_card_d|sd_sdo" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[0] -to "sd_card:sd_card_d|sd_cs" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[1] -to "sd_card:sd_card_d|sd_sck" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[2] -to "sd_card:sd_card_d|sd_sdi" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[3] -to "sd_card:sd_card_d|sd_sdo" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SEGMENT_SIZE=4096" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[4] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|ErmReq" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[5] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[6] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[7] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[8] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[9] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[10] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[11] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[12] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[13] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[14] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[15] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[16] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[17] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[18] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[19] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[20] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[21] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[22] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[23] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[24] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[25] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[26] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[27] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|ack" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[28] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[29] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[30] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[31] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[32] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[33] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[34] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[35] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[36] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[37] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[38] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[39] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[40] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[41] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[42] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[43] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[4] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|ErmReq" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[5] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[6] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[7] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[8] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[9] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[10] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[11] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[12] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcDbo[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[13] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[14] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[15] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[16] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[17] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[18] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcSeq[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[19] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[20] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[21] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[22] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[23] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[24] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[25] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[26] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|MmcTmp[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[27] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|ack" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[28] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[29] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[30] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[31] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[32] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[33] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[34] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[35] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[36] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[37] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[38] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[39] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[40] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[41] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[42] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[43] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|adr[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[44] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|boot_ack" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[45] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|boot_req_r" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[46] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcact" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[44] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|boot_ack" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[45] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|boot_req_r" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[46] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcact" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[47] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcact_i" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[48] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[49] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[50] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[51] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[52] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[53] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[54] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[55] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[56] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcena" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[57] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|req" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[58] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|wrt" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[59] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|req" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[47] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcact_i" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[48] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[49] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[50] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[51] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[52] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[53] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[54] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[55] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcdbi[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[56] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|mmcena" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[57] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|req" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[58] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|megasd:U03|wrt" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[59] -to "virtual_toplevel:emsx_top|emsx_top:mymsx|req" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_DATA_BITS=60" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_BITS=60" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=206" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_LOWORD=28779" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_HIWORD=35097" -section_id auto_signaltap_0
 set_global_assignment -name SLD_FILE /home/amr/FPGA/Projects/OneChipMSX/fpga/mist/stp1_auto_stripped.stp
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

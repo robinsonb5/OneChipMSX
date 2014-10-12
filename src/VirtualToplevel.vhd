@@ -327,7 +327,8 @@ mymsx : entity work.emsx_top
 	
 	boot_req => boot_req,
 	boot_ack => boot_ack,
-	boot_data => boot_data
+	boot_data => boot_data,
+	temp_boot => host_divert_sdcard
 );
 
 --pVideoHS_n <= vga_hsync_i;
