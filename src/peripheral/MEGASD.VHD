@@ -293,6 +293,11 @@ begin
 --		mmcact<='0';
 --	end if;
 
+-- AMR: UGLY HACK ALERT
+-- The original OCMSX core doesn't (correctly) pause the CPU while an SPI transaction's in progress.
+-- Because we've had to halve the SPI speed to accommodate the Chameleon's MUX limitations, we now have
+-- to pause the CPU for half the SPI transaction to avoid breaking the MegaSD firmware's write support.
+
 	if MmcSeq(MMCSEQ_HIGH downto 5)=(MMCSEQ_HIGH downto 5=>'0') and MmcSeq(4 downto 0) = "10000" then
 		mmcact_i<='0';
 	end if;
