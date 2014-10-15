@@ -298,7 +298,12 @@ begin
 -- Because we've had to halve the SPI speed to accommodate the Chameleon's MUX limitations, we now have
 -- to pause the CPU for half the SPI transaction to avoid breaking the MegaSD firmware's write support.
 
-	if MmcSeq(MMCSEQ_HIGH downto 5)=(MMCSEQ_HIGH downto 5=>'0') and MmcSeq(4 downto 0) = "10000" then
+-- 10010  -  Boot works, Write works irrespective of turbo setting.
+-- 10000  -  Boot works, Write works in turbo, Write fails without turbo.
+-- 01010  -  Boot works, Writes fail irrespective of turbo setting.
+-- 01000  -  Boot fails
+
+	if MmcSeq(MMCSEQ_HIGH downto 5)=(MMCSEQ_HIGH downto 5=>'0') and MmcSeq(4 downto 0) = "10011" then
 		mmcact_i<='0';
 	end if;
 
