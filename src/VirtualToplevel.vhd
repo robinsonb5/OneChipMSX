@@ -159,6 +159,12 @@ signal mouse_dat : std_logic_vector(3 downto 0);
 signal mouse_str : std_logic;
 signal joymouse : std_logic_vector(5 downto 0);
 
+-- Audio volumes
+signal vol_master : std_logic_vector(2 downto 0);
+signal vol_opll : std_logic_vector(2 downto 0);
+signal vol_scc : std_logic_vector(2 downto 0);
+signal vol_psg : std_logic_vector(2 downto 0);
+
 type mouse_states is (MOUSE_WAIT,MOUSE_START,MOUSE_HIGHX,MOUSE_LOWX,MOUSE_HIGHY,MOUSE_LOWY);
 signal mouse_state : mouse_states:=MOUSE_WAIT;
 
@@ -328,7 +334,13 @@ mymsx : entity work.emsx_top
 	boot_req => boot_req,
 	boot_ack => boot_ack,
 	boot_data => boot_data,
-	temp_boot => host_divert_sdcard
+	temp_boot => host_divert_sdcard,
+
+	-- Audio volumes
+	MstrVol => vol_master,
+	PsgVol => vol_opll,
+	SccVol => vol_scc,
+	OpllVol => vol_psg	
 );
 
 --pVideoHS_n <= vga_hsync_i;
@@ -409,7 +421,13 @@ top : entity work.CtrlModule
 		vga_hsync => vga_hsync_i,
 		vga_vsync => vga_vsync_i,
 		osd_window => osd_window,
-		osd_pixel => osd_pixel
+		osd_pixel => osd_pixel,
+		
+		-- Audio volumes
+		vol_master => vol_master,
+		vol_opll => vol_opll,
+		vol_scc => vol_scc,
+		vol_psg => vol_psg
 );
 
 

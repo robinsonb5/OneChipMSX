@@ -28,7 +28,7 @@
 #define HW_HOST_MOUSEBUTTONS 0x0c	/* RW */
 #define HW_HOST_MOUSE 0x10
 #define HW_HOST_MOUSEF_IDLE 0x1  /* Has the previously written event been received? */
-#define HW_HOST_VOLUMES 0x14 /* Each volume control is 3 bits: 2:0, 5:3, 6:4, 9:7 */
+#define HW_HOST_VOLUMES 0x14 /* Each volume control is 3 bits: 2:0, 6:4, 10:8, 14:12 */
 
 #endif
 

@@ -136,7 +136,14 @@ entity emsx_top is
 	boot_req : out std_logic;
 	boot_ack : in std_logic;
 	boot_data : in std_logic_vector(7 downto 0);
-	temp_boot : in std_logic
+	temp_boot : in std_logic;
+
+	-- Volumes
+	MstrVol : std_logic_vector(2 downto 0);
+	PsgVol : std_logic_vector(2 downto 0);
+	SccVol : std_logic_vector(2 downto 0);
+	OpllVol : std_logic_vector(2 downto 0)
+	
 );
 end emsx_top;
 
@@ -740,10 +747,10 @@ end component;
 --  signal Sound_L     : std_logic_vector(15 downto 0);
 --  signal Sound_R     : std_logic_vector(15 downto 0);
 
-  signal MstrVol     : std_logic_vector(2 downto 0);
-  signal PsgVol     : std_logic_vector(2 downto 0);
-  signal SccVol     : std_logic_vector(2 downto 0);
-  signal OpllVol     : std_logic_vector(2 downto 0);
+--  signal MstrVol     : std_logic_vector(2 downto 0);
+--  signal PsgVol     : std_logic_vector(2 downto 0);
+--  signal SccVol     : std_logic_vector(2 downto 0);
+--  signal OpllVol     : std_logic_vector(2 downto 0);
 
   signal vFKeys			: std_logic_vector(  7 downto 0 );
 
@@ -1522,82 +1529,82 @@ end process;
 -- Sound output
 ----------------------------------------------------------------
 -- master volume
-	process( clk21m,lock_n )
-	begin
-		if( clk21m'event and clk21m = '1' )then
-			if( lock_n = '0' )then
-				MstrVol <= "000";			-- Maximum
-			elsif( Fkeys(5) /= vFkeys(5) )then -- PgUp Master Volume Up
-				if( MstrVol /= "000" )then
-					MstrVol <= MstrVol - '1';
-				end if;
-			elsif( Fkeys(4) /= vFkeys(4) )then -- PgDn Master Volume Down
-				if( MstrVol /= "111" )then
-					MstrVol <= MstrVol + '1';
-				end if;
-			end if;
-		end if;
-	end process;
+--	process( clk21m,lock_n )
+--	begin
+--		if( clk21m'event and clk21m = '1' )then
+--			if( lock_n = '0' )then
+--				MstrVol <= "000";			-- Maximum
+--			elsif( Fkeys(5) /= vFkeys(5) )then -- PgUp Master Volume Up
+--				if( MstrVol /= "000" )then
+--					MstrVol <= MstrVol - '1';
+--				end if;
+--			elsif( Fkeys(4) /= vFkeys(4) )then -- PgDn Master Volume Down
+--				if( MstrVol /= "111" )then
+--					MstrVol <= MstrVol + '1';
+--				end if;
+--			end if;
+--		end if;
+--	end process;
 
-	-- PSG volume
-	process( clk21m,lock_n )
-	begin
-		if( clk21m'event and clk21m = '1' )then
-			if( lock_n = '0' )then
-				PsgVol <= "111";	-- original "011";
-			elsif( Fkeys(3) /= vFKeys(3) )then	-- F9
-				if( Fkeys(7) = '1' )then		-- SHIFT
-					if( PsgVol /= "000" )then	-- F9+SHIFT
-						PsgVol <= PsgVol - '1';
-					end if;
-				else
-					if( PsgVol /= "111" )then	-- F9
-						PsgVol <= PsgVol + '1';
-					end if;
-				end if;
-			end if;
-		end if;
-	end process;
+--	-- PSG volume
+--	process( clk21m,lock_n )
+--	begin
+--		if( clk21m'event and clk21m = '1' )then
+--			if( lock_n = '0' )then
+--				PsgVol <= "111";	-- original "011";
+--			elsif( Fkeys(3) /= vFKeys(3) )then	-- F9
+--				if( Fkeys(7) = '1' )then		-- SHIFT
+--					if( PsgVol /= "000" )then	-- F9+SHIFT
+--						PsgVol <= PsgVol - '1';
+--					end if;
+--				else
+--					if( PsgVol /= "111" )then	-- F9
+--						PsgVol <= PsgVol + '1';
+--					end if;
+--				end if;
+--			end if;
+--		end if;
+--	end process;
 
-	-- SCC volume
-	process( clk21m,lock_n )
-	begin
-		if( clk21m'event and clk21m = '1' )then
-			if( lock_n = '0' )then
-				SccVol <= "111";	-- orignal "110";
-			elsif( Fkeys(2) /= vFKeys(2) )then	-- F10
-				if( Fkeys(7) = '1' )then		-- SHIFT
-					if( SccVol /= "000" )then	-- F10+SHIFT
-						SccVol <= SccVol - '1';
-					end if;
-				else
-					if( SccVol /= "111" )then	-- F10
-						SccVol <= SccVol + '1';
-					end if;
-				end if;
-			end if;
-		end if;
-	end process;
+--	-- SCC volume
+--	process( clk21m,lock_n )
+--	begin
+--		if( clk21m'event and clk21m = '1' )then
+--			if( lock_n = '0' )then
+--				SccVol <= "111";	-- orignal "110";
+--			elsif( Fkeys(2) /= vFKeys(2) )then	-- F10
+--				if( Fkeys(7) = '1' )then		-- SHIFT
+--					if( SccVol /= "000" )then	-- F10+SHIFT
+--						SccVol <= SccVol - '1';
+--					end if;
+--				else
+--					if( SccVol /= "111" )then	-- F10
+--						SccVol <= SccVol + '1';
+--					end if;
+--				end if;
+--			end if;
+--		end if;
+--	end process;
 
-	-- OPLL volume
-	process( clk21m,lock_n )
-	begin
-		if( clk21m'event and clk21m = '1' )then
-			if( lock_n = '0' )then
-				OpllVol <= "111";	-- original "110";
-			elsif( Fkeys(1) /= vFKeys(1) )then	-- F11
-				if( Fkeys(7) = '1' )then		-- SHIFT
-					if( OpllVol /= "000" )then	-- F11+SHIFT
-						OpllVol <= OpllVol - '1';
-					end if;
-				else
-					if( OpllVol /= "111" )then	-- F11
-						OpllVol <= OpllVol + '1';
-					end if;
-				end if;
-			end if;			 
-		end if;
-	end process;
+--	-- OPLL volume
+--	process( clk21m,lock_n )
+--	begin
+--		if( clk21m'event and clk21m = '1' )then
+--			if( lock_n = '0' )then
+--				OpllVol <= "111";	-- original "110";
+--			elsif( Fkeys(1) /= vFKeys(1) )then	-- F11
+--				if( Fkeys(7) = '1' )then		-- SHIFT
+--					if( OpllVol /= "000" )then	-- F11+SHIFT
+--						OpllVol <= OpllVol - '1';
+--					end if;
+--				else
+--					if( OpllVol /= "111" )then	-- F11
+--						OpllVol <= OpllVol + '1';
+--					end if;
+--				end if;
+--			end if;			 
+--		end if;
+--	end process;
 
 	process( clk21m )
 	begin

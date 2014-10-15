@@ -61,7 +61,13 @@ entity CtrlModule is
 		vga_hsync : in std_logic;
 		vga_vsync : in std_logic;
 		osd_window : out std_logic;
-		osd_pixel : out std_logic		
+		osd_pixel : out std_logic;
+
+		-- Audio volumes
+		vol_master : out std_logic_vector(2 downto 0);
+		vol_opll : out std_logic_vector(2 downto 0);
+		vol_scc : out std_logic_vector(2 downto 0);
+		vol_psg : out std_logic_vector(2 downto 0)
 );
 end entity;
 
@@ -466,6 +472,13 @@ begin
 							mouse_deltax<=mem_write(15 downto 8);
 							mouse_deltay<=mem_write(7 downto 0);
 							mouse_rdy<='1'; -- New data present.
+							mem_busy<='0';
+
+						when X"54" => -- Audio volumes
+							vol_master<=not mem_write(2 downto 0);
+							vol_opll<=mem_write(6 downto 4);
+							vol_scc<=mem_write(10 downto 8);
+							vol_psg<=mem_write(14 downto 12);
 							mem_busy<='0';
 
 						when others =>
