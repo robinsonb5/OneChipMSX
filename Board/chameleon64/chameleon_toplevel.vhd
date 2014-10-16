@@ -62,8 +62,8 @@ entity chameleon_toplevel is
 		red : out unsigned(4 downto 0);
 		grn : out unsigned(4 downto 0);
 		blu : out unsigned(4 downto 0);
-		nHSync : buffer std_logic;
-		nVSync : buffer std_logic;
+		nHSync : out std_logic;
+		nVSync : out std_logic;
 
 -- Audio
 		sigmaL : out std_logic;
@@ -115,7 +115,9 @@ architecture rtl of chameleon_toplevel is
 	signal vga_g: std_logic_vector(7 downto 0);
 	signal vga_b: std_logic_vector(7 downto 0);
 	signal vga_window : std_logic;
-
+	signal vga_hsync : std_logic;
+	signal vga_vsync : std_logic;
+	
 -- SD card
 	signal spi_mosi : std_logic;
 	signal spi_cs : std_logic;
@@ -178,7 +180,7 @@ architecture rtl of chameleon_toplevel is
 	END COMPONENT;
 	
 begin
-	
+
 	
 -- -----------------------------------------------------------------------
 -- Clocks and PLL
@@ -430,8 +432,8 @@ emsx_top : entity work.Virtual_Toplevel
 --    pCMT_out	: out   std_logic;						-- CMT output
 --    pCMT_in		: in    std_logic :='1';						-- CMT input
 
-    pVideoHS_n => nHSync,
-    pVideoVS_n => nVSync,
+    pVideoHS_n => vga_hsync,
+    pVideoVS_n => vga_vsync,
 
     -- DE1 7-SEG Display
     hex => open,
@@ -447,6 +449,8 @@ emsx_top : entity work.Virtual_Toplevel
 	
 -- Dither the video down to 5 bits per gun.
 	vga_window<='1';
+	nHsync<= not vga_hsync;
+	nVsync<= not vga_vsync;	
 
 	mydither : component video_vga_dither
 		generic map(
@@ -454,8 +458,8 @@ emsx_top : entity work.Virtual_Toplevel
 		)
 		port map(
 			clk=>memclk,
-			hsync=>nHSync,
-			vsync=>nVSync,
+			hsync=>vga_hsync,
+			vsync=>vga_vsync,
 			vid_ena=>vga_window,
 			iRed => unsigned(vga_r),
 			iGreen => unsigned(vga_g),

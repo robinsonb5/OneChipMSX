@@ -2,8 +2,9 @@ This is a fork of Caro's DE1 OneChipMSX Port.  The biggest change is that I
 have attempted to abstract the core away from the board-specific toplevel
 in order to make core easier to port to other boards.
 
-My initial target platforms are the DE1, DE2 and Turbo Chameleon 64 boards,
-with board-specific RTL, PLL and constraint files in Board/<board>/*, while
+My initial target platforms are the DE1, Turbo Chameleon 64 and MIST boards,
+with DE2 to follow as time allows.
+Board-specific RTL, PLL and constraint files are in Board/<board>/*, while
 project files are found in fpga/<board>/*
 This fork contains an extra CPU (ZPUFlex), pulled in as a submodule, so
 having checked out the repo you'll also need to pull in the submodules with
