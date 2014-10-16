@@ -50,8 +50,9 @@ void WaitEnter()
 	}
 }
 
+enum boot_settings {BOOT_IGNORESETTINGS,BOOT_LOADSETTINGS,BOOT_SAVESETTINGS};
 
-static int Boot(int save)
+static int Boot(enum boot_settings settings)
 {
 	int result=0;
 	int opened;
@@ -88,7 +89,7 @@ static int Boot(int save)
 
 		if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
 		{
-			if(save)	// If so, are we saving to it, or loading from it?
+			if(settings==BOOT_SAVESETTINGS)	// If so, are we saving to it, or loading from it?
 			{
 				int i;
 				int *p=(int *)sector_buffer;
@@ -98,7 +99,7 @@ static int Boot(int save)
 					*p++=0;
 				FileWrite(&file,sector_buffer);
 			}
-			else
+			else if(settings==BOOT_LOADSETTINGS)
 			{
 				if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
 				{
@@ -171,7 +172,7 @@ static int Boot(int save)
 }
 
 
-static void doreset(int s)
+static void doreset(enum boot_settings s)
 {
 	Menu_Hide();
 	OSD_Clear();
@@ -187,12 +188,12 @@ static void doreset(int s)
 
 static void savereset()
 {
-	doreset(1);
+	doreset(BOOT_SAVESETTINGS);
 }
 
 static void reset()
 {
-	doreset(0);
+	doreset(BOOT_IGNORESETTINGS);
 }
 
 
@@ -340,7 +341,7 @@ int main(int argc,char **argv)
 	OSD_Show(1);	// OSD should now show correctly.
 
 
-	if(Boot(0))
+	if(Boot(BOOT_LOADSETTINGS))
 	{
 		OSD_Show(0);
 		Menu_Set(topmenu);
