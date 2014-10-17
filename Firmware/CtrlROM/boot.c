@@ -223,7 +223,7 @@ static char *slot2_labels[]=
 
 static char *ram_labels[]=
 {
-	"2048LB RAM",
+	"2048KB RAM",
 	"4096KB RAM"
 };
 
