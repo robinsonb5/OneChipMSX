@@ -101,15 +101,12 @@ static int Boot(enum boot_settings settings)
 			}
 			else if(settings==BOOT_LOADSETTINGS)
 			{
-				if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
-				{
-					FileRead(&file,sector_buffer);
-					dipsw=*(int *)(&sector_buffer[0]);
-					SetVolumes(*(int *)(&sector_buffer[4]));
-					HW_HOST(HW_HOST_SW)=dipsw;
-					SetDIPSwitch(dipsw);
+				FileRead(&file,sector_buffer);
+				dipsw=*(int *)(&sector_buffer[0]);
+				SetVolumes(*(int *)(&sector_buffer[4]));
+				HW_HOST(HW_HOST_SW)=dipsw;
+				SetDIPSwitch(dipsw);
 	//				printf("DIP %d, Vol %d\n",dipsw,GetVolumes());
-				}
 			}
 		}
 
