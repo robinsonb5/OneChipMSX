@@ -57,6 +57,9 @@ signal audior : std_logic_vector(15 downto 0);
 signal vga_tred : unsigned(7 downto 0);
 signal vga_tgreen : unsigned(7 downto 0);
 signal vga_tblue : unsigned(7 downto 0);
+signal vga_r_osd : std_logic_vector(5 downto 0);
+signal vga_g_osd : std_logic_vector(5 downto 0);
+signal vga_b_osd : std_logic_vector(5 downto 0);
 signal vga_window : std_logic;
 
 -- user_io
@@ -221,6 +224,29 @@ component sd_card
            sd_sdo 	:	out std_logic
   );
   end component sd_card;
+
+
+COMPONENT osd
+	GENERIC ( OSD_X_OFFSET : STD_LOGIC_VECTOR(9 DOWNTO 0) := b"0000000000"; OSD_Y_OFFSET : STD_LOGIC_VECTOR(9 DOWNTO 0) := b"0000000000"; OSD_COLOR : STD_LOGIC_VECTOR(2 DOWNTO 0) := b"000" );
+	PORT
+	(
+		pclk		:	 IN STD_LOGIC;
+		sck		:	 IN STD_LOGIC;
+		ss		:	 IN STD_LOGIC;
+		sdi		:	 IN STD_LOGIC;
+		red_in		:	 IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+		green_in		:	 IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+		blue_in		:	 IN STD_LOGIC_VECTOR(5 DOWNTO 0);
+		hs_in		:	 IN STD_LOGIC;
+		vs_in		:	 IN STD_LOGIC;
+		red_out		:	 OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
+		green_out		:	 OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
+		blue_out		:	 OUT STD_LOGIC_VECTOR(5 DOWNTO 0);
+		hs_out		:	 OUT STD_LOGIC;
+		vs_out		:	 OUT STD_LOGIC
+	);
+END COMPONENT;
+
 
 begin
 
@@ -407,13 +433,13 @@ sd_card_d: component sd_card
 LED <= '0' when ((joy_ana_0 /= joy_ana_1) AND (joy_0 /= joy_1)) else '1';
 	
 user_io_d : user_io
-    generic map (STRLEN => 1)
+    generic map (STRLEN => 5)
     port map (
       SPI_CLK => SPI_SCK,
       SPI_SS_IO => CONF_DATA0,
       SPI_MISO => SPI_DO,
       SPI_MOSI => SPI_DI,
-      conf_str => "00000000",   -- no config string -> no osd
+      conf_str => X"4f434d5358",   -- no config string -> no osd
       status => status,
 		
  		-- connection to io controller
@@ -457,14 +483,34 @@ mydither : component video_vga_dither
 		hsync => VGA_HS,
 		vsync => VGA_VS,
 		vid_ena => vga_window,
-		iRed => vga_tred,
-		iGreen => vga_tgreen,
-		iBlue => vga_tblue,
+		iRed => unsigned(vga_r_osd)&vga_tred(1 downto 0),
+		iGreen => unsigned(vga_g_osd)&vga_tgreen(1 downto 0),
+		iBlue => unsigned(vga_b_osd)&vga_tblue(1 downto 0),
 		std_logic_vector(oRed) => VGA_R,
 		std_logic_vector(oGreen) => VGA_G,
 		std_logic_vector(oBlue) => VGA_B
 	);
  
+myosd : component osd
+--	GENERIC ( OSD_X_OFFSET : STD_LOGIC_VECTOR(9 DOWNTO 0) := b"0000000000"; OSD_Y_OFFSET : STD_LOGIC_VECTOR(9 DOWNTO 0) := b"0000000000"; OSD_COLOR : STD_LOGIC_VECTOR(2 DOWNTO 0) := b"000" );
+	PORT map
+	(
+		pclk	=> clk21m,
+		sck => SPI_SCK,
+		ss => SPI_SS3,
+		sdi => SPI_DI,
+		red_in => std_logic_vector(vga_tred(7 downto 2)),
+		green_in => std_logic_vector(vga_tgreen(7 downto 2)),
+		blue_in => std_logic_vector(vga_tblue(7 downto 2)),
+		hs_in	=> VGA_HS,
+		vs_in	=> VGA_VS,
+		unsigned(red_out) => vga_r_osd,
+		unsigned(green_out) => vga_g_osd,
+		unsigned(blue_out)	=> vga_b_osd,
+		hs_out => open,
+		vs_out => open
+	);
+
 
 -- Do we have audio?  If so, instantiate a two DAC channels.
 leftsd: component hybrid_pwm_sd
