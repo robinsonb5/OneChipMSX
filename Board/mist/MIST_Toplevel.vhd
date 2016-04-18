@@ -61,6 +61,8 @@ signal vga_r_osd : std_logic_vector(5 downto 0);
 signal vga_g_osd : std_logic_vector(5 downto 0);
 signal vga_b_osd : std_logic_vector(5 downto 0);
 signal vga_window : std_logic;
+signal VGA_HS_OSD : std_logic;
+signal VGA_VS_OSD : std_logic;
 
 -- user_io
 signal buttons: std_logic_vector(1 downto 0);
@@ -379,6 +381,8 @@ emsx_top : entity work.Virtual_Toplevel
 
     pVideoHS_n => VGA_HS,
     pVideoVS_n => VGA_VS,
+    pVideoHS_OSD_n => VGA_HS_OSD,
+    pVideoVS_OSD_n => VGA_VS_OSD,
 
     -- DE1 7-SEG Display
     hex => open,
@@ -492,11 +496,8 @@ mydither : component video_vga_dither
 	);
  
 myosd : component osd
---	GENERIC ( OSD_X_OFFSET : STD_LOGIC_VECTOR(9 DOWNTO 0) := b"0000000000"; OSD_Y_OFFSET : STD_LOGIC_VECTOR(9 DOWNTO 0) := b"0000000000"; OSD_COLOR : STD_LOGIC_VECTOR(2 DOWNTO 0) := b"000" );
 	generic map
-	(
-		OSD_X_OFFSET => b"1100000000",
-		OSD_Y_OFFSET => b"1100000000"
+	(	OSD_X_OFFSET => b"1111000000"
 	)
 	PORT map
 	(
@@ -507,8 +508,8 @@ myosd : component osd
 		red_in => std_logic_vector(vga_tred(7 downto 2)),
 		green_in => std_logic_vector(vga_tgreen(7 downto 2)),
 		blue_in => std_logic_vector(vga_tblue(7 downto 2)),
-		hs_in	=> VGA_HS,
-		vs_in	=> VGA_VS,
+		hs_in	=> VGA_HS_OSD,
+		vs_in	=> VGA_VS_OSD,
 		unsigned(red_out) => vga_r_osd,
 		unsigned(green_out) => vga_g_osd,
 		unsigned(blue_out)	=> vga_b_osd,

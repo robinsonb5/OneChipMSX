@@ -98,6 +98,9 @@ entity virtual_toplevel is
     pVideoHS_n  : out std_logic;                        -- Csync(RGB15K), HSync(VGA31K)
     pVideoVS_n  : out std_logic;                        -- Audio(RGB15K), VSync(VGA31K)
 
+    pVideoHS_OSD_n  : buffer std_logic;                    -- vanilla HSync - needed by OSD.
+    pVideoVS_OSD_n  : buffer std_logic;                    -- VSync
+
     -- Hex display
     hex	    : out std_logic_vector(15 downto 0);
 
@@ -131,8 +134,6 @@ signal ctrl_sd_cmd : std_logic;
 signal ctrl_sd_dat3 : std_logic;
 signal ctrl_sd_clk : std_logic;
 
-signal vga_hsync_i : std_logic;
-signal vga_vsync_i : std_logic;
 signal vga_red_i : std_logic_vector(7 downto 0);
 signal vga_green_i : std_logic_vector(7 downto 0);
 signal vga_blue_i : std_logic_vector(7 downto 0);
@@ -321,8 +322,8 @@ mymsx : entity work.emsx_top
 
     pVideoHS_n => pVideoHS_n,
     pVideoVS_n => pVideoVS_n,
-	 pVideoHS_OSD_n => vga_hsync_i,
-	 pVideoVS_OSD_n => vga_vsync_i,
+	 pVideoHS_OSD_n => pVideoHS_OSD_n,
+	 pVideoVS_OSD_n => pVideoVS_OSD_n,
 
     -- Hex display
     hex => hex,
@@ -343,9 +344,7 @@ mymsx : entity work.emsx_top
 	OpllVol => vol_psg	
 );
 
---pVideoHS_n <= vga_hsync_i;
---pVideoVS_n <= vga_vsync_i; -- vsync_i is now exclusively used by the OSD, since it can't
-										-- cope with composite sync.
+
 vga_red_i(1 downto 0)<="00";
 vga_green_i(1 downto 0)<="00";
 vga_blue_i(1 downto 0)<="00";
@@ -360,7 +359,7 @@ overlay : entity work.OSD_Overlay
 		window_in => '1',
 		osd_window_in => osd_window,
 		osd_pixel_in => osd_pixel,
-		hsync_in => vga_hsync_i,
+		hsync_in => pVideoHS_OSD_n,
 		red_out => pDac_VR,
 		green_out => pDac_VG,
 		blue_out => pDac_VB,
@@ -418,8 +417,8 @@ top : entity work.CtrlModule
 		mouse_idle => mouse_idle,	
 		
 		-- Video signals for OSD
-		vga_hsync => vga_hsync_i,
-		vga_vsync => vga_vsync_i,
+		vga_hsync => pVideoHS_OSD_n,
+		vga_vsync => pVideoVS_OSD_n,
 		osd_window => osd_window,
 		osd_pixel => osd_pixel,
 		

@@ -87,11 +87,9 @@ static int Boot(enum boot_settings settings)
 		}
 		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
-		opened=FileOpen(&file,"OCMSX   CFG");	// Do we have a configuration file?
-
-		if(settings==BOOT_SAVESETTINGS)	// If so, are we saving to it, or loading from it?
+		if(opened=FileOpen(&file,"OCMSX   CFG"))	// Do we have a configuration file?
 		{
-			if(opened)
+			if(settings==BOOT_SAVESETTINGS)	// If so, are we saving to it, or loading from it?
 			{
 				int i;
 				int *p=(int *)sector_buffer;
@@ -101,20 +99,13 @@ static int Boot(enum boot_settings settings)
 					*p++=0;
 				FileWrite(&file,sector_buffer);
 			}
-		}
-		else if(settings==BOOT_LOADSETTINGS)
-		{
-			if(opened)
+			else if(settings==BOOT_LOADSETTINGS)
 			{
 				FileRead(&file,sector_buffer);
 				dipsw=*(int *)(&sector_buffer[0]);
 				SetVolumes(*(int *)(&sector_buffer[4]));
 				HW_HOST(HW_HOST_SW)=dipsw;
 				SetDIPSwitch(dipsw);
-			}
-			else
-			{
-				SetVolumes(0x7777);
 			}
 //				printf("DIP %d, Vol %d\n",dipsw,GetVolumes());
 		}
@@ -222,8 +213,8 @@ static char *slot1_labels[]=
 static char *slot2_labels[]=
 {
 	"Sl2: None",
-	"Sl2: ESE-SCC 1MB/SCC-I",
 	"Sl2: ESE-RAM 1MB/ASCII8",
+	"Sl2: ESE-SCC 1MB/SCC-I",
 	"Sl2: ESE-RAM 1MB/ASCII16"
 };
 
@@ -335,6 +326,8 @@ int main(int argc,char **argv)
 	HW_HOST(HW_HOST_SW)=DEFAULT_DIPSWITCH_SETTINGS;
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 	HW_HOST(HW_HOST_MOUSEBUTTONS)=3;
+	SetVolumes(0x7777);
+	HW_HOST(HW_HOST_VOLUMES)=GetVolumes();
 
 	PS2Init();
 	EnableInterrupts();
