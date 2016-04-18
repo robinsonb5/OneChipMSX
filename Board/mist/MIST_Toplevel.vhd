@@ -493,6 +493,11 @@ mydither : component video_vga_dither
  
 myosd : component osd
 --	GENERIC ( OSD_X_OFFSET : STD_LOGIC_VECTOR(9 DOWNTO 0) := b"0000000000"; OSD_Y_OFFSET : STD_LOGIC_VECTOR(9 DOWNTO 0) := b"0000000000"; OSD_COLOR : STD_LOGIC_VECTOR(2 DOWNTO 0) := b"000" );
+	generic map
+	(
+		OSD_X_OFFSET => b"1100000000",
+		OSD_Y_OFFSET => b"1100000000"
+	)
 	PORT map
 	(
 		pclk	=> clk21m,

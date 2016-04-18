@@ -87,9 +87,11 @@ static int Boot(enum boot_settings settings)
 		}
 		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
-		if((opened=FileOpen(&file,"OCMSX   CFG")))	// Do we have a configuration file?
+		opened=FileOpen(&file,"OCMSX   CFG");	// Do we have a configuration file?
+
+		if(settings==BOOT_SAVESETTINGS)	// If so, are we saving to it, or loading from it?
 		{
-			if(settings==BOOT_SAVESETTINGS)	// If so, are we saving to it, or loading from it?
+			if(opened)
 			{
 				int i;
 				int *p=(int *)sector_buffer;
@@ -99,15 +101,22 @@ static int Boot(enum boot_settings settings)
 					*p++=0;
 				FileWrite(&file,sector_buffer);
 			}
-			else if(settings==BOOT_LOADSETTINGS)
+		}
+		else if(settings==BOOT_LOADSETTINGS)
+		{
+			if(opened)
 			{
 				FileRead(&file,sector_buffer);
 				dipsw=*(int *)(&sector_buffer[0]);
 				SetVolumes(*(int *)(&sector_buffer[4]));
 				HW_HOST(HW_HOST_SW)=dipsw;
 				SetDIPSwitch(dipsw);
-	//				printf("DIP %d, Vol %d\n",dipsw,GetVolumes());
 			}
+			else
+			{
+				SetVolumes(0x7777);
+			}
+//				printf("DIP %d, Vol %d\n",dipsw,GetVolumes());
 		}
 
 		OSD_Puts("Trying MSX3BIOS.SYS\n");

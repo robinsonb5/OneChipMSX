@@ -363,7 +363,7 @@ end process;
 --		IMPL_EMULATION => minimal,
 		CACHE => true,
 		REMAP_STACK => false, -- We're not accessing SDRAM, so no need to remap the Boot ROM / Stack RAM
-		EXECUTE_RAM => false, -- We might need to execute code from SDRAM, too.
+		EXECUTE_RAM => false,
 		maxAddrBit => maxAddrBit,
 		maxAddrBitBRAM => 12
 	)
