@@ -95,7 +95,8 @@ static int Boot(enum boot_settings settings)
 				int *p=(int *)sector_buffer;
 				*p++=dipsw;
 				*p++=GetVolumes();
-				for(i=0;i<126;++i)	// Clear remainder of buffer
+				*p++=GetMouseSettings();
+				for(i=0;i<125;++i)	// Clear remainder of buffer
 					*p++=0;
 				FileWrite(&file,sector_buffer);
 			}
@@ -104,6 +105,7 @@ static int Boot(enum boot_settings settings)
 				FileRead(&file,sector_buffer);
 				dipsw=*(int *)(&sector_buffer[0]);
 				SetVolumes(*(int *)(&sector_buffer[4]));
+				SetMouseSettings(*(int *)(&sector_buffer[8]));
 				HW_HOST(HW_HOST_SW)=dipsw;
 				SetDIPSwitch(dipsw);
 			}
@@ -224,6 +226,14 @@ static char *ram_labels[]=
 	"4096KB RAM"
 };
 
+static char *mouse_labels[]=
+{
+	"  Scaling 1:1",
+	"  Scaling 2:1",
+	"  Scaling 2:2",
+	"  Scaling 4:2"
+};
+
 
 static struct menu_entry dipswitches[]=
 {
@@ -258,7 +268,8 @@ static struct menu_entry topmenu[]=
 	{MENU_ENTRY_SUBMENU,"Options \x10",MENU_ACTION(dipswitches)},
 	{MENU_ENTRY_SUBMENU,"Sound \x10",MENU_ACTION(volumes)},
 	{MENU_ENTRY_TOGGLE,"Turbo",BIT_TURBO},
-	{MENU_ENTRY_TOGGLE,"Mouse emulation",BIT_MOUSEEMULATION},
+	{MENU_ENTRY_TOGGLE,"Mouse Emulation",BIT_MOUSEEMULATION},
+	{MENU_ENTRY_CYCLE,(char *)mouse_labels,4},
 	{MENU_ENTRY_CALLBACK,"Exit",MENU_ACTION(&Menu_Hide)},
 	{MENU_ENTRY_NULL,0,0}
 };
@@ -278,7 +289,7 @@ int SetDIPSwitch(int d)
 int GetDIPSwitch()
 {
 	struct menu_entry *m;
-	int result=MENU_TOGGLE_VALUES&0xcc4;  // Bits 2, 6, 7, 10 and 11 are direct mapped
+	int result=MENU_TOGGLE_VALUES&0xcc4;  // Bits 2, 6, 7 and 11 are direct mapped
 	int t;
 	m=&dipswitches[6]; 	if(MENU_CYCLE_VALUE(m))
 		result|=0x200;	// RAM
@@ -305,6 +316,14 @@ int GetVolumes()
 }
 
 
+int GetMouseSettings()
+{
+	struct menu_entry *m;
+	m=&topmenu[6];
+	return(MENU_CYCLE_VALUE(m)); // Mouse settings
+}
+
+
 void SetVolumes(int v)
 {
 	struct menu_entry *m=volumes;
@@ -315,6 +334,14 @@ void SetVolumes(int v)
 	MENU_SLIDER_VALUE(m++)=v&7;
 	v>>=4;
 	MENU_SLIDER_VALUE(m)=v&7;
+}
+
+
+int SetMouseSettings(int v)
+{
+	struct menu_entry *m;
+	m=&topmenu[6];
+	MENU_CYCLE_VALUE(m)=v; // Mouse settings
 }
 
 
@@ -353,7 +380,7 @@ int main(int argc,char **argv)
 			{
 				if(HW_HOST(HW_HOST_MOUSE)&HW_HOST_MOUSEF_IDLE)
 				{
-					int dx,dy;
+					int dx,dy,t;
 					DisableInterrupts();
 					dx=ps2_mousex; dy=ps2_mousey;
 					// Clamp mouse values, since the MSX mouse can only shift an 8-bit signed value,
@@ -366,10 +393,33 @@ int main(int argc,char **argv)
 						dx=-128;
 					if(dy<-128)
 						dy=-128;
+
+					// Mouse scaling
+					struct menu_entry *m;
+					m=&topmenu[6];
+					t=MENU_CYCLE_VALUE(m); // Mouse settings
+					if(t&2)
+					{
+						dx>>=1;
+						dy>>=1;
+					}
+					if(t&1)
+						dy>>=1;
+
+					HW_HOST(HW_HOST_MOUSE)=((dx&255)<<8)|(dy&255);
+
+					if(t&2)
+					{
+						dx<<=1;
+						dy<<=1;
+					}
+					if(t&1)
+						dy<<=1;
+
 					ps2_mousex-=dx;
 					ps2_mousey-=dy;
+
 					EnableInterrupts();
-					HW_HOST(HW_HOST_MOUSE)=((dx&255)<<8)|(dy&255);
 				}
 			}
 			

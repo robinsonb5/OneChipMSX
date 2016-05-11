@@ -81,6 +81,7 @@ void Menu_Set(struct menu_entry *head)
 int Menu_Run()
 {
 	int i;
+	int refresh=0;
 	struct menu_entry *m=menu;
 
 	if((TestKey(KEY_F11)&2)||(TestKey(KEY_F12)&2))
@@ -90,6 +91,8 @@ int Menu_Run()
 		while(TestKey(KEY_F11))
 			HandlePS2RawCodes(); // Wait for KeyUp message before opening OSD, since this disables the keyboard for the MSX core.
 		OSD_Show(menu_visible^=1);
+		if(menu_visible)
+			refresh=1;
 	}
 
 	if(!menu_visible)	// Swallow any keystrokes that occur while the OSD is hidden...
@@ -102,9 +105,15 @@ int Menu_Run()
 		return;
 	}
 	if((TestKey(KEY_UPARROW)&2)&&currentrow)
+	{
 		--currentrow;
+		refresh=1;
+	}
 	if((TestKey(KEY_DOWNARROW)&2)&&(currentrow<(menurows-1)))
+	{
 		++currentrow;
+		refresh=1;
+	}
 
 	// Find the currently highlighted menu item
 	i=currentrow;
@@ -119,6 +128,7 @@ int Menu_Run()
 
 	if(TestKey(KEY_LEFTARROW)&2) // Decrease slider value
 	{
+		refresh=1;
 		switch(m->type)
 		{
 			case MENU_ENTRY_SLIDER:
@@ -133,6 +143,7 @@ int Menu_Run()
 
 	if(TestKey(KEY_RIGHTARROW)&2) // Increase slider value
 	{
+		refresh=1;
 		switch(m->type)
 		{
 			case MENU_ENTRY_SLIDER:
@@ -149,6 +160,7 @@ int Menu_Run()
 	if(TestKey(KEY_ENTER)&2)
 	{
 		struct menu_entry *m=menu;
+		refresh=1;
 		i=currentrow;
 		while(i)
 		{
@@ -181,11 +193,14 @@ int Menu_Run()
 		}
 	}
 
-	for(i=0;i<OSD_ROWS-1;++i)
+	if(refresh)
 	{
-		OSD_SetX(0);
-		OSD_SetY(i);
-		OSD_Putchar(i==currentrow ? (i==menurows-1 ? 17 : 16) : 32);
+		for(i=0;i<OSD_ROWS-1;++i)
+		{
+			OSD_SetX(0);
+			OSD_SetY(i);
+			OSD_Putchar(i==currentrow ? (i==menurows-1 ? 17 : 16) : 32);
+		}
 	}
 
 	return(menu_visible);

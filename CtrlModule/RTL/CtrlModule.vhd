@@ -169,7 +169,7 @@ begin
 	myrom : entity work.CtrlROM_ROM
 	generic map
 	(
-		maxAddrBitBRAM => 12
+		maxAddrBitBRAM => 13
 	)
 	port map (
 		clk => clk,
@@ -365,7 +365,7 @@ end process;
 		REMAP_STACK => false, -- We're not accessing SDRAM, so no need to remap the Boot ROM / Stack RAM
 		EXECUTE_RAM => false,
 		maxAddrBit => maxAddrBit,
-		maxAddrBitBRAM => 12
+		maxAddrBitBRAM => 13
 	)
 	port map (
 		clk                 => clk,
@@ -500,30 +500,30 @@ begin
 					mem_busy<='0';
 --					osd_req<='1';
 				when X"C" =>	-- OSD controller at 0xFFFFFC00 & 0xFFFFFD00
-					mem_read(31 downto 8)<=(others => 'X');
+					mem_read(31 downto 8)<=(others => '0');
 					mem_read(7 downto 0)<=osd_char_q;
 					mem_busy<='0';
 				when X"D" =>	-- OSD controller at 0xFFFFFC00 & 0xFFFFFD00
-					mem_read(31 downto 8)<=(others => 'X');
+					mem_read(31 downto 8)<=(others => '0');
 					mem_read(7 downto 0)<=osd_char_q;
 					mem_busy<='0';
 
 				when X"F" =>	-- Peripherals
 					case mem_addr(7 downto 0) is
 						when X"B0" => -- Interrupt
-							mem_read<=(others=>'X');
+							mem_read<=(others=>'0');
 							mem_read(int_max downto 0)<=int_status;
 							int_ack<='1';
 							mem_busy<='0';
 
 						when X"C0" => -- UART
-							mem_read<=(others=>'X');
+							mem_read<=(others=>'0');
 							mem_read(9 downto 0)<=ser_rxrecv&ser_txready&ser_rxdata;
 							ser_rxrecv<='0';	-- Clear rx flag.
 							mem_busy<='0';
 
 						when X"D0" => -- SPI Status
-							mem_read<=(others=>'X');
+							mem_read<=(others=>'0');
 							mem_read(15)<=spi_busy;
 							mem_busy<='0';
 
@@ -532,19 +532,19 @@ begin
 
 						-- Read from PS/2 regs
 						when X"E0" =>
-							mem_read<=(others =>'X');
+							mem_read<=(others =>'0');
 							mem_read(11 downto 0)<=kbdrecvreg & '1' & kbdrecvbyte(10 downto 1);
 							kbdrecvreg<='0';
 							mem_busy<='0';
 
 						when X"E4" =>
-							mem_read<=(others =>'X');
+							mem_read<=(others =>'0');
 							mem_read(13 downto 0)<=mouse_init & mouse_fourbyte & mouserecvreg & not mousesendbusy & mouserecvbyte(10 downto 1);
 							mouserecvreg<='0';
 							mem_busy<='0';
 
 						when X"50" => -- Host mouse data
-							mem_read<=(others =>'X');
+							mem_read<=(others =>'0');
 							mem_read(0)<=mouse_idle;
 							mem_busy<='0';
 
