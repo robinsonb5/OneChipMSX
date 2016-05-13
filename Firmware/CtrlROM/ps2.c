@@ -40,8 +40,8 @@ static volatile int intflag;
 #define PS2_TIMEOUT 5
 #define MOUSESETTLE 1
 
-int ps2_mousex;
-int ps2_mousey;
+volatile int ps2_mousex;
+volatile int ps2_mousey;
 //int ps2_mousebuttons;
 int mdataout=-1;
 static int mdata[4];

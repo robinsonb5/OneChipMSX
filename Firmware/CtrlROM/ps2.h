@@ -26,8 +26,8 @@ int ps2_ringbuffer_read(struct ps2_ringbuffer *r);
 int ps2_ringbuffer_count(struct ps2_ringbuffer *r);
 extern struct ps2_ringbuffer kbbuffer;
 
-extern int ps2_mousex;
-extern int ps2_mousey;
+extern volatile int ps2_mousex;
+extern volatile int ps2_mousey;
 //extern int ps2_mousebuttons;
 
 void PS2Handler();

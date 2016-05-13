@@ -380,9 +380,12 @@ int main(int argc,char **argv)
 			{
 				if(HW_HOST(HW_HOST_MOUSE)&HW_HOST_MOUSEF_IDLE)
 				{
-					int dx,dy,t;
+					int dx,dy;
+					static int rx=0,ry=0;
+					int t;
 					DisableInterrupts();
 					dx=ps2_mousex; dy=ps2_mousey;
+
 					// Clamp mouse values, since the MSX mouse can only shift an 8-bit signed value,
 					// while the PS2 mouse provides 9 bit data.
 					if(dx>127)
@@ -393,6 +396,11 @@ int main(int argc,char **argv)
 						dx=-128;
 					if(dy<-128)
 						dy=-128;
+
+					ps2_mousex-=dx;
+					ps2_mousey-=dy;
+
+					EnableInterrupts();
 
 					// Mouse scaling
 					struct menu_entry *m;
@@ -407,7 +415,7 @@ int main(int argc,char **argv)
 						dy>>=1;
 
 					HW_HOST(HW_HOST_MOUSE)=((dx&255)<<8)|(dy&255);
-
+#if 0
 					if(t&2)
 					{
 						dx<<=1;
@@ -415,11 +423,7 @@ int main(int argc,char **argv)
 					}
 					if(t&1)
 						dy<<=1;
-
-					ps2_mousex-=dx;
-					ps2_mousey-=dy;
-
-					EnableInterrupts();
+#endif
 				}
 			}
 			
