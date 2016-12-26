@@ -174,10 +174,10 @@ BEGIN
 		clk2_divide_by => 2250,
 		clk2_duty_cycle => 50,
 		clk2_multiply_by => 7159,
-		clk2_phase_shift => "0",
-		clk3_divide_by => 27000000,
+		clk2_phase_shift => "-4000",
+		clk3_divide_by => 75,
 		clk3_duty_cycle => 50,
-		clk3_multiply_by => 128879999,
+		clk3_multiply_by => 358,
 		clk3_phase_shift => "0",
 		compensate_clock => "CLK0",
 		inclk0_input_frequency => 37037,
@@ -320,12 +320,12 @@ END SYN;
 -- Retrieval info: PRIVATE: PHASE_RECONFIG_INPUTS_CHECK STRING "0"
 -- Retrieval info: PRIVATE: PHASE_SHIFT0 STRING "0.00000000"
 -- Retrieval info: PRIVATE: PHASE_SHIFT1 STRING "0.00000000"
--- Retrieval info: PRIVATE: PHASE_SHIFT2 STRING "0.00000000"
+-- Retrieval info: PRIVATE: PHASE_SHIFT2 STRING "-4.00000000"
 -- Retrieval info: PRIVATE: PHASE_SHIFT3 STRING "0.00000000"
 -- Retrieval info: PRIVATE: PHASE_SHIFT_STEP_ENABLED_CHECK STRING "0"
 -- Retrieval info: PRIVATE: PHASE_SHIFT_UNIT0 STRING "deg"
 -- Retrieval info: PRIVATE: PHASE_SHIFT_UNIT1 STRING "deg"
--- Retrieval info: PRIVATE: PHASE_SHIFT_UNIT2 STRING "deg"
+-- Retrieval info: PRIVATE: PHASE_SHIFT_UNIT2 STRING "ns"
 -- Retrieval info: PRIVATE: PHASE_SHIFT_UNIT3 STRING "ps"
 -- Retrieval info: PRIVATE: PLL_ADVANCED_PARAM_CHECK STRING "0"
 -- Retrieval info: PRIVATE: PLL_ARESET_CHECK STRING "1"
@@ -378,10 +378,10 @@ END SYN;
 -- Retrieval info: CONSTANT: CLK2_DIVIDE_BY NUMERIC "2250"
 -- Retrieval info: CONSTANT: CLK2_DUTY_CYCLE NUMERIC "50"
 -- Retrieval info: CONSTANT: CLK2_MULTIPLY_BY NUMERIC "7159"
--- Retrieval info: CONSTANT: CLK2_PHASE_SHIFT STRING "0"
--- Retrieval info: CONSTANT: CLK3_DIVIDE_BY NUMERIC "27000000"
+-- Retrieval info: CONSTANT: CLK2_PHASE_SHIFT STRING "-4000"
+-- Retrieval info: CONSTANT: CLK3_DIVIDE_BY NUMERIC "75"
 -- Retrieval info: CONSTANT: CLK3_DUTY_CYCLE NUMERIC "50"
--- Retrieval info: CONSTANT: CLK3_MULTIPLY_BY NUMERIC "128879999"
+-- Retrieval info: CONSTANT: CLK3_MULTIPLY_BY NUMERIC "358"
 -- Retrieval info: CONSTANT: CLK3_PHASE_SHIFT STRING "0"
 -- Retrieval info: CONSTANT: COMPENSATE_CLOCK STRING "CLK0"
 -- Retrieval info: CONSTANT: INCLK0_INPUT_FREQUENCY NUMERIC "37037"

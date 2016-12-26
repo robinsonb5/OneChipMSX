@@ -46,8 +46,8 @@ create_clock -name {clk_27} -period 37.037 -waveform { 0.000 0.500 } [get_ports 
 #**************************************************************
 
 derive_pll_clocks 
-create_generated_clock -name sd1clk_pin -source [get_pins {mypll|altpll_component|auto_generated|pll1|clk[0]}] [get_ports {SDRAM_CLK}]
-create_generated_clock -name sysclk -source [get_pins {mypll|altpll_component|auto_generated|pll1|clk[1]}]
+create_generated_clock -name sd1clk_pin -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[2]}] [get_ports {SDRAM_CLK}]
+create_generated_clock -name sysclk -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[1]}]
 
 #**************************************************************
 # Set Clock Latency
@@ -107,7 +107,7 @@ set_false_path -from {*uart|txd} -to {UART_TX}
 #set_multicycle_path -from [get_clocks {mypll|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
 #set_multicycle_path -from [get_clocks {mypll2|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
 
-set_multicycle_path -from [get_clocks {sd1clk_pin}] -to [get_clocks {mypll|altpll_component|auto_generated|pll1|clk[1]}] -setup -end 2
+set_multicycle_path -from [get_clocks {sd1clk_pin}] -to [get_clocks {U00|altpll_component|auto_generated|pll1|clk[1]}] -setup -end 2
 
 set_multicycle_path -through [get_nets {*zpu|Mult0*}] -setup -end 2
 set_multicycle_path -through [get_nets {*zpu|Mult0*}] -hold -end 2
