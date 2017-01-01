@@ -607,7 +607,7 @@ end component;
 
   -- ESE-RAM signals
   signal ErmReq      : std_logic;
---  signal ErmAck      : std_logic;
+  signal ErmAck      : std_logic;
 --  signal ErmDbi      : std_logic_vector(7 downto 0);
   signal ErmRam      : std_logic;
   signal ErmWrt      : std_logic;
@@ -937,7 +937,9 @@ end process;
 
 process(memclk)
 begin
-	if (memclk'event and memclk = '1') then
+	if (pSW(1) = '0') then
+			FreeCounter <= X"0000";
+	elsif (memclk'event and memclk = '1') then
 		if (ff_mem_seq = "00") then
 			FreeCounter <= FreeCounter + 1;
 		end if;
@@ -946,9 +948,14 @@ end process;
 
 process(memclk)
 begin
-	if (memclk'event and memclk = '1') then
-		if( (ff_mem_seq = "00") and (FreeCounter = X"FFFF") and (RstSeq /= "11111") )then
-			RstSeq <= RstSeq + 1;			-- 3ms (= 65536 / 21.48MHz)
+	if (pSW(1) = '0') then
+		   RstSeq <= "00000";
+			RstPower <='1';
+	elsif (memclk'event and memclk = '1') then
+		if (RstSeq /= "11111") then
+			if( (ff_mem_seq = "00") and (FreeCounter = X"FFFF") ) then
+				RstSeq <= RstSeq + 1;			-- 3ms (= 65536 / 21.48MHz)
+			end if;
 		else
 			RstPower <= '0';	
 		end if;
@@ -980,7 +987,7 @@ begin
 		ff_rst_seq <= "00";
 	elsif( clk21m'event and clk21m = '1' )then
 		if( w_10hz = '1' )then
-			ff_rst_seq <= ff_rst_seq(0) & (not ff_rst_seq(1));
+			ff_rst_seq <= ff_rst_seq(0) & (not ff_rst_seq(1));  -- 00 01 11 10
 		end if;
 	end if;
 end process;
@@ -1224,6 +1231,7 @@ ack     <= RamAck  when                 RamReq = '1' else     -- ErmAck, MapAck,
            Scc1Ack when mem = '1' and iSltScc1 = '1' else     -- Scc1Ack
            Scc2Ack when mem = '1' and iSltScc2 = '1' else     -- Scc2Ack
            OpllAck when                OpllReq = '1' else     -- OpllAck
+			  ErmAck and not mmcact when ErmReq = '1' else
            req;                                               -- PsgAck, PpiAck, MapAck, VdpAck, RtcAck
 dbi     <= Scc1Dbi when (jSltScc1 = '1') else
            MRAMDbi when (jMEGA_RAM = '1') else
@@ -2073,7 +2081,7 @@ pMemDat		<= SdrDat;
     port map(clk21m, adr, RomDbi);
 
   U03 : megasd
-    port map(clk21m, reset, clkena, ErmReq, Open, wrt, adr, Open, dbo,
+    port map(clk21m, reset, clkena, ErmReq, ErmAck, wrt, adr, Open, dbo,
              ErmRam, ErmWrt, ErmAdr, RamDbi, Open,
              MmcDbi, MmcEna, MmcAct, pSd_Ck, pSd_Dt3, pSd_Cm, pSd_Dt0,
              EPC_CK, EPC_CS, EPC_OE, EPC_DI, EPC_DO,boot_req,boot_ack,boot_data);
@@ -2184,7 +2192,8 @@ pMemDat		<= SdrDat;
   U33: esepwm
     generic map (DAC_MSBI) port map (clk21m, reset, lpf5_wave, DACout);
 
-	 hex<=PpiPortA & EXPSLOT3;
+--	 hex<=PpiPortA & EXPSLOT3;
+	 hex<=pSltAdr;
 
   U37: system_timer
 	port map (

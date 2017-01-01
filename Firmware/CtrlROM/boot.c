@@ -52,7 +52,7 @@ void WaitEnter()
 
 enum boot_settings {BOOT_IGNORESETTINGS,BOOT_LOADSETTINGS,BOOT_SAVESETTINGS};
 
-static int Boot(enum boot_settings settings)
+static int Boot(enum boot_settings settings,int loadbios)
 {
 	int result=0;
 	int opened;
@@ -85,6 +85,7 @@ static int Boot(enum boot_settings settings)
 			HW_HOST(HW_HOST_SW)=dipsw;
 			SetDIPSwitch(dipsw);
 		}
+
 		HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 
 		if(opened=FileOpen(&file,"OCMSX   CFG"))	// Do we have a configuration file?
@@ -112,6 +113,14 @@ static int Boot(enum boot_settings settings)
 //				printf("DIP %d, Vol %d\n",dipsw,GetVolumes());
 		}
 
+		if(!loadbios)
+		{
+			HW_HOST(HW_HOST_BOOTDATA)=01;	// Tell IPL to skip boot process
+			HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_BOOTDONE;	// Release SD card and early-terminate any remaining requests for boot data
+			return(1);
+		}
+			
+
 		OSD_Puts("Trying MSX3BIOS.SYS\n");
 		if(!(opened=FileOpen(&file,"MSX3BIOSSYS")))	// Try and load MSX3 BIOS first
 		{
@@ -133,6 +142,8 @@ static int Boot(enum boot_settings settings)
 				c>>=1;
 			}
 			bits-=9;
+
+			HW_HOST(HW_HOST_BOOTDATA)=00;	// Tell IPL not to skip boot process
 
 			while(filesize>0)
 			{
@@ -171,28 +182,33 @@ static int Boot(enum boot_settings settings)
 }
 
 
-static void doreset(enum boot_settings s)
+static void doreset(enum boot_settings s, int hard)
 {
 	Menu_Hide();
 	OSD_Clear();
 	OSD_Show(1);
-	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
-	PS2Wait();
-	PS2Wait();
+	HW_HOST(HW_HOST_CTRL)=hard ? HW_HOST_CTRLF_HARDRESET : HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
-	Boot(s);
+	PS2Wait();
+	PS2Wait();
+	Boot(s,hard);
 	Menu_Set(topmenu);
 	OSD_Show(0);
 }
 
 static void savereset()
 {
-	doreset(BOOT_SAVESETTINGS);
+	doreset(BOOT_SAVESETTINGS,0);
 }
 
 static void reset()
 {
-	doreset(BOOT_IGNORESETTINGS);
+	doreset(BOOT_IGNORESETTINGS,0);
+}
+
+static void hardreset()
+{
+	doreset(BOOT_IGNORESETTINGS,1);
 }
 
 
@@ -249,7 +265,6 @@ static struct menu_entry dipswitches[]=
 	{MENU_ENTRY_NULL,0,0}
 };
 
-
 static struct menu_entry volumes[]=
 {
 	{MENU_ENTRY_SLIDER,"Master",7},
@@ -260,16 +275,16 @@ static struct menu_entry volumes[]=
 	{MENU_ENTRY_NULL,0,0}
 };
 
-
 static struct menu_entry topmenu[]=
 {
-	{MENU_ENTRY_CALLBACK,"Reset",MENU_ACTION(&reset)},
-	{MENU_ENTRY_CALLBACK,"Save and Reset",MENU_ACTION(&savereset)},
 	{MENU_ENTRY_SUBMENU,"Options \x10",MENU_ACTION(dipswitches)},
 	{MENU_ENTRY_SUBMENU,"Sound \x10",MENU_ACTION(volumes)},
 	{MENU_ENTRY_TOGGLE,"Turbo",BIT_TURBO},
 	{MENU_ENTRY_TOGGLE,"Mouse Emulation",BIT_MOUSEEMULATION},
 	{MENU_ENTRY_CYCLE,(char *)mouse_labels,4},
+	{MENU_ENTRY_CALLBACK,"Save and Reset",MENU_ACTION(&savereset)},
+	{MENU_ENTRY_CALLBACK,"Hard Reset",MENU_ACTION(&hardreset)},
+	{MENU_ENTRY_CALLBACK,"Reset",MENU_ACTION(&reset)},
 	{MENU_ENTRY_CALLBACK,"Exit",MENU_ACTION(&Menu_Hide)},
 	{MENU_ENTRY_NULL,0,0}
 };
@@ -319,7 +334,7 @@ int GetVolumes()
 int GetMouseSettings()
 {
 	struct menu_entry *m;
-	m=&topmenu[6];
+	m=&topmenu[4];
 	return(MENU_CYCLE_VALUE(m)); // Mouse settings
 }
 
@@ -340,7 +355,7 @@ void SetVolumes(int v)
 int SetMouseSettings(int v)
 {
 	struct menu_entry *m;
-	m=&topmenu[6];
+	m=&topmenu[4];
 	MENU_CYCLE_VALUE(m)=v; // Mouse settings
 }
 
@@ -349,7 +364,7 @@ int main(int argc,char **argv)
 {
 	int i;
 	SetDIPSwitch(DEFAULT_DIPSWITCH_SETTINGS);
-	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_RESET;	// Put OCMS into Reset
+	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_HARDRESET;	// Put OCMS into Hard Reset and steal SD Card
 	HW_HOST(HW_HOST_SW)=DEFAULT_DIPSWITCH_SETTINGS;
 	HW_HOST(HW_HOST_CTRL)=HW_HOST_CTRLF_SDCARD;	// Release reset but steal SD card
 	HW_HOST(HW_HOST_MOUSEBUTTONS)=3;
@@ -366,8 +381,7 @@ int main(int argc,char **argv)
 	PS2Wait();
 	OSD_Show(1);	// OSD should now show correctly.
 
-
-	if(Boot(BOOT_LOADSETTINGS))
+	if(Boot(BOOT_LOADSETTINGS,1))
 	{
 		OSD_Show(0);
 		Menu_Set(topmenu);
@@ -404,7 +418,7 @@ int main(int argc,char **argv)
 
 					// Mouse scaling
 					struct menu_entry *m;
-					m=&topmenu[6];
+					m=&topmenu[4];
 					t=MENU_CYCLE_VALUE(m); // Mouse settings
 					if(t&2)
 					{

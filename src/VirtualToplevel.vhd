@@ -121,6 +121,7 @@ signal boot_ack_ctrl : std_logic;
 signal boot_data : std_logic_vector(7 downto 0);
 
 signal host_reset_n : std_logic;
+signal host_hardreset_n : std_logic;
 signal host_bootdone : std_logic;
 signal host_divert_sdcard : std_logic;
 signal host_divert_keyboard : std_logic;
@@ -144,6 +145,7 @@ signal dipswitches : std_logic_vector( 11 downto 0);
 
 signal lockreset_n : std_logic;
 signal msxreset_n : std_logic;
+signal msxhardreset_n : std_logic;
 
 signal msx_kbd_clk : std_logic;
 signal msx_kbd_dat : std_logic;
@@ -228,18 +230,27 @@ begin
 end process;
 
 
+process (clk21m)
+begin
+	if rising_edge(clk21m) then
+		msxhardreset_n <= pSW(1) and host_hardreset_n;
+		msxreset_n <= pSW(0) and host_reset_n;
+		lockreset_n <= pSW(0) and host_reset_n and lock_n;
+	end if;
+end process;
+
+
 msx_kbd_clk <= pPs2Clk_in or host_divert_keyboard;	-- Lock keyboard when OSD is enabled.
 msx_kbd_dat <= pPs2Dat_in or host_divert_keyboard;	-- Lock keyboard when OSD is enabled.
 pPs2Dat_out <= msx_kbd_datout or host_divert_keyboard; 
 pPs2Clk_out <= msx_kbd_clkout or host_divert_keyboard; 
 
-msxreset_n <= pSW(0) and host_reset_n;
-lockreset_n <= pSW(0) and host_reset_n and lock_n;
 
 pSd_Ck <= ctrl_sd_clk when host_divert_sdcard='1' else host_sd_clk;
 pSd_Dt3 <= ctrl_sd_dat3 when host_divert_sdcard='1' else host_sd_dat3;
 pSd_Cm <= ctrl_sd_cmd when host_divert_sdcard='1' else host_sd_cmd;
 host_sd_dat <= '1' when host_divert_sdcard='1' else pSd_Dt0;
+
 
 mymsx : entity work.emsx_top
   port map (
@@ -305,7 +316,8 @@ mymsx : entity work.emsx_top
     pSd_Dt0 => host_sd_dat,
 	 
     -- DIP switch, Lamp ports
-    pSW(3 downto 1) => pSW(3 downto 1),
+    pSW(3 downto 2) => pSW(3 downto 2),
+    pSW(1) => msxhardreset_n,
     pSW(0) => msxreset_n,
     pDip => dipswitches(9 downto 0),
     pLedG => pLedG,
@@ -397,6 +409,7 @@ top : entity work.CtrlModule
 		ps2m_dat_out => ps2m_dat_out,
 
 		host_reset_n => host_reset_n,
+		host_hardreset_n => host_hardreset_n,
 		host_bootdone => host_bootdone,
 		host_divert_sdcard => host_divert_sdcard,
 		host_divert_keyboard => host_divert_keyboard,
@@ -431,7 +444,7 @@ top : entity work.CtrlModule
 
 
 
-boot_ack<=boot_ack_ctrl or host_bootdone;  -- Once the ROM is fully transferred, ack any further reads immediately.
+boot_ack<=boot_ack_ctrl; --  or host_bootdone;  -- Once the ROM is fully transferred, ack any further reads immediately.
 
 end architecture;
 

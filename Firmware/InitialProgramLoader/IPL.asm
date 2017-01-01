@@ -16,9 +16,9 @@ XF000:	DI	; Disable interrrupts
 
 	; Init Palette
 	LD	HL,VDPDATA
-	LD	BC,0299H	; Copy 2 bytes to IO_99
+	LD	BC,0299H	; Copy 2 bytes to IO_99 - select palette register 0
 	OTIR
-	LD	BC,209AH	; Copy 32 bytes to IO_9A (why 9a?)
+	LD	BC,209AH	; Copy 32 bytes to IO_9A - set up the colour palette
 	OTIR
 	JP	XF043
 VDPDATA:
@@ -33,6 +33,11 @@ XF043:
 XF07B:
 	LD	A,60H
 	LD	(6000H),A	; Select EPCS rather than SD card
+
+	LD	A,(4000H)	; Get initial byte
+	DEC	A		; Set condition code
+	JP	Z,XF08D		; If zero, i.e. initial byte was 1, skip ROM loading
+
 	LD	DE,0200H
 	LD	C,E
 	CALL	COPYROMS
@@ -91,7 +96,7 @@ XF0D3:	LD	A,(HL)
 	DJNZ	XF0D3	; 256 bytes
 	DEC	C
 	JR	NZ,XF0D3	; More 256 byte chunks?
-	LD	A,(5000H)
+	LD	A,(5000H)	; Release Chip Select
 	POP	BC
 	POP	HL
 	XOR	A

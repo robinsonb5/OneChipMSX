@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.numeric_std.ALL;
- 
+
 entity MIST_Toplevel is
 	port
 	(
@@ -46,6 +46,7 @@ END entity;
 architecture rtl of MIST_Toplevel is
 
 signal reset : std_logic;
+signal reset_s : std_logic;
 signal pll_locked : std_logic;
 signal fastclk : std_logic;
 signal clk21m      : std_logic;
@@ -269,7 +270,15 @@ SDRAM_A(12)<='0';
 -- reset from IO controller
 -- status bit 0 is always triggered by the i ocontroller on its own reset
 -- button 1 is the core specfic button in the mists front
-reset <= '0' when status(0)='1' or buttons(1)='1' else '1';
+-- reset <= '0' when status(0)='1' or buttons(1)='1' else '1';
+
+process(clk21m)
+begin
+	if rising_edge(clk21m) then
+		reset_s <= status(0) or buttons(1);
+		reset<=not reset_s;
+	end if;
+end process;
 
 process(clk21m)
 begin

@@ -321,7 +321,7 @@ emsx_top : entity work.Virtual_Toplevel
 			outbits => 4
 		)
 		port map(
-			clk=>CLOCK_50, -- FIXME - sysclk
+			clk=>memclk, -- FIXME - sysclk
 			hsync=>vga_hsync,
 			vsync=>vga_vsync,
 			vid_ena=>vga_window,

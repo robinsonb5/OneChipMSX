@@ -40,7 +40,6 @@ set_time_format -unit ns -decimal_places 3
 
 create_clock -name {clk_50} -period 20.000 -waveform { 0.000 0.500 } [get_ports {CLOCK_50}]
 
-
 #**************************************************************
 # Create Generated Clock
 #**************************************************************
@@ -48,6 +47,17 @@ create_clock -name {clk_50} -period 20.000 -waveform { 0.000 0.500 } [get_ports 
 derive_pll_clocks 
 create_generated_clock -name sd1clk_pin -source [get_pins {U00|altpll_component|pll|clk[2]}] [get_ports {DRAM_CLK}]
 create_generated_clock -name sysclock -source [get_pins {U00|altpll_component|pll|clk[1]}]
+create_generated_clock -name slowclock -source [get_pins {U00|altpll_component|pll|clk[0]}]
+create_generated_clock -name clkdiv -source [get_pins {U00|altpll_component|pll|clk[0]}] -divide_by 4 [get_keepers {virtual_toplevel:emsx_top|emsx_top:mymsx|clkdiv[0]}]
+create_generated_clock -name Aud1 -source [get_pins {U00|altpll_component|pll|clk[0]}] -divide_by 3 [get_keepers {a_codec:U35|oAUD_XCK}]
+create_generated_clock -name Aud2 -source [get_pins {U00|altpll_component|pll|clk[0]}] -divide_by 10 [get_keepers {a_codec:U35|oAUD_BCK}]
+create_generated_clock -name Aud3 -source [get_pins {U00|altpll_component|pll|clk[0]}] -divide_by 10 [get_keepers {a_codec:U35|oAUD_DACLRCLK}]
+create_generated_clock -name Aud4 -source [get_pins {U00|altpll_component|pll|clk[0]}] -divide_by 10 [get_keepers {a_codec:U35|oAUD_ADCLRCK}]
+create_generated_clock -name Aud5 -source [get_pins {U00|altpll_component|pll|clk[0]}] -divide_by 30 [get_keepers {I2C_AV_Config:U36|mI2C_CTRL_CLK}]
+create_generated_clock -name reset -source [get_pins {U00|altpll_component|pll|clk[0]}] [get_keepers {virtual_toplevel:emsx_top|emsx_top:mymsx|RstPower}]
+
+
+set_clock_groups -exclusive -group [get_clocks {reset}] -group [get_clocks {U00|altpll_component|pll|clk[0] U00|altpll_component|pll|clk[1] U00|altpll_component|pll|clk[2]}]
 
 #**************************************************************
 # Set Clock Latency
@@ -70,6 +80,15 @@ set_input_delay -clock sd1clk_pin -min 3.2 [get_ports DRAM_DQ*]
 set_input_delay -clock sysclock -min 0.5 [get_ports SD_DAT]
 set_input_delay -clock sysclock -max 1.0 [get_ports SD_DAT]
 
+set_input_delay -clock slowclock -min 0.5 [get_ports Joy*]
+set_input_delay -clock slowclock -max 1.0 [get_ports Joy*]
+
+set_input_delay -clock slowclock -min 0.5 [get_ports AUD_ADCDAT]
+set_input_delay -clock slowclock -max 1.0 [get_ports AUD_ADCDAT]
+set_input_delay -clock slowclock -min 0.5 [get_ports I2C_SDAT]
+set_input_delay -clock slowclock -max 1.0 [get_ports I2C_SDAT]
+
+
 #**************************************************************
 # Set Output Delay
 #**************************************************************
@@ -84,6 +103,15 @@ set_output_delay -clock sysclock -max 1.0 [get_ports VGA_*]
 
 set_output_delay -clock sysclock -min 0.5 [get_ports SD_*]
 set_output_delay -clock sysclock -max 1.0 [get_ports SD_*]
+
+set_output_delay -clock slowclock -min 0.5 [get_ports LED*]
+set_output_delay -clock slowclock -max 1.0 [get_ports LED*]
+
+set_output_delay -clock slowclock -min 0.5 [get_ports AUD*]
+set_output_delay -clock slowclock -max 1.0 [get_ports AUD*]
+
+set_output_delay -clock slowclock -min 0.5 [get_ports I2C*]
+set_output_delay -clock slowclock -max 1.0 [get_ports I2C*]
 
 #**************************************************************
 # Set Clock Groups
@@ -112,10 +140,12 @@ set_false_path -to {UART_TXD}
 # Set Multicycle Path
 #**************************************************************
 
-#set_multicycle_path -from [get_clocks {mypll|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
-#set_multicycle_path -from [get_clocks {mypll2|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
+# set_multicycle_path -from [get_clocks {mypll|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
+# set_multicycle_path -from [get_clocks {mypll2|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
 
-#set_multicycle_path -from [get_clocks {sd1clk_pin}] -to [get_clocks {U00|altpll_component|pll|clk[1]}] -setup -end 2
+# set_multicycle_path -from [get_clocks {sd1clk_pin}] -to [get_clocks {U00|altpll_component|pll|clk[1]}] -setup -end 2
+# set_multicycle_path -through [get_nets {*zpu|Mult0*}] -setup -end 2
+# set_multicycle_path -through [get_nets {*zpu|Mult0*}] -hold -end 2
 
 #**************************************************************
 # Set Maximum Delay

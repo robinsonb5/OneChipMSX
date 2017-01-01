@@ -19,6 +19,7 @@
 #define HW_HOST_CTRLF_BOOTDONE 2
 #define HW_HOST_CTRLF_SDCARD 4
 #define HW_HOST_CTRLF_KEYBOARD 8
+#define HW_HOST_CTRLF_HARDRESET 16
 
 /* Boot data.
    Blocks until the previous byte has been read,

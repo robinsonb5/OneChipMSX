@@ -40,6 +40,9 @@ set_time_format -unit ns -decimal_places 3
 
 create_clock -name {clk_27} -period 37.037 -waveform { 0.000 0.500 } [get_ports {CLOCK_27[0]}]
 
+create_clock -name SPICLK -period 40.000 [get_ports {SPI_SCK}]
+create_clock -name SD_ACK -period 40.000 [get_keepers {user_io:user_io_d|sd_ack}]
+create_clock -name sd_dout_strobe -period 40.000 [get_keepers {user_io:user_io_d|sd_dout_strobe}]
 
 #**************************************************************
 # Create Generated Clock
@@ -48,6 +51,7 @@ create_clock -name {clk_27} -period 37.037 -waveform { 0.000 0.500 } [get_ports 
 derive_pll_clocks 
 create_generated_clock -name sd1clk_pin -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[2]}] [get_ports {SDRAM_CLK}]
 create_generated_clock -name sysclk -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[1]}]
+create_generated_clock -name clk21m -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[0]}]
 
 #**************************************************************
 # Set Clock Latency
@@ -72,6 +76,15 @@ set_input_delay -clock sd1clk_pin -min 3.2 [get_ports SDRAM_DQ*]
 set_input_delay -clock sysclk -min 0.0 [get_ports {UART_RX}]
 set_input_delay -clock sysclk -max 0.0 [get_ports {UART_RX}]
 
+set_input_delay -clock SPICLK -min 0.0 [get_ports {CONF_DATA0}]
+set_input_delay -clock SPICLK -max 1.0 [get_ports {CONF_DATA0}]
+
+set_input_delay -clock SPICLK -min 0.0 [get_ports {SPI_SCK}]
+set_input_delay -clock SPICLK -max 1.0 [get_ports {SPI_SCK}]
+set_input_delay -clock SPICLK -min 0.5 [get_ports {SPI_DI}]
+set_input_delay -clock SPICLK -max 1.5 [get_ports {SPI_DI}]
+set_input_delay -clock SPICLK -min 0.5 [get_ports {SPI_SS3}]
+set_input_delay -clock SPICLK -max 1.5 [get_ports {SPI_SS3}]
 
 #**************************************************************
 # Set Output Delay
@@ -86,6 +99,15 @@ set_output_delay -clock sd1clk_pin -min 0.5 [get_ports SDRAM_CLK]
 # having unconstrained ports in the design
 #set_output_delay -clock sysclk -min 0.0 [get_ports UART_TX]
 #set_output_delay -clock sysclk -max 0.0 [get_ports UART_TX]
+
+set_output_delay -clock clk21m -min 0.0 [get_ports VGA*]
+set_output_delay -clock clk21m -max 0.0 [get_ports VGA*]
+set_output_delay -clock clk21m -min 0.0 [get_ports AUDIO*]
+set_output_delay -clock clk21m -max 0.0 [get_ports AUDIO*]
+set_output_delay -clock SPICLK -min 0.0 [get_ports LED*]
+set_output_delay -clock SPICLK -max 0.0 [get_ports LED*]
+set_output_delay -clock SPICLK -min 0.5 [get_ports SPI_DO*]
+set_output_delay -clock SPICLK -max 2.0 [get_ports SPI_DO*]
 
 #**************************************************************
 # Set Clock Groups
@@ -107,10 +129,10 @@ set_false_path -from {*uart|txd} -to {UART_TX}
 #set_multicycle_path -from [get_clocks {mypll|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
 #set_multicycle_path -from [get_clocks {mypll2|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
 
-set_multicycle_path -from [get_clocks {sd1clk_pin}] -to [get_clocks {U00|altpll_component|auto_generated|pll1|clk[1]}] -setup -end 2
+# set_multicycle_path -from [get_clocks {sd1clk_pin}] -to [get_clocks {U00|altpll_component|auto_generated|pll1|clk[1]}] -setup -end 2
 
-set_multicycle_path -through [get_nets {*zpu|Mult0*}] -setup -end 2
-set_multicycle_path -through [get_nets {*zpu|Mult0*}] -hold -end 2
+# set_multicycle_path -through [get_nets {*zpu|Mult0*}] -setup -end 2
+# set_multicycle_path -through [get_nets {*zpu|Mult0*}] -hold -end 2
 
 #**************************************************************
 # Set Maximum Delay

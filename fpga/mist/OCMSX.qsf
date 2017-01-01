@@ -38,7 +38,7 @@
 
 set_global_assignment -name FAMILY "Cyclone III"
 set_global_assignment -name DEVICE EP3C25E144C7
-set_global_assignment -name TOP_LEVEL_ENTITY MIST_TopLevel
+set_global_assignment -name TOP_LEVEL_ENTITY MIST_Toplevel
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "12.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "00:29:53  MAY 10, 2013"
 set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
@@ -161,6 +161,102 @@ set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+
+
+set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_RETIMING ON
+
+set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC ON
+
+
+
+set_global_assignment -name SDC_FILE ../../Board/mist/mist.sdc
+set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/OnScreenDisplay.vhd
+set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/OSD_Overlay.vhd
+set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/DualPortRAM_2Read_Unreg.vhd
+set_global_assignment -name VHDL_FILE ../../CtrlModule/CharROM/CharROM_ROM.vhd
+set_global_assignment -name VERILOG_FILE ../../../Board/mist/user_io.v
+set_global_assignment -name VERILOG_FILE ../../../Board/mist/sd_card.v
+set_global_assignment -name VERILOG_FILE ../../../Board/mist/osd.v
+set_global_assignment -name VERILOG_FILE ../../../Board/mist/mist_console.v
+set_global_assignment -name VHDL_FILE ../../../Board/mist/MIST_Toplevel.vhd
+set_global_assignment -name VHDL_FILE ../../ZPUFlex/RTL/zpupkg.vhd
+set_global_assignment -name VHDL_FILE ../../ZPUFlex/RTL/zpu_core_flex.vhd
+set_global_assignment -name VHDL_FILE ../../Firmware/CtrlROM/CtrlROM_ROM.vhd
+set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/spi.vhd
+set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/simple_uart.vhd
+set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/io_ps2_com.vhd
+set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/interrupt_controller.vhd
+set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/CtrlModule.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/VENCODE.VHD
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_wait_control.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/VDP_VGA.VHD
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_text12.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/VDP_SSG.VHD
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_sprite.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_spinforam.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_register.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_package.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_ntsc_pal.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_linebuf.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_interrupt.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_hvcounter.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_graphic4567.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_graphic123M.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_doublebuf.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_command.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_colordec.vhd
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/VDP.VHD
+set_global_assignment -name VHDL_FILE ../../src/EMSX_TOP.VHD
+set_global_assignment -name VHDL_FILE ../../src/sound/DAC/ESEPWM.VHD
+set_global_assignment -name VHDL_FILE ../../src/sound/SCC/scc_wave.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/SCC/megaram.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/psg/psg_wave.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/psg/psg.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/voicerom.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/voicememory.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/vm2413.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/temporalmixer.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/slotcounter.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/sinetable.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/registermemory.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/phasememory.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/phasegenerator.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/outputmemory.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/outputgenerator.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/opll.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/operator.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/lineartable.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/feedbackmemory.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/envelopememory.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/envelopegenerator.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/controller.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/attacktable.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/eseopll.vhd
+set_global_assignment -name VHDL_FILE ../../src/sound/LPF/LPF48.VHD
+set_global_assignment -name VHDL_FILE ../../src/sound/LPF/LPF.VHD
+set_global_assignment -name VHDL_FILE ../../src/sound/FILTER/TAPRAM.VHD
+set_global_assignment -name VHDL_FILE ../../src/sound/FILTER/ESEFIR5.VHD
+set_global_assignment -name VHDL_FILE ../../src/cpu/T80a.vhd
+set_global_assignment -name VHDL_FILE ../../src/cpu/T80_Reg.vhd
+set_global_assignment -name VHDL_FILE ../../src/cpu/T80_Pack.vhd
+set_global_assignment -name VHDL_FILE ../../src/cpu/T80_MCode.vhd
+set_global_assignment -name VHDL_FILE ../../src/cpu/T80_ALU.VHD
+set_global_assignment -name VHDL_FILE ../../src/cpu/T80.VHD
+set_global_assignment -name QIP_FILE ../../Board/mist/PLL4X2.qip
+set_global_assignment -name VHDL_FILE ../../src/peripheral/systemtimer.vhd
+set_global_assignment -name VHDL_FILE ../../src/peripheral/RTC.VHD
+set_global_assignment -name VHDL_FILE ../../src/peripheral/RAM.VHD
+set_global_assignment -name VHDL_FILE ../../src/peripheral/MEGASD.VHD
+set_global_assignment -name VHDL_FILE ../../src/peripheral/MEGA_RAM.VHD
+set_global_assignment -name VHDL_FILE ../../src/peripheral/MAPPER.VHD
+set_global_assignment -name VHDL_FILE ../../src/peripheral/KEYMAP.VHD
+set_global_assignment -name VHDL_FILE ../../src/peripheral/KANJI.VHD
+set_global_assignment -name VHDL_FILE ../../src/peripheral/ESEPS2.VHD
+set_global_assignment -name VHDL_FILE ../../src/VIDEO/video_vga_dither.vhd
+set_global_assignment -name VHDL_FILE ../../src/VirtualToplevel.vhd
+set_global_assignment -name VHDL_FILE ../../Firmware/InitialProgramLoader/IPLROM.vhd
+set_global_assignment -name VERILOG_FILE ../../src/sound/DAC/hybrid_pwm_sd.v
+set_global_assignment -name VERILOG_FILE ../../Board/mist/osd.v
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
@@ -260,707 +356,56 @@ set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[3]
 set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[2]
 set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[1]
 set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[0]
-
-
-set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_RETIMING ON
-
-set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC ON
-
-
-
-set_global_assignment -name SDC_FILE ../../Board/mist/mist.sdc
-set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/OnScreenDisplay.vhd
-set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/OSD_Overlay.vhd
-set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/DualPortRAM_2Read_Unreg.vhd
-set_global_assignment -name VHDL_FILE ../../CtrlModule/CharROM/CharROM_ROM.vhd
-set_global_assignment -name VERILOG_FILE ../../../Board/mist/user_io.v
-set_global_assignment -name VERILOG_FILE ../../../Board/mist/sd_card.v
-set_global_assignment -name VERILOG_FILE ../../../Board/mist/osd.v
-set_global_assignment -name VERILOG_FILE ../../../Board/mist/mist_console.v
-set_global_assignment -name VHDL_FILE ../../../Board/mist/MIST_Toplevel.vhd
-set_global_assignment -name VHDL_FILE ../../ZPUFlex/RTL/zpupkg.vhd
-set_global_assignment -name VHDL_FILE ../../ZPUFlex/RTL/zpu_core_flex.vhd
-set_global_assignment -name VHDL_FILE ../../Firmware/CtrlROM/CtrlROM_ROM.vhd
-set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/spi.vhd
-set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/simple_uart.vhd
-set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/io_ps2_com.vhd
-set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/interrupt_controller.vhd
-set_global_assignment -name VHDL_FILE ../../CtrlModule/RTL/CtrlModule.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/VENCODE.VHD
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_wait_control.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/VDP_VGA.VHD
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_text12.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/VDP_SSG.VHD
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_sprite.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_spinforam.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_register.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_package.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_ntsc_pal.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_linebuf.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_interrupt.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_hvcounter.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_graphic4567.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_graphic123M.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_doublebuf.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_command.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/vdp_colordec.vhd
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/VDP.VHD
-set_global_assignment -name VHDL_FILE ../../src/EMSX_TOP.VHD
-set_global_assignment -name VHDL_FILE ../../src/sound/DAC/ESEPWM.VHD
-set_global_assignment -name VHDL_FILE ../../src/sound/SCC/scc_wave.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/SCC/megaram.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/psg/psg_wave.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/psg/psg.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/voicerom.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/voicememory.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/vm2413.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/temporalmixer.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/slotcounter.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/sinetable.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/registermemory.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/phasememory.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/phasegenerator.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/outputmemory.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/outputgenerator.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/opll.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/operator.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/lineartable.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/feedbackmemory.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/envelopememory.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/envelopegenerator.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/controller.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/VM2413/attacktable.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/OPLL/eseopll.vhd
-set_global_assignment -name VHDL_FILE ../../src/sound/LPF/LPF48.VHD
-set_global_assignment -name VHDL_FILE ../../src/sound/LPF/LPF.VHD
-set_global_assignment -name VHDL_FILE ../../src/sound/FILTER/TAPRAM.VHD
-set_global_assignment -name VHDL_FILE ../../src/sound/FILTER/ESEFIR5.VHD
-set_global_assignment -name VHDL_FILE ../../src/cpu/T80a.vhd
-set_global_assignment -name VHDL_FILE ../../src/cpu/T80_Reg.vhd
-set_global_assignment -name VHDL_FILE ../../src/cpu/T80_Pack.vhd
-set_global_assignment -name VHDL_FILE ../../src/cpu/T80_MCode.vhd
-set_global_assignment -name VHDL_FILE ../../src/cpu/T80_ALU.VHD
-set_global_assignment -name VHDL_FILE ../../src/cpu/T80.VHD
-set_global_assignment -name QIP_FILE ../../Board/mist/PLL4X2.qip
-set_global_assignment -name VHDL_FILE ../../src/peripheral/systemtimer.vhd
-set_global_assignment -name VHDL_FILE ../../src/peripheral/RTC.VHD
-set_global_assignment -name VHDL_FILE ../../src/peripheral/RAM.VHD
-set_global_assignment -name VHDL_FILE ../../src/peripheral/MEGASD.VHD
-set_global_assignment -name VHDL_FILE ../../src/peripheral/MEGA_RAM.VHD
-set_global_assignment -name VHDL_FILE ../../src/peripheral/MAPPER.VHD
-set_global_assignment -name VHDL_FILE ../../src/peripheral/KEYMAP.VHD
-set_global_assignment -name VHDL_FILE ../../src/peripheral/KANJI.VHD
-set_global_assignment -name VHDL_FILE ../../src/peripheral/ESEPS2.VHD
-set_global_assignment -name VHDL_FILE ../../src/VIDEO/video_vga_dither.vhd
-set_global_assignment -name VHDL_FILE ../../src/VirtualToplevel.vhd
-set_global_assignment -name VHDL_FILE ../../Firmware/InitialProgramLoader/IPLROM.vhd
-set_global_assignment -name VERILOG_FILE ../../src/sound/DAC/hybrid_pwm_sd.v
-set_global_assignment -name VERILOG_FILE ../../Board/mist/osd.v
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name SIGNALTAP_FILE stp1.stp
 set_global_assignment -name SLD_NODE_CREATOR_ID 110 -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_ENTITY_NAME sld_signaltap -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_clk -to "Virtual_Toplevel:virtualtoplevel|SDR_CLK" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[0] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|from_zpu.memAWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[1] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|from_zpu.memBWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[2] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[3] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[4] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[5] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[6] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[7] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[8] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[9] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[10] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[11] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[12] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[13] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[14] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[15] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[16] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[17] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[18] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[19] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[20] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[21] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[22] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[23] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[24] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[25] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[26] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[27] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[28] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[29] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[30] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[31] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[32] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[33] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[34] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[35] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[36] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[37] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[38] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[39] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[40] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[41] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[42] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[43] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[44] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[45] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[46] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[47] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[48] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[49] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[50] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[51] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[52] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[53] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[54] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[55] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[56] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[57] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[58] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[59] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[60] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[61] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[62] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[63] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[64] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[65] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[66] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM2:myrom2|from_zpu.memAWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[67] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM2:myrom2|from_zpu.memBWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[68] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[69] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[70] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[71] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[72] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[73] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[74] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[75] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[76] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[77] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[78] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[79] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[80] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[81] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[82] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[83] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[84] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[85] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[86] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[87] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[88] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[89] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[90] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[91] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[92] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[93] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[94] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[95] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[96] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[97] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[98] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[99] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[100] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[101] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[102] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[103] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[104] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[105] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[106] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[107] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[108] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[109] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[110] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[111] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[112] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[113] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[114] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[115] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[116] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[117] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[118] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[119] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[120] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[121] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[122] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[123] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[124] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[125] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[126] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[127] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[128] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[129] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[130] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[131] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[132] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[133] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[134] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[135] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[136] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[137] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[138] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[139] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[140] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[141] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[142] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[143] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[144] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[145] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[146] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[147] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[148] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[149] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[150] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[151] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[152] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[153] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[154] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[155] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[156] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[157] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[158] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[159] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[160] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[161] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[162] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[163] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[164] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[165] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[166] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[167] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[168] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[169] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[170] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[171] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[172] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[173] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[174] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[175] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[176] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[177] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[178] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[179] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[180] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[181] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[182] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[183] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[184] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[185] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[186] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[187] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[188] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[189] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[190] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[191] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[192] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[193] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[194] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[195] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[196] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|reset" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[197] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[198] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[199] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[200] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[201] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[202] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[203] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[204] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[205] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[206] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[207] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[208] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[209] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[210] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[211] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[212] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[213] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[214] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[215] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[216] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[217] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[218] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[219] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[220] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[221] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[222] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[223] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[224] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[225] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[226] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[227] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[228] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[229] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[230] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[231] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[232] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[233] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[234] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[235] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[236] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[237] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[238] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[239] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[240] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[241] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[242] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[243] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[244] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[245] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[246] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[247] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[248] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[249] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[250] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[251] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[252] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[253] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[254] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[255] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[256] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[257] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[258] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[259] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[260] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[261] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[262] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[263] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[264] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[265] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[266] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[267] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[268] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[269] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[270] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[271] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[272] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[273] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[274] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[275] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[276] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[277] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[278] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[279] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[280] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[281] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[282] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[283] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[284] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[285] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[286] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[287] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[288] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[289] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[290] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[0] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|from_zpu.memAWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[1] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|from_zpu.memBWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[2] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[3] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[4] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[5] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[6] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[7] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[8] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[9] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[10] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[11] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[12] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[13] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[14] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[15] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[16] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[17] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[18] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[19] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[20] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[21] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[22] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[23] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[24] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[25] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[26] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[27] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[28] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[29] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[30] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[31] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[32] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[33] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memARead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[34] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[35] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[36] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[37] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[38] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[39] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[40] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[41] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[42] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[43] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[44] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[45] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[46] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[47] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[48] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[49] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[50] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[51] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[52] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[53] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[54] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[55] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[56] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[57] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[58] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[59] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[60] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[61] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[62] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[63] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[64] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[65] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM1:myrom1|to_zpu.memBRead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[66] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM2:myrom2|from_zpu.memAWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[67] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|CtrlROM_ROM2:myrom2|from_zpu.memBWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[68] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[69] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[70] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[71] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[72] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[73] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[74] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[75] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[76] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[77] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[78] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[79] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[80] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[81] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[82] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[83] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[84] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[85] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[86] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[87] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[88] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[89] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[90] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[91] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[92] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[93] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[94] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[95] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[96] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[97] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[98] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[99] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memARead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[100] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[101] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[102] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[103] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[104] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[105] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[106] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[107] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[108] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[109] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[110] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[111] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[112] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[113] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[114] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[115] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[116] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[117] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[118] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[119] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[120] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[121] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[122] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[123] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[124] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[125] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[126] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[127] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[128] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[129] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[130] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[131] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM:mysplitrom|to_zpu.memBRead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[132] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[133] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[134] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[135] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[136] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[137] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[138] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[139] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[140] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[141] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[142] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[143] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[144] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[145] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[146] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[147] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[148] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[149] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[150] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[151] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[152] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[153] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[154] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[155] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[156] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[157] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[158] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[159] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[160] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[161] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[162] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[163] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memARead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[164] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[165] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[166] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[167] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[168] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[169] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[170] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[171] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[172] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[173] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[174] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[175] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[176] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[177] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[178] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[179] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[180] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[181] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[182] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[183] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[184] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[185] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[186] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[187] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[188] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[189] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[190] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[191] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[192] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[193] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[194] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[195] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|CtrlROM_ROM:myrom|to_zpu.memBRead[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[196] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|reset" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[197] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[198] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[199] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[200] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[201] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[202] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[203] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[204] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[205] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[206] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[207] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[208] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[209] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[210] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAAddr[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[211] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[212] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[213] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[214] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[215] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[216] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[217] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[218] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[219] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[220] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[221] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[222] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[223] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[224] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[225] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[226] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[227] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[228] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[229] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[230] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[231] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[232] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[233] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[234] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[235] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[236] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[237] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[238] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[239] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[240] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[241] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[242] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[243] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memAWrite[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[244] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[245] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[246] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[247] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[248] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[249] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[250] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[251] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[252] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[253] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[254] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[255] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[256] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[257] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBAddr[9]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[258] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWriteEnable" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[259] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[0]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[260] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[10]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[261] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[11]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[262] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[12]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[263] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[13]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[264] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[14]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[265] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[15]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[266] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[16]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[267] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[17]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[268] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[18]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[269] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[19]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[270] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[1]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[271] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[20]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[272] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[21]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[273] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[22]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[274] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[23]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[275] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[24]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[276] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[25]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[277] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[26]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[278] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[27]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[279] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[28]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[280] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[29]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[281] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[2]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[282] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[30]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[283] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[31]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[284] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[3]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[285] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[4]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[286] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[5]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[287] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[6]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[288] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[7]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[289] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[8]" -section_id auto_signaltap_0
-set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[290] -to "Virtual_Toplevel:virtualtoplevel|CtrlModule:mycontrolmodule|zpu_core_flex:zpu|to_rom.memBWrite[9]" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_DATA_BITS=291" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_BITS=291" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_clk -to "virtual_toplevel:emsx_top|memclk" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[0] -to SPI_DI -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[1] -to SPI_DO -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[2] -to SPI_SCK -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[3] -to SPI_SS2 -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[4] -to SPI_SS3 -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[5] -to SPI_SS4 -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[6] -to reset -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[7] -to "user_io:user_io_d|sd_din_strobe" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[8] -to "user_io:user_io_d|sd_dout_strobe" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[0] -to SPI_DI -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[1] -to SPI_DO -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[2] -to SPI_SCK -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[3] -to SPI_SS2 -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[4] -to SPI_SS3 -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[5] -to SPI_SS4 -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[6] -to reset -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[7] -to "user_io:user_io_d|sd_din_strobe" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[8] -to "user_io:user_io_d|sd_dout_strobe" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_DATA_BITS=9" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_BITS=9" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_INFO=805334528" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_POWER_UP_TRIGGER=0" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=893" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=000000000000000000000000000000000000000000000000000" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=51" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER_INVERSION_MASK_LENGTH=0" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SEGMENT_SIZE=64" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SEGMENT_SIZE=1024" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ATTRIBUTE_MEM_MODE=OFF" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STATE_FLOW_USE_GENERATED=0" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STATE_BITS=11" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_BUFFER_FULL_STOP=1" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_CURRENT_RESOURCE_WIDTH=1" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_LOWORD=34322" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_HIWORD=3494" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_LOWORD=36307" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_HIWORD=8032" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL=1" -section_id auto_signaltap_0
-set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SAMPLE_DEPTH=64" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SAMPLE_DEPTH=1024" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_IN_ENABLED=0" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ADVANCED_TRIGGER_ENTITY=basic,1," -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL_PIPELINE=1" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ENABLE_ADVANCED_TRIGGER=0" -section_id auto_signaltap_0
-set_global_assignment -name SLD_FILE stp1_auto_stripped.stp
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SPI_DI
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SPI_DO
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SPI_SCK
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SPI_SS2
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SPI_SS3
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SPI_SS4
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SPI_DO
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SPI_DO
+set_global_assignment -name SLD_FILE /home/amr/FPGA/Projects/OneChipMSX/fpga/mist/stp1_auto_stripped.stp
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -41,6 +41,7 @@ entity CtrlModule is
 		
 		-- Host control
 		host_reset_n : out std_logic;
+		host_hardreset_n : out std_logic;
 		host_bootdone : out std_logic;
 		host_divert_sdcard : out std_logic;
 		host_divert_keyboard : out std_logic;
@@ -392,6 +393,7 @@ begin
 		spi_active<='0';
 		int_enabled<='0';
 		kbdrecvreg <='0';
+		host_bootdone<='0';
 		host_bootdata_ack_r<='0';
 		host_bootdata_pending<='0';
 		host_divert_sdcard<='0';
@@ -456,6 +458,7 @@ begin
 							
 						when X"44" => -- Host control
 							host_reset_n<=not mem_write(0);
+							host_hardreset_n<=not mem_write(4);
 							host_bootdone<=mem_write(1);
 							host_divert_sdcard <= mem_write(2);
 							host_divert_keyboard <= mem_write(3);

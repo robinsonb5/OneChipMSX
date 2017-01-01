@@ -52,7 +52,7 @@ ENTITY IPLROM IS
 END IPLROM;
 
 ARCHITECTURE RTL OF IPLROM IS
-	TYPE ROM_TYPE IS ARRAY (0 TO 767) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
+	TYPE ROM_TYPE IS ARRAY (0 TO 511) OF STD_LOGIC_VECTOR(7 DOWNTO 0);  -- FIXME reduced from 767 to save blockram
 	CONSTANT IPL_DATA : ROM_TYPE := (
 		X"f3",X"01",X"00",X"02",X"11",X"00",X"f0",X"21",
 		X"00",X"00",X"ed",X"b0",X"21",X"1c",X"f0",X"01",
@@ -62,26 +62,27 @@ ARCHITECTURE RTL OF IPLROM IS
 		X"1b",X"03",X"33",X"01",X"1b",X"06",X"47",X"01",
 		X"49",X"03",X"3d",X"06",X"40",X"06",X"0b",X"04",
 		X"41",X"02",X"37",X"05",X"4d",X"07",X"31",X"ff",
-		X"ff",X"3e",X"60",X"32",X"00",X"60",X"11",X"00",
-		X"02",X"4b",X"cd",X"60",X"f0",X"af",X"32",X"00",
-		X"60",X"3c",X"32",X"00",X"68",X"32",X"00",X"70",
-		X"32",X"00",X"78",X"3e",X"c0",X"d3",X"a8",X"c7",
-		X"06",X"18",X"3e",X"80",X"32",X"00",X"70",X"3c",
-		X"32",X"00",X"78",X"3c",X"f5",X"c5",X"06",X"20",
-		X"21",X"00",X"80",X"cd",X"7d",X"f0",X"c1",X"e1",
-		X"d8",X"7c",X"10",X"e8",X"c9",X"d5",X"c5",X"cb",
-		X"23",X"cb",X"12",X"78",X"87",X"4f",X"06",X"00",
-		X"e5",X"21",X"00",X"40",X"d1",X"7e",X"12",X"13",
-		X"10",X"fb",X"0d",X"20",X"f8",X"3a",X"00",X"50",
-		X"c1",X"e1",X"af",X"57",X"58",X"19",X"eb",X"89",
-		X"4f",X"c9",
+		X"ff",X"3e",X"60",X"32",X"00",X"60",X"3a",X"00",
+		X"40",X"3d",X"ca",X"54",X"f0",X"11",X"00",X"02",
+		X"4b",X"cd",X"67",X"f0",X"af",X"32",X"00",X"60",
+		X"3c",X"32",X"00",X"68",X"32",X"00",X"70",X"32",
+		X"00",X"78",X"3e",X"c0",X"d3",X"a8",X"c7",X"06",
+		X"18",X"3e",X"80",X"32",X"00",X"70",X"3c",X"32",
+		X"00",X"78",X"3c",X"f5",X"c5",X"06",X"20",X"21",
+		X"00",X"80",X"cd",X"84",X"f0",X"c1",X"e1",X"d8",
+		X"7c",X"10",X"e8",X"c9",X"d5",X"c5",X"cb",X"23",
+		X"cb",X"12",X"78",X"87",X"4f",X"06",X"00",X"e5",
+		X"21",X"00",X"40",X"d1",X"7e",X"12",X"13",X"10",
+		X"fb",X"0d",X"20",X"f8",X"3a",X"00",X"50",X"c1",
+		X"e1",X"af",X"57",X"58",X"19",X"eb",X"89",X"4f",
+		X"c9",
 		others=>X"00"	);
 BEGIN
 
 	PROCESS( CLK )
 	BEGIN
 		IF( CLK'EVENT AND CLK = '1' )THEN
-			DBI <= IPL_DATA( CONV_INTEGER( ADR(9 DOWNTO 0) ) );
+			DBI <= IPL_DATA( CONV_INTEGER( ADR(8 DOWNTO 0) ) );  -- FIXME reduced from 9 to save blockram
 		END IF;
 	END PROCESS;
 END RTL;
