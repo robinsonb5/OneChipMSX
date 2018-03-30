@@ -39,6 +39,8 @@ create_generated_clock -name clk110m -source [get_pins {U00|altpll_component|aut
 # create_clock -name clkdiv5m -period 186.2 virtual_toplevel:emsx_top|emsx_top:mymsx|clkdiv[0]
 # create_clock -name nresetloc -period 100 gen_reset:myReset|nresetLoc
 
+create_generated_clock -name clkdiv -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[0]}] -divide_by 4 [get_keepers {virtual_toplevel:emsx_top|emsx_top:mymsx|clkdiv[0]}]
+create_generated_clock -name reset -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[0]}] [get_keepers {virtual_toplevel:emsx_top|emsx_top:mymsx|RstPower}]
 
 #**************************************************************
 # Set Clock Uncertainty
