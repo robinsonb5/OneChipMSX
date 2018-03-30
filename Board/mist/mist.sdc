@@ -48,7 +48,7 @@ create_clock -name sd_dout_strobe -period 40.000 [get_keepers {user_io:user_io_d
 # Create Generated Clock
 #**************************************************************
 
-derive_pll_clocks 
+derive_pll_clocks -create_base_clocks
 create_generated_clock -name sd1clk_pin -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[2]}] [get_ports {SDRAM_CLK}]
 create_generated_clock -name sysclk -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[1]}]
 create_generated_clock -name clk21m -source [get_pins {U00|altpll_component|auto_generated|pll1|clk[0]}]
@@ -68,8 +68,9 @@ derive_clock_uncertainty;
 # Set Input Delay
 #**************************************************************
 
-set_input_delay -clock sd1clk_pin -max 5.8 [get_ports SDRAM_DQ*]
-set_input_delay -clock sd1clk_pin -min 3.2 [get_ports SDRAM_DQ*]
+set_input_delay -clock U00|altpll_component|auto_generated|pll1|clk[2] -min 6.5 -reference_pin [get_ports {SDRAM_CLK}] [get_ports SDRAM_DQ*]
+set_input_delay -clock U00|altpll_component|auto_generated|pll1|clk[2] -max 6.5 -reference_pin [get_ports {SDRAM_CLK}] [get_ports SDRAM_DQ*]
+# set_input_delay -clock sd1clk_pin -min 3.2 [get_ports SDRAM_DQ*]
 
 # Delays for async signals - not necessary, but might as well avoid
 # having unconstrained ports in the design
@@ -90,8 +91,10 @@ set_input_delay -clock SPICLK -max 1.5 [get_ports {SPI_SS3}]
 # Set Output Delay
 #**************************************************************
 
-set_output_delay -clock sd1clk_pin -max 1.5 [get_ports SDRAM_*]
-set_output_delay -clock sd1clk_pin -min -0.8 [get_ports SDRAM_*]
+set_output_delay -clock U00|altpll_component|auto_generated|pll1|clk[2] -max -1.5 -reference_pin [get_ports {SDRAM_CLK}] [get_ports SDRAM_*]
+set_output_delay -clock U00|altpll_component|auto_generated|pll1|clk[2] -min -0.8 -reference_pin [get_ports {SDRAM_CLK}] [get_ports SDRAM_*]
+#set_output_delay -clock sd1clk_pin -max 1.5 [get_ports SDRAM_*]
+#set_output_delay -clock sd1clk_pin -min -0.8 [get_ports SDRAM_*]
 set_output_delay -clock sd1clk_pin -max 0.5 [get_ports SDRAM_CLK]
 set_output_delay -clock sd1clk_pin -min 0.5 [get_ports SDRAM_CLK]
 
@@ -129,7 +132,7 @@ set_false_path -from {*uart|txd} -to {UART_TX}
 #set_multicycle_path -from [get_clocks {mypll|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
 #set_multicycle_path -from [get_clocks {mypll2|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
 
-# set_multicycle_path -from [get_clocks {sd1clk_pin}] -to [get_clocks {U00|altpll_component|auto_generated|pll1|clk[1]}] -setup -end 2
+# set_multicycle_path -from U00|altpll_component|auto_generated|pll1|clk[2] -to [get_clocks {U00|altpll_component|auto_generated|pll1|clk[1]}] -setup -end 2
 
 # set_multicycle_path -through [get_nets {*zpu|Mult0*}] -setup -end 2
 # set_multicycle_path -through [get_nets {*zpu|Mult0*}] -hold -end 2
